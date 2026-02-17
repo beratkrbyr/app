@@ -349,3 +349,5 @@ agent_communication:
     message: "Initial implementation complete. Backend services, availability, and admin endpoints tested and working. Sample data added (3 services, 7 days availability). Ready for comprehensive backend testing of booking flow and frontend testing."
   - agent: "testing"
     message: "✅ Backend testing COMPLETE - 92.3% success rate. All core APIs working: Services (8 available), Availability (7 days data), Booking creation with Friday discount (10%), Admin login/stats/settings, Double booking prevention. Fixed ObjectId serialization issue. Only minor issue: duplicate test services in DB (not functional problem). Ready for frontend testing."
+  - agent: "testing"
+    message: "❌ CRITICAL ISSUE: Mobile app not loading properly. The preview URL https://schedule-clean.preview.emergentagent.com shows a static 'Start building apps on emergent' screen instead of the actual cleaning company booking app. Expo server is running and bundling successfully, but the app is not rendering. This prevents any frontend testing from being conducted. The frontend implementation needs immediate attention."
