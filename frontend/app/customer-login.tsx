@@ -135,6 +135,8 @@ export default function CustomerLoginScreen() {
                 Platform.OS === 'web' && { cursor: 'pointer' } as any
               ]}
               onPress={handleSubmit}
+              // @ts-ignore - Web platform compatibility
+              onClick={Platform.OS === 'web' ? handleSubmit : undefined}
               accessibilityRole="button"
             >
               <Text style={styles.submitButtonText}>
