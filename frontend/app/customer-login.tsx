@@ -264,4 +264,18 @@ const styles = StyleSheet.create({
     color: '#1e40af',
     lineHeight: 20,
   },
+  errorContainer: {
+    backgroundColor: '#fef2f2',
+    padding: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 14,
+    flex: 1,
+  },
 });
