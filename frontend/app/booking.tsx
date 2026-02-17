@@ -37,6 +37,11 @@ LocaleConfig.defaultLocale = 'tr';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
+interface TimeSlotInfo {
+  time: string;
+  available: boolean;
+}
+
 export default function BookingScreen() {
   const router = useRouter();
   const { serviceId, serviceName, servicePrice } = useLocalSearchParams();
@@ -52,7 +57,7 @@ export default function BookingScreen() {
   
   const [availableDates, setAvailableDates] = useState<string[]>([]);
   const [markedDates, setMarkedDates] = useState<any>({});
-  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+  const [timeSlots, setTimeSlots] = useState<TimeSlotInfo[]>([]);
   const [loadingDates, setLoadingDates] = useState(true);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -60,6 +65,11 @@ export default function BookingScreen() {
   
   // Validation errors
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  // 30 günlük tarih aralığı için max date
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 30);
+  const maxDateStr = maxDate.toISOString().split('T')[0];
 
   useEffect(() => {
     fetchAvailability();
@@ -73,11 +83,22 @@ export default function BookingScreen() {
 
   const fetchAvailability = async () => {
     try {
+      // Fetch current month and next month for 30 day coverage
       const response = await fetch(
         `${BACKEND_URL}/api/availability?year=${currentMonth.getFullYear()}&month=${currentMonth.getMonth() + 1}`
       );
       const data = await response.json();
-      const available = data.dates
+      
+      // Also fetch next month if needed
+      const nextMonth = new Date(currentMonth);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      const response2 = await fetch(
+        `${BACKEND_URL}/api/availability?year=${nextMonth.getFullYear()}&month=${nextMonth.getMonth() + 1}`
+      );
+      const data2 = await response2.json();
+      
+      const allDates = [...(data.dates || []), ...(data2.dates || [])];
+      const available = allDates
         .filter((d: any) => d.available)
         .map((d: any) => d.date);
       setAvailableDates(available);
@@ -86,7 +107,7 @@ export default function BookingScreen() {
       const marked: any = {};
       const today = new Date().toISOString().split('T')[0];
       available.forEach((dateStr: string) => {
-        if (dateStr >= today) {
+        if (dateStr >= today && dateStr <= maxDateStr) {
           marked[dateStr] = {
             marked: true,
             dotColor: '#10b981',
@@ -108,7 +129,17 @@ export default function BookingScreen() {
         `${BACKEND_URL}/api/availability/slots?date=${selectedDate}`
       );
       const data = await response.json();
-      setAvailableTimeSlots(data.slots || []);
+      
+      // Create time slots with availability info
+      const allSlots = data.all_slots || [];
+      const bookedSlots = data.booked_slots || [];
+      
+      const slots: TimeSlotInfo[] = allSlots.map((time: string) => ({
+        time,
+        available: !bookedSlots.includes(time),
+      }));
+      
+      setTimeSlots(slots);
       setSelectedTime('');
     } catch (error) {
       console.error('Error fetching time slots:', error);
@@ -211,7 +242,7 @@ export default function BookingScreen() {
 
   const onDayPress = (day: any) => {
     const today = new Date().toISOString().split('T')[0];
-    if (availableDates.includes(day.dateString) && day.dateString >= today) {
+    if (availableDates.includes(day.dateString) && day.dateString >= today && day.dateString <= maxDateStr) {
       setSelectedDate(day.dateString);
       setShowCalendarModal(false);
       setErrors({...errors, selectedDate: ''});
@@ -242,7 +273,7 @@ export default function BookingScreen() {
 
           {/* Date Selection */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Tarih Seçin *</Text>
+            <Text style={styles.sectionTitle}>Tarih Seçin * (30 gün içinde)</Text>
             <TouchableOpacity
               style={[styles.dateButton, errors.selectedDate ? styles.inputError : null]}
               onPress={() => setShowCalendarModal(true)}
@@ -268,7 +299,7 @@ export default function BookingScreen() {
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>Tarih Seçin</Text>
+                  <Text style={styles.modalTitle}>Tarih Seçin (30 gün)</Text>
                   <TouchableOpacity onPress={() => setShowCalendarModal(false)}>
                     <Ionicons name="close" size={28} color="#111827" />
                   </TouchableOpacity>
@@ -298,6 +329,7 @@ export default function BookingScreen() {
                     textDayHeaderFontSize: 14,
                   }}
                   minDate={new Date().toISOString().split('T')[0]}
+                  maxDate={maxDateStr}
                 />
                 
                 <View style={styles.calendarLegend}>
@@ -316,31 +348,56 @@ export default function BookingScreen() {
             {loadingSlots ? (
               <ActivityIndicator color="#2563eb" />
             ) : selectedDate ? (
-              availableTimeSlots.length > 0 ? (
-                <View style={styles.timeGrid}>
-                  {availableTimeSlots.map((time) => (
-                    <TouchableOpacity
-                      key={time}
-                      style={[
-                        styles.timeSlot,
-                        selectedTime === time && styles.timeSlotSelected,
-                      ]}
-                      onPress={() => {
-                        setSelectedTime(time);
-                        setErrors({...errors, selectedTime: ''});
-                      }}
-                    >
-                      <Text
+              timeSlots.length > 0 ? (
+                <>
+                  <View style={styles.timeLegend}>
+                    <View style={styles.timeLegendItem}>
+                      <View style={[styles.timeLegendBox, { backgroundColor: '#d1fae5', borderColor: '#10b981' }]} />
+                      <Text style={styles.timeLegendText}>Müsait</Text>
+                    </View>
+                    <View style={styles.timeLegendItem}>
+                      <View style={[styles.timeLegendBox, { backgroundColor: '#fee2e2', borderColor: '#ef4444' }]} />
+                      <Text style={styles.timeLegendText}>Dolu</Text>
+                    </View>
+                  </View>
+                  <View style={styles.timeGrid}>
+                    {timeSlots.map((slot) => (
+                      <TouchableOpacity
+                        key={slot.time}
                         style={[
-                          styles.timeSlotText,
-                          selectedTime === time && styles.timeSlotTextSelected,
+                          styles.timeSlot,
+                          slot.available 
+                            ? (selectedTime === slot.time ? styles.timeSlotSelected : styles.timeSlotAvailable)
+                            : styles.timeSlotBooked,
                         ]}
+                        onPress={() => {
+                          if (slot.available) {
+                            setSelectedTime(slot.time);
+                            setErrors({...errors, selectedTime: ''});
+                          }
+                        }}
+                        disabled={!slot.available}
                       >
-                        {time}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                        <Text
+                          style={[
+                            styles.timeSlotText,
+                            slot.available
+                              ? (selectedTime === slot.time ? styles.timeSlotTextSelected : styles.timeSlotTextAvailable)
+                              : styles.timeSlotTextBooked,
+                          ]}
+                        >
+                          {slot.time}
+                        </Text>
+                        {!slot.available && (
+                          <Ionicons name="lock-closed" size={14} color="#991b1b" />
+                        )}
+                        {slot.available && selectedTime === slot.time && (
+                          <Ionicons name="checkmark-circle" size={14} color="#ffffff" />
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </>
               ) : (
                 <Text style={styles.noSlotsText}>
                   Bu tarih için müsait saat bulunmamaktadır.
@@ -567,18 +624,53 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: '#9ca3af',
   },
+  timeLegend: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 24,
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+  },
+  timeLegendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  timeLegendBox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+  },
+  timeLegendText: {
+    fontSize: 14,
+    color: '#374151',
+    fontWeight: '500',
+  },
   timeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
   },
   timeSlot: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderWidth: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  timeSlotAvailable: {
+    backgroundColor: '#d1fae5',
+    borderColor: '#10b981',
+  },
+  timeSlotBooked: {
+    backgroundColor: '#fee2e2',
+    borderColor: '#ef4444',
+    opacity: 0.7,
   },
   timeSlotSelected: {
     backgroundColor: '#2563eb',
@@ -586,8 +678,13 @@ const styles = StyleSheet.create({
   },
   timeSlotText: {
     fontSize: 16,
-    color: '#374151',
-    fontWeight: '500',
+    fontWeight: '600',
+  },
+  timeSlotTextAvailable: {
+    color: '#065f46',
+  },
+  timeSlotTextBooked: {
+    color: '#991b1b',
   },
   timeSlotTextSelected: {
     color: '#ffffff',
