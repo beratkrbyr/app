@@ -225,17 +225,11 @@ export default function ProfileScreen() {
       </View>
 
       {canCancel(item.status) && (
-        <Pressable
-          style={({ pressed }) => [
-            styles.cancelButton,
-            pressed && { opacity: 0.7 },
-            Platform.OS === 'web' && { cursor: 'pointer' } as any
-          ]}
+        <TouchableOpacity
+          style={styles.cancelButton}
           onPress={() => handleCancelBooking(item.id)}
-          // @ts-ignore - Web platform compatibility
-          onClick={Platform.OS === 'web' ? () => handleCancelBooking(item.id) : undefined}
           disabled={cancellingId === item.id}
-          accessibilityRole="button"
+          activeOpacity={0.7}
         >
           {cancellingId === item.id ? (
             <ActivityIndicator size="small" color="#ef4444" />
@@ -245,7 +239,7 @@ export default function ProfileScreen() {
               <Text style={styles.cancelButtonText}>Randevuyu İptal Et</Text>
             </>
           )}
-        </Pressable>
+        </TouchableOpacity>
       )}
     </View>
   );
