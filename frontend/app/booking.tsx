@@ -275,16 +275,22 @@ export default function BookingScreen() {
           {/* Date Selection */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tarih Seçin * (30 gün içinde)</Text>
-            <TouchableOpacity
-              style={[styles.dateButton, errors.selectedDate ? styles.inputError : null]}
+            <Pressable
+              style={({ pressed }) => [
+                styles.dateButton,
+                errors.selectedDate ? styles.inputError : null,
+                pressed && { opacity: 0.8 },
+                Platform.OS === 'web' && { cursor: 'pointer' } as any
+              ]}
               onPress={() => setShowCalendarModal(true)}
+              accessibilityRole="button"
             >
               <Ionicons name="calendar-outline" size={20} color="#2563eb" />
               <Text style={[styles.dateButtonText, !selectedDate && styles.placeholderText]}>
                 {formatSelectedDate()}
               </Text>
               <Ionicons name="chevron-down" size={20} color="#6b7280" />
-            </TouchableOpacity>
+            </Pressable>
             {errors.selectedDate ? (
               <Text style={styles.errorText}>{errors.selectedDate}</Text>
             ) : null}
