@@ -49,6 +49,11 @@ export default function CustomerCalendarScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
+  // 30 günlük tarih aralığı için max date
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 30);
+  const maxDateStr = maxDate.toISOString().split('T')[0];
+
   useEffect(() => {
     fetchAvailability();
   }, [currentMonth]);
@@ -61,6 +66,7 @@ export default function CustomerCalendarScreen() {
 
   const fetchAvailability = async () => {
     try {
+      // Fetch current month
       const response = await fetch(
         `${BACKEND_URL}/api/availability?year=${currentMonth.getFullYear()}&month=${
           currentMonth.getMonth() + 1
@@ -68,11 +74,21 @@ export default function CustomerCalendarScreen() {
       );
       const data = await response.json();
       
+      // Also fetch next month for 30 day coverage
+      const nextMonth = new Date(currentMonth);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      const response2 = await fetch(
+        `${BACKEND_URL}/api/availability?year=${nextMonth.getFullYear()}&month=${nextMonth.getMonth() + 1}`
+      );
+      const data2 = await response2.json();
+      
+      const allDates = [...(data.dates || []), ...(data2.dates || [])];
+      
       const marked: any = {};
       const today = new Date().toISOString().split('T')[0];
       
-      data.dates.forEach((item: any) => {
-        if (item.available && item.date >= today) {
+      allDates.forEach((item: any) => {
+        if (item.available && item.date >= today && item.date <= maxDateStr) {
           marked[item.date] = {
             marked: true,
             dotColor: '#10b981',
@@ -98,30 +114,17 @@ export default function CustomerCalendarScreen() {
       );
       const data = await response.json();
       
-      // Get all time slots from availability
-      const availabilityResponse = await fetch(
-        `${BACKEND_URL}/api/availability?year=${new Date(selectedDate).getFullYear()}&month=${
-          new Date(selectedDate).getMonth() + 1
-        }`
-      );
-      const availabilityData = await availabilityResponse.json();
-      const dateInfo = availabilityData.dates.find((d: any) => d.date === selectedDate);
+      // Use all_slots and booked_slots from backend
+      const allSlots = data.all_slots || [];
+      const bookedSlots = data.booked_slots || [];
       
-      if (dateInfo && dateInfo.available) {
-        // Create time slot info with availability status
-        const allSlots: TimeSlotInfo[] = [
-          '09:00', '10:00', '11:00', '12:00', '13:00', 
-          '14:00', '15:00', '16:00', '17:00', '18:00'
-        ].map(time => ({
-          time,
-          available: data.slots.includes(time),
-          booked: !data.slots.includes(time),
-        }));
-        
-        setTimeSlots(allSlots);
-      } else {
-        setTimeSlots([]);
-      }
+      const slots: TimeSlotInfo[] = allSlots.map((time: string) => ({
+        time,
+        available: !bookedSlots.includes(time),
+        booked: bookedSlots.includes(time),
+      }));
+      
+      setTimeSlots(slots);
     } catch (error) {
       console.error('Error fetching time slots:', error);
     } finally {
@@ -135,7 +138,8 @@ export default function CustomerCalendarScreen() {
   };
 
   const handleDayPress = (day: any) => {
-    if (markedDates[day.dateString]) {
+    const today = new Date().toISOString().split('T')[0];
+    if (markedDates[day.dateString] && day.dateString <= maxDateStr) {
       setSelectedDate(day.dateString);
     }
   };
@@ -161,7 +165,7 @@ export default function CustomerCalendarScreen() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Randevu Takvimi</Text>
           <Text style={styles.headerSubtitle}>
-            Müsait günleri görmek için takvime göz atın
+            30 gün içindeki müsait günleri görüntüleyin
           </Text>
         </View>
 
@@ -196,6 +200,7 @@ export default function CustomerCalendarScreen() {
             textDayHeaderFontSize: 14,
           }}
           minDate={new Date().toISOString().split('T')[0]}
+          maxDate={maxDateStr}
         />
 
         {selectedDate && (
@@ -215,18 +220,18 @@ export default function CustomerCalendarScreen() {
               <>
                 <View style={styles.slotLegend}>
                   <View style={styles.slotLegendItem}>
-                    <View style={[styles.slotLegendBox, { backgroundColor: '#10b981' }]} />
+                    <View style={[styles.slotLegendBox, { backgroundColor: '#d1fae5', borderColor: '#10b981' }]} />
                     <Text style={styles.slotLegendText}>Müsait</Text>
                   </View>
                   <View style={styles.slotLegendItem}>
-                    <View style={[styles.slotLegendBox, { backgroundColor: '#ef4444' }]} />
+                    <View style={[styles.slotLegendBox, { backgroundColor: '#fee2e2', borderColor: '#ef4444' }]} />
                     <Text style={styles.slotLegendText}>Dolu</Text>
                   </View>
                 </View>
 
                 <View style={styles.timeGrid}>
                   {timeSlots.map((slot) => (
-                    <TouchableOpacity
+                    <View
                       key={slot.time}
                       style={[
                         styles.timeSlot,
@@ -237,11 +242,6 @@ export default function CustomerCalendarScreen() {
                           borderColor: slot.available ? '#10b981' : '#ef4444',
                         },
                       ]}
-                      disabled={!slot.available}
-                      onPress={() => {
-                        // Navigate to services to start booking
-                        router.push('/(tabs)');
-                      }}
                     >
                       <Text
                         style={[
@@ -259,7 +259,7 @@ export default function CustomerCalendarScreen() {
                       {slot.available && (
                         <Ionicons name="checkmark-circle" size={16} color="#065f46" />
                       )}
-                    </TouchableOpacity>
+                    </View>
                   ))}
                 </View>
 
@@ -371,9 +371,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   slotLegendBox: {
-    width: 16,
-    height: 16,
+    width: 20,
+    height: 20,
     borderRadius: 4,
+    borderWidth: 2,
   },
   slotLegendText: {
     fontSize: 14,
