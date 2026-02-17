@@ -23,15 +23,26 @@ export default function CustomerLoginScreen() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      setError(message);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
 
   const handleSubmit = async () => {
+    setError('');
+    
     if (!phone.trim()) {
-      Alert.alert('Hata', 'Telefon numarası gereklidir.');
+      showAlert('Hata', 'Telefon numarası gereklidir.');
       return;
     }
 
     if (!isLogin && !name.trim()) {
-      Alert.alert('Hata', 'Adınızı giriniz.');
+      showAlert('Hata', 'Adınızı giriniz.');
       return;
     }
 
@@ -45,7 +56,7 @@ export default function CustomerLoginScreen() {
       }
       router.replace('/(tabs)');
     } catch (error) {
-      Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
+      showAlert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
     }
   };
 
