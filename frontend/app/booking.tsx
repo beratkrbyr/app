@@ -132,6 +132,23 @@ export default function BookingScreen() {
       });
 
       if (response.ok) {
+        const result = await response.json();
+        
+        // Schedule reminder notification (1 hour before)
+        await scheduleBookingNotification(
+          result.id,
+          serviceName as string,
+          booking.booking_date,
+          booking.booking_time
+        );
+        
+        // Send immediate confirmation
+        await sendImmediateNotification(
+          'Randevu Oluşturuldu! ✅',
+          `${serviceName} randevunuz ${booking.booking_date} tarihinde ${booking.booking_time} saatine kaydedildi.`,
+          { bookingId: result.id, type: 'confirmation' }
+        );
+        
         router.replace('/booking-success');
       } else {
         const error = await response.json();
