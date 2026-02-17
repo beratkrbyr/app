@@ -80,6 +80,13 @@ export default function CustomerLoginScreen() {
           </View>
 
           <View style={styles.form}>
+            {error ? (
+              <View style={styles.errorContainer}>
+                <Ionicons name="alert-circle" size={20} color="#ef4444" />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
+            
             {!isLogin && (
               <View style={styles.inputContainer}>
                 <Ionicons name="person-outline" size={20} color="#6b7280" />
