@@ -174,11 +174,11 @@ class BackendTester:
         # Test Friday booking (should get 10% discount)
         friday_booking = {
             "service_id": service_id,
-            "customer_name": "Ahmet Yılmaz",
-            "customer_phone": "5551234567",
-            "customer_address": "İstanbul, Kadıköy",
+            "customer_name": "Zeynep Kaya",
+            "customer_phone": "5551111111",
+            "customer_address": "İstanbul, Beşiktaş",
             "booking_date": "2026-02-21",  # Friday
-            "booking_time": "10:00",
+            "booking_time": "11:00",  # Available slot
             "payment_method": "cash"
         }
         
