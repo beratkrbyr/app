@@ -225,8 +225,11 @@ export default function ProfileScreen() {
       </View>
 
       {canCancel(item.status) && (
-        <TouchableOpacity
-          style={styles.cancelButton}
+        <Pressable
+          style={({ pressed }) => [
+            styles.cancelButton,
+            pressed && { opacity: 0.7 }
+          ]}
           onPress={() => handleCancelBooking(item.id)}
           disabled={cancellingId === item.id}
         >
@@ -238,7 +241,7 @@ export default function ProfileScreen() {
               <Text style={styles.cancelButtonText}>Randevuyu İptal Et</Text>
             </>
           )}
-        </TouchableOpacity>
+        </Pressable>
       )}
     </View>
   );
