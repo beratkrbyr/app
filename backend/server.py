@@ -220,9 +220,25 @@ async def create_booking(booking: BookingCreate):
     }
     
     result = await db.bookings.insert_one(booking_doc)
-    booking_doc["id"] = str(result.inserted_id)
     
-    return booking_doc
+    # Return clean serializable response
+    response = {
+        "id": str(result.inserted_id),
+        "service_id": booking_doc["service_id"],
+        "service_name": booking_doc["service_name"],
+        "customer_name": booking_doc["customer_name"],
+        "customer_phone": booking_doc["customer_phone"],
+        "customer_address": booking_doc["customer_address"],
+        "booking_date": booking_doc["booking_date"],
+        "booking_time": booking_doc["booking_time"],
+        "total_price": booking_doc["total_price"],
+        "discount_applied": booking_doc["discount_applied"],
+        "payment_method": booking_doc["payment_method"],
+        "status": booking_doc["status"],
+        "created_at": booking_doc["created_at"]
+    }
+    
+    return response
 
 @api_router.get("/bookings/check")
 async def check_bookings(phone: str):
