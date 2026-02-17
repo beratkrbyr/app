@@ -1,0 +1,46 @@
+{
+  "summary": "Frontend testing completed for cleaning company booking app. All button click issues have been fixed. Tested: customer login/register buttons, guest button, profile login button, date selection modal, admin login, and logout functionality.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Console warnings",
+        "issues": [
+          "Deprecation warning: 'shadow*' style props are deprecated. Use 'boxShadow'.",
+          "Deprecation warning: props.pointerEvents is deprecated. Use style.pointerEvents",
+          "Deprecation warning: style.tintColor is deprecated. Please use props.tintColor."
+        ]
+      }
+    ]
+  },
+  "test_report_links": ["/app/test_reports/iteration_1.json"],
+  "test_results": {
+    "homepage_services": "PASS - Services displayed with images and prices",
+    "customer_login_page": "PASS - Login/Register toggle buttons working",
+    "register_form_toggle": "PASS - Switches between login and register forms",
+    "guest_button": "PASS - 'Misafir olarak devam et' navigates to home",
+    "profile_login_button": "PASS - 'Giriş Yap' button navigates to customer-login",
+    "customer_login_submit": "PASS - Login with phone number works",
+    "date_selection_modal": "PASS - Calendar modal opens with available dates",
+    "admin_login": "PASS - Admin login with admin/admin123 works",
+    "logout_button": "PASS - Logout redirects to customer-login page"
+  },
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Consider replacing deprecated style props (shadow*, pointerEvents, tintColor) with recommended alternatives to avoid future compatibility issues"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (not tested - frontend only requested)",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "None required - existing test data in database",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All button click issues have been fixed by adding onClick handlers for web platform compatibility. React Native Web Pressable components require both onPress (for native) and onClick (for web) handlers. The app uses Expo Router for navigation."
+}
