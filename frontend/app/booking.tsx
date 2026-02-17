@@ -283,6 +283,8 @@ export default function BookingScreen() {
                 Platform.OS === 'web' && { cursor: 'pointer' } as any
               ]}
               onPress={() => setShowCalendarModal(true)}
+              // @ts-ignore - Web platform compatibility
+              onClick={Platform.OS === 'web' ? () => setShowCalendarModal(true) : undefined}
               accessibilityRole="button"
             >
               <Ionicons name="calendar-outline" size={20} color="#2563eb" />
@@ -309,6 +311,8 @@ export default function BookingScreen() {
                   <Text style={styles.modalTitle}>Tarih Seçin (30 gün)</Text>
                   <Pressable 
                     onPress={() => setShowCalendarModal(false)}
+                    // @ts-ignore - Web platform compatibility
+                    onClick={Platform.OS === 'web' ? () => setShowCalendarModal(false) : undefined}
                     style={({ pressed }) => [
                       pressed && { opacity: 0.7 },
                       Platform.OS === 'web' && { cursor: 'pointer' } as any
@@ -566,6 +570,8 @@ export default function BookingScreen() {
               Platform.OS === 'web' && { cursor: 'pointer' } as any
             ]}
             onPress={handleSubmit}
+            // @ts-ignore - Web platform compatibility
+            onClick={Platform.OS === 'web' ? handleSubmit : undefined}
             disabled={submitting}
             accessibilityRole="button"
           >
