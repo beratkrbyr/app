@@ -9,32 +9,42 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../../../contexts/ThemeContext';
 
 export default function AdminScreen() {
   const router = useRouter();
+  const { theme, isDark } = useTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <View style={[styles.header, { backgroundColor: theme.primary }]}>
         <Text style={styles.headerTitle}>Admin Paneli</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.description}>
+        <Text style={[styles.description, { color: theme.textSecondary }]}>
           Admin paneline erişmek için giriş yapmanız gerekmektedir.
         </Text>
 
         <TouchableOpacity
-          style={styles.loginButton}
+          style={[styles.loginButton, { backgroundColor: theme.primary }]}
           onPress={() => router.push('/admin-login')}
         >
           <Ionicons name="log-in-outline" size={24} color="#ffffff" />
           <Text style={styles.loginButtonText}>Admin Girişi</Text>
         </TouchableOpacity>
 
-        <View style={styles.infoCard}>
-          <Ionicons name="information-circle" size={24} color="#2563eb" />
-          <Text style={styles.infoText}>
+        <TouchableOpacity
+          style={[styles.settingsButton, { backgroundColor: theme.surface, borderColor: theme.border }]}
+          onPress={() => router.push('/user-settings')}
+        >
+          <Ionicons name={isDark ? "moon" : "sunny"} size={24} color={theme.primary} />
+          <Text style={[styles.settingsButtonText, { color: theme.text }]}>Tema Ayarları</Text>
+        </TouchableOpacity>
+
+        <View style={[styles.infoCard, { backgroundColor: theme.info + '15' }]}>
+          <Ionicons name="information-circle" size={24} color={theme.info} />
+          <Text style={[styles.infoText, { color: theme.info }]}>
             Admin olarak giriş yaptıktan sonra randevuları yönetebilir,
             hizmetleri düzenleyebilir ve müsait günleri ayarlayabilirsiniz.
           </Text>
