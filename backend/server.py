@@ -152,7 +152,7 @@ async def get_time_slots(date: str):
     availability = await db.availability.find_one({"date": date})
     
     if not availability or not availability.get("available"):
-        return {"slots": [], "available": False}
+        return {"slots": [], "all_slots": [], "booked_slots": [], "available": False}
     
     # Get booked slots for this date
     bookings = await db.bookings.find({
@@ -161,10 +161,13 @@ async def get_time_slots(date: str):
     }).to_list(100)
     
     booked_times = [b["booking_time"] for b in bookings]
-    available_slots = [slot for slot in availability.get("time_slots", []) if slot not in booked_times]
+    all_slots = availability.get("time_slots", [])
+    available_slots = [slot for slot in all_slots if slot not in booked_times]
     
     return {
         "slots": available_slots,
+        "all_slots": all_slots,
+        "booked_slots": booked_times,
         "available": len(available_slots) > 0
     }
 
