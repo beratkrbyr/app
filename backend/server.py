@@ -102,7 +102,7 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
         token = credentials.credentials
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         return payload
-    except:
+    except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 def is_friday(date_str: str) -> bool:
