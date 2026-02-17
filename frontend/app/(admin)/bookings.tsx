@@ -137,7 +137,7 @@ export default function BookingsScreen() {
   const renderBooking = ({ item }: { item: Booking }) => (
     <TouchableOpacity
       style={styles.bookingCard}
-      onPress={() => showStatusMenu(item)}
+      onPress={() => openStatusModal(item)}
     >
       <View style={styles.bookingHeader}>
         <Text style={styles.serviceName}>{item.service_name}</Text>
@@ -178,6 +178,10 @@ export default function BookingsScreen() {
           <Text style={styles.dateTimeText}>{item.booking_time}</Text>
         </View>
         <Text style={styles.price}>₺{item.total_price.toFixed(2)}</Text>
+      </View>
+
+      <View style={styles.tapHint}>
+        <Text style={styles.tapHintText}>Durumu değiştirmek için tıklayın</Text>
       </View>
     </TouchableOpacity>
   );
