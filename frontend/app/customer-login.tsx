@@ -131,7 +131,8 @@ export default function CustomerLoginScreen() {
             <Pressable
               style={({ pressed }) => [
                 styles.submitButton,
-                pressed && { opacity: 0.8 }
+                pressed && { opacity: 0.8 },
+                Platform.OS === 'web' && { cursor: 'pointer' } as any
               ]}
               onPress={handleSubmit}
               accessibilityRole="button"
@@ -144,7 +145,8 @@ export default function CustomerLoginScreen() {
             <Pressable
               style={({ pressed }) => [
                 styles.switchButton,
-                pressed && { opacity: 0.7 }
+                pressed && { opacity: 0.7 },
+                Platform.OS === 'web' && { cursor: 'pointer' } as any
               ]}
               onPress={() => setIsLogin(!isLogin)}
               accessibilityRole="button"
@@ -159,7 +161,8 @@ export default function CustomerLoginScreen() {
             <Pressable
               style={({ pressed }) => [
                 styles.guestButton,
-                pressed && { opacity: 0.7 }
+                pressed && { opacity: 0.7 },
+                Platform.OS === 'web' && { cursor: 'pointer' } as any
               ]}
               onPress={() => router.push('/(tabs)')}
               accessibilityRole="button"
