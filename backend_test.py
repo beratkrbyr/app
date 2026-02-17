@@ -205,8 +205,8 @@ class BackendTester:
             "customer_name": "Can Demir",
             "customer_phone": "5552222222",
             "customer_address": "Ankara, Çankaya",
-            "booking_date": "2026-02-20",  # Thursday
-            "booking_time": "15:00",  # Available slot
+            "booking_date": "2026-02-21",  # Saturday (non-Friday)
+            "booking_time": "14:00",  # Available slot
             "payment_method": "online"
         }
         
