@@ -125,7 +125,12 @@ class BackendTester:
         if status == 200:
             slots = data.get('slots', [])
             available = data.get('available', False)
-            day_name = "Friday" if date == "2026-02-21" else "Thursday"
+            if date == "2026-02-20":
+                day_name = "Friday"
+            elif date == "2026-02-21":
+                day_name = "Saturday"
+            else:
+                day_name = "Unknown"
             self.log_result(f"GET /api/availability/slots ({day_name})", True, 
                           f"Found {len(slots)} available slots: {slots}")
         else:
