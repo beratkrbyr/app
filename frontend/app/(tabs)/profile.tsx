@@ -232,6 +232,7 @@ export default function ProfileScreen() {
           ]}
           onPress={() => handleCancelBooking(item.id)}
           disabled={cancellingId === item.id}
+          accessibilityRole="button"
         >
           {cancellingId === item.id ? (
             <ActivityIndicator size="small" color="#ef4444" />
@@ -260,13 +261,17 @@ export default function ProfileScreen() {
             Profilinizi görmek ve randevularınızı takip etmek için giriş yapın
           </Text>
 
-          <TouchableOpacity
-            style={styles.loginButton}
+          <Pressable
+            style={({ pressed }) => [
+              styles.loginButton,
+              pressed && { opacity: 0.8 }
+            ]}
             onPress={() => router.push('/customer-login')}
+            accessibilityRole="button"
           >
             <Ionicons name="log-in-outline" size={24} color="#ffffff" />
             <Text style={styles.loginButtonText}>Giriş Yap</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
