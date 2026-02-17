@@ -189,15 +189,18 @@ backend:
 frontend:
   - task: "Navigation setup with tabs"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/(tabs)/_layout.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Tab navigation implemented with 3 tabs: Hizmetler, Randevularım, Admin. Needs UI testing."
+      - working: false
+        agent: "testing"
+        comment: "CRITICAL: Mobile app not loading - shows static 'Start building apps on emergent' screen instead of the actual app. Expo server is running and bundling successfully but app is not rendering. Cannot test navigation or any frontend functionality."
 
   - task: "Services list screen"
     implemented: true
