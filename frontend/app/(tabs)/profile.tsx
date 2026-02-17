@@ -1,0 +1,270 @@
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useCustomer } from '../../contexts/CustomerContext';
+
+export default function ProfileScreen() {
+  const router = useRouter();
+  const { customer, isAuthenticated, logout } = useCustomer();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Çıkış Yap',
+      'Çıkış yapmak istediğinizden emin misiniz?',
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Çıkış Yap',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            router.replace('/customer-login');
+          },
+        },
+      ]
+    );
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Profil</Text>
+        </View>
+
+        <View style={styles.notAuthContainer}>
+          <Ionicons name="person-circle-outline" size={80} color="#9ca3af" />
+          <Text style={styles.notAuthTitle}>Giriş Yapmanız Gerekiyor</Text>
+          <Text style={styles.notAuthText}>
+            Profilinizi görmek ve randevularınızı takip etmek için giriş yapın
+          </Text>
+
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => router.push('/customer-login')}
+          >
+            <Ionicons name="log-in-outline" size={24} color="#ffffff" />
+            <Text style={styles.loginButtonText}>Giriş Yap</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Profil</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.profileCard}>
+          <View style={styles.avatar}>
+            <Ionicons name="person" size={48} color="#ffffff" />
+          </View>
+          <Text style={styles.profileName}>{customer?.name}</Text>
+          <Text style={styles.profilePhone}>{customer?.phone}</Text>
+          {customer?.email && (
+            <Text style={styles.profileEmail}>{customer.email}</Text>
+          )}
+        </View>
+
+        <View style={styles.menuSection}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/(tabs)/my-bookings')}
+          >
+            <Ionicons name="calendar-outline" size={24} color="#2563eb" />
+            <View style={styles.menuItemContent}>
+              <Text style={styles.menuItemTitle}>Randevularım</Text>
+              <Text style={styles.menuItemDescription}>
+                Tüm randevularınızı görüntüleyin
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/user-settings')}
+          >
+            <Ionicons name="color-palette-outline" size={24} color="#2563eb" />
+            <View style={styles.menuItemContent}>
+              <Text style={styles.menuItemTitle}>Tema Ayarları</Text>
+              <Text style={styles.menuItemDescription}>
+                Açık/Koyu tema seçimi
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/admin-login')}
+          >
+            <Ionicons name="shield-outline" size={24} color="#f59e0b" />
+            <View style={styles.menuItemContent}>
+              <Text style={styles.menuItemTitle}>Yönetici Girişi</Text>
+              <Text style={styles.menuItemDescription}>
+                Yönetici paneline erişim
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Ionicons name="log-out-outline" size={24} color="#ef4444" />
+          <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  header: {
+    backgroundColor: '#2563eb',
+    padding: 24,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  notAuthContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  notAuthTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginTop: 24,
+    marginBottom: 12,
+  },
+  notAuthText: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+    marginBottom: 32,
+    lineHeight: 24,
+  },
+  loginButton: {
+    backgroundColor: '#2563eb',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+    width: '100%',
+  },
+  loginButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  scrollContent: {
+    padding: 16,
+  },
+  profileCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: '#2563eb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  profileName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  profilePhone: {
+    fontSize: 16,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
+  profileEmail: {
+    fontSize: 14,
+    color: '#9ca3af',
+  },
+  menuSection: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  menuItemContent: {
+    flex: 1,
+  },
+  menuItemTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 2,
+  },
+  menuItemDescription: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#ef4444',
+  },
+  logoutButtonText: {
+    color: '#ef4444',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
