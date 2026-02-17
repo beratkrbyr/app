@@ -319,7 +319,18 @@ async def create_service(
     service_doc = service.dict()
     result = await db.services.insert_one(service_doc)
     
-    return {"id": str(result.inserted_id), **service_doc}
+    response_data = {
+        "id": str(result.inserted_id),
+        "name": service_doc["name"],
+        "description": service_doc["description"],
+        "price": service_doc["price"],
+        "active": service_doc["active"],
+        "order": service_doc["order"]
+    }
+    if "image" in service_doc:
+        response_data["image"] = service_doc["image"]
+    
+    return response_data
 
 @api_router.put("/admin/services/{service_id}")
 async def update_service(
