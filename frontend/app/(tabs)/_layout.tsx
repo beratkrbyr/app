@@ -42,10 +42,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="my-bookings"
         options={{
-          title: 'Randevularım',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
-          ),
+          href: null,
         }}
       />
       <Tabs.Screen
