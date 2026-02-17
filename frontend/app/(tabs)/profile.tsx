@@ -228,7 +228,8 @@ export default function ProfileScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.cancelButton,
-            pressed && { opacity: 0.7 }
+            pressed && { opacity: 0.7 },
+            Platform.OS === 'web' && { cursor: 'pointer' } as any
           ]}
           onPress={() => handleCancelBooking(item.id)}
           disabled={cancellingId === item.id}
@@ -264,7 +265,8 @@ export default function ProfileScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.loginButton,
-              pressed && { opacity: 0.8 }
+              pressed && { opacity: 0.8 },
+              Platform.OS === 'web' && { cursor: 'pointer' } as any
             ]}
             onPress={() => router.push('/customer-login')}
             accessibilityRole="button"
@@ -338,7 +340,8 @@ export default function ProfileScreen() {
         <Pressable 
           style={({ pressed }) => [
             styles.logoutButton,
-            pressed && { opacity: 0.8 }
+            pressed && { opacity: 0.8 },
+            Platform.OS === 'web' && { cursor: 'pointer' } as any
           ]} 
           onPress={handleLogout}
           accessibilityRole="button"
