@@ -12,11 +12,13 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -27,6 +29,7 @@ interface Service {
   price: number;
   active: boolean;
   order: number;
+  image?: string;
 }
 
 export default function ServicesScreen() {
@@ -41,6 +44,7 @@ export default function ServicesScreen() {
     price: '',
     active: true,
     order: 0,
+    image: '',
   });
 
   useEffect(() => {
