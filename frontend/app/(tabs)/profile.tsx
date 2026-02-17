@@ -341,6 +341,7 @@ export default function ProfileScreen() {
             pressed && { opacity: 0.8 }
           ]} 
           onPress={handleLogout}
+          accessibilityRole="button"
         >
           <Ionicons name="log-out-outline" size={24} color="#ef4444" />
           <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
