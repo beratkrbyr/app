@@ -254,7 +254,7 @@ async def cancel_booking(booking_id: str, phone: str):
     """Cancel a booking by customer"""
     try:
         booking = await db.bookings.find_one({"_id": ObjectId(booking_id)})
-    except:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid booking ID")
     
     if not booking:
