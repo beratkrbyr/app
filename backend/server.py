@@ -318,9 +318,8 @@ async def create_service(
     
     service_doc = service.dict()
     result = await db.services.insert_one(service_doc)
-    service_doc["id"] = str(result.inserted_id)
     
-    return service_doc
+    return {"id": str(result.inserted_id), **service_doc}
 
 @api_router.put("/admin/services/{service_id}")
 async def update_service(
