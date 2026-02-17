@@ -15,7 +15,25 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
+
+// Türkçe takvim ayarları
+LocaleConfig.locales['tr'] = {
+  monthNames: [
+    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+  ],
+  monthNamesShort: [
+    'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
+    'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'
+  ],
+  dayNames: [
+    'Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'
+  ],
+  dayNamesShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+  today: 'Bugün'
+};
+LocaleConfig.defaultLocale = 'tr';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -28,19 +46,24 @@ export default function BookingScreen() {
   const [customerAddress, setCustomerAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash'>('cash');
   
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
   
   const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [markedDates, setMarkedDates] = useState<any>({});
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [loadingDates, setLoadingDates] = useState(true);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  
+  // Validation errors
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     fetchAvailability();
-  }, []);
+  }, [currentMonth]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -50,15 +73,27 @@ export default function BookingScreen() {
 
   const fetchAvailability = async () => {
     try {
-      const now = new Date();
       const response = await fetch(
-        `${BACKEND_URL}/api/availability?year=${now.getFullYear()}&month=${now.getMonth() + 1}`
+        `${BACKEND_URL}/api/availability?year=${currentMonth.getFullYear()}&month=${currentMonth.getMonth() + 1}`
       );
       const data = await response.json();
       const available = data.dates
         .filter((d: any) => d.available)
         .map((d: any) => d.date);
       setAvailableDates(available);
+      
+      // Create marked dates for calendar
+      const marked: any = {};
+      const today = new Date().toISOString().split('T')[0];
+      available.forEach((dateStr: string) => {
+        if (dateStr >= today) {
+          marked[dateStr] = {
+            marked: true,
+            dotColor: '#10b981',
+          };
+        }
+      });
+      setMarkedDates(marked);
     } catch (error) {
       console.error('Error fetching availability:', error);
     } finally {
@@ -69,9 +104,8 @@ export default function BookingScreen() {
   const fetchTimeSlots = async () => {
     setLoadingSlots(true);
     try {
-      const dateStr = selectedDate.toISOString().split('T')[0];
       const response = await fetch(
-        `${BACKEND_URL}/api/availability/slots?date=${dateStr}`
+        `${BACKEND_URL}/api/availability/slots?date=${selectedDate}`
       );
       const data = await response.json();
       setAvailableTimeSlots(data.slots || []);
@@ -83,14 +117,11 @@ export default function BookingScreen() {
     }
   };
 
-  const isDateAvailable = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    return availableDates.includes(dateStr);
-  };
-
   const calculateDiscount = () => {
+    if (!selectedDate) return 0;
     const price = parseFloat(servicePrice as string);
-    const dayOfWeek = selectedDate.getDay();
+    const dateObj = new Date(selectedDate);
+    const dayOfWeek = dateObj.getDay();
     if (dayOfWeek === 5) { // Friday
       return price * 0.1;
     }
@@ -102,14 +133,46 @@ export default function BookingScreen() {
     return price - calculateDiscount();
   };
 
-  const handleSubmit = async () => {
-    if (!customerName.trim() || !customerPhone.trim() || !customerAddress.trim()) {
-      Alert.alert('Eksik Bilgi', 'Lütfen tüm alanları doldurun.');
-      return;
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+    
+    if (!customerName.trim()) {
+      newErrors.customerName = 'Ad Soyad zorunludur';
     }
-
+    
+    if (!customerPhone.trim()) {
+      newErrors.customerPhone = 'Telefon numarası zorunludur';
+    } else if (customerPhone.length < 10) {
+      newErrors.customerPhone = 'Geçerli bir telefon numarası girin';
+    }
+    
+    if (!customerAddress.trim()) {
+      newErrors.customerAddress = 'Adres zorunludur';
+    }
+    
+    if (!selectedDate) {
+      newErrors.selectedDate = 'Tarih seçmeniz zorunludur';
+    }
+    
     if (!selectedTime) {
-      Alert.alert('Saat Seçin', 'Lütfen bir saat dilimi seçin.');
+      newErrors.selectedTime = 'Saat seçmeniz zorunludur';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      showAlert('Eksik Bilgi', 'Lütfen tüm zorunlu alanları doldurun.');
       return;
     }
 
@@ -120,7 +183,7 @@ export default function BookingScreen() {
         customer_name: customerName,
         customer_phone: customerPhone,
         customer_address: customerAddress,
-        booking_date: selectedDate.toISOString().split('T')[0],
+        booking_date: selectedDate,
         booking_time: selectedTime,
         payment_method: paymentMethod,
       };
@@ -136,21 +199,33 @@ export default function BookingScreen() {
         router.replace('/booking-success');
       } else {
         const error = await response.json();
-        Alert.alert('Hata', error.detail || 'Randevu oluşturulamadı.');
+        showAlert('Hata', error.detail || 'Randevu oluşturulamadı.');
       }
     } catch (error) {
       console.error('Error creating booking:', error);
-      Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
+      showAlert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const onDateChange = (event: any, date?: Date) => {
-    setShowDatePicker(false);
-    if (date) {
-      setSelectedDate(date);
+  const onDayPress = (day: any) => {
+    const today = new Date().toISOString().split('T')[0];
+    if (availableDates.includes(day.dateString) && day.dateString >= today) {
+      setSelectedDate(day.dateString);
+      setShowCalendarModal(false);
+      setErrors({...errors, selectedDate: ''});
     }
+  };
+
+  const formatSelectedDate = () => {
+    if (!selectedDate) return 'Tarih Seçin';
+    return new Date(selectedDate).toLocaleDateString('tr-TR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      weekday: 'long',
+    });
   };
 
   return (
@@ -167,102 +242,177 @@ export default function BookingScreen() {
 
           {/* Date Selection */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Tarih Seçin</Text>
+            <Text style={styles.sectionTitle}>Tarih Seçin *</Text>
             <TouchableOpacity
-              style={styles.dateButton}
-              onPress={() => setShowDatePicker(true)}
+              style={[styles.dateButton, errors.selectedDate ? styles.inputError : null]}
+              onPress={() => setShowCalendarModal(true)}
             >
               <Ionicons name="calendar-outline" size={20} color="#2563eb" />
-              <Text style={styles.dateButtonText}>
-                {selectedDate.toLocaleDateString('tr-TR', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                  weekday: 'long',
-                })}
+              <Text style={[styles.dateButtonText, !selectedDate && styles.placeholderText]}>
+                {formatSelectedDate()}
               </Text>
+              <Ionicons name="chevron-down" size={20} color="#6b7280" />
             </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={selectedDate}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-                minimumDate={new Date()}
-              />
-            )}
+            {errors.selectedDate ? (
+              <Text style={styles.errorText}>{errors.selectedDate}</Text>
+            ) : null}
           </View>
+
+          {/* Calendar Modal */}
+          <Modal
+            visible={showCalendarModal}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setShowCalendarModal(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>Tarih Seçin</Text>
+                  <TouchableOpacity onPress={() => setShowCalendarModal(false)}>
+                    <Ionicons name="close" size={28} color="#111827" />
+                  </TouchableOpacity>
+                </View>
+                
+                <Calendar
+                  onDayPress={onDayPress}
+                  onMonthChange={(month: any) => {
+                    setCurrentMonth(new Date(month.year, month.month - 1));
+                  }}
+                  markedDates={{
+                    ...markedDates,
+                    [selectedDate]: {
+                      ...markedDates[selectedDate],
+                      selected: true,
+                      selectedColor: '#2563eb',
+                    },
+                  }}
+                  theme={{
+                    selectedDayBackgroundColor: '#2563eb',
+                    todayTextColor: '#2563eb',
+                    dotColor: '#10b981',
+                    arrowColor: '#2563eb',
+                    monthTextColor: '#111827',
+                    textDayFontSize: 16,
+                    textMonthFontSize: 18,
+                    textDayHeaderFontSize: 14,
+                  }}
+                  minDate={new Date().toISOString().split('T')[0]}
+                />
+                
+                <View style={styles.calendarLegend}>
+                  <View style={styles.legendItem}>
+                    <View style={[styles.legendDot, { backgroundColor: '#10b981' }]} />
+                    <Text style={styles.legendText}>Müsait</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </Modal>
 
           {/* Time Selection */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Saat Seçin</Text>
+            <Text style={styles.sectionTitle}>Saat Seçin *</Text>
             {loadingSlots ? (
               <ActivityIndicator color="#2563eb" />
-            ) : availableTimeSlots.length > 0 ? (
-              <View style={styles.timeGrid}>
-                {availableTimeSlots.map((time) => (
-                  <TouchableOpacity
-                    key={time}
-                    style={[
-                      styles.timeSlot,
-                      selectedTime === time && styles.timeSlotSelected,
-                    ]}
-                    onPress={() => setSelectedTime(time)}
-                  >
-                    <Text
+            ) : selectedDate ? (
+              availableTimeSlots.length > 0 ? (
+                <View style={styles.timeGrid}>
+                  {availableTimeSlots.map((time) => (
+                    <TouchableOpacity
+                      key={time}
                       style={[
-                        styles.timeSlotText,
-                        selectedTime === time && styles.timeSlotTextSelected,
+                        styles.timeSlot,
+                        selectedTime === time && styles.timeSlotSelected,
                       ]}
+                      onPress={() => {
+                        setSelectedTime(time);
+                        setErrors({...errors, selectedTime: ''});
+                      }}
                     >
-                      {time}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+                      <Text
+                        style={[
+                          styles.timeSlotText,
+                          selectedTime === time && styles.timeSlotTextSelected,
+                        ]}
+                      >
+                        {time}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : (
+                <Text style={styles.noSlotsText}>
+                  Bu tarih için müsait saat bulunmamaktadır.
+                </Text>
+              )
             ) : (
               <Text style={styles.noSlotsText}>
-                Bu tarih için müsait saat bulunmamaktadır.
+                Önce bir tarih seçin.
               </Text>
             )}
+            {errors.selectedTime ? (
+              <Text style={styles.errorText}>{errors.selectedTime}</Text>
+            ) : null}
           </View>
 
           {/* Customer Info */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>İletişim Bilgileri</Text>
-            <View style={styles.inputContainer}>
+            
+            <View style={[styles.inputContainer, errors.customerName ? styles.inputError : null]}>
               <Ionicons name="person-outline" size={20} color="#6b7280" />
               <TextInput
                 style={styles.input}
-                placeholder="Adınız Soyadınız"
+                placeholder="Adınız Soyadınız *"
                 value={customerName}
-                onChangeText={setCustomerName}
+                onChangeText={(text) => {
+                  setCustomerName(text);
+                  if (text.trim()) setErrors({...errors, customerName: ''});
+                }}
                 placeholderTextColor="#9ca3af"
               />
             </View>
-            <View style={styles.inputContainer}>
+            {errors.customerName ? (
+              <Text style={styles.errorText}>{errors.customerName}</Text>
+            ) : null}
+            
+            <View style={[styles.inputContainer, errors.customerPhone ? styles.inputError : null]}>
               <Ionicons name="call-outline" size={20} color="#6b7280" />
               <TextInput
                 style={styles.input}
-                placeholder="Telefon Numaranız"
+                placeholder="Telefon Numaranız *"
                 value={customerPhone}
-                onChangeText={setCustomerPhone}
+                onChangeText={(text) => {
+                  setCustomerPhone(text);
+                  if (text.trim()) setErrors({...errors, customerPhone: ''});
+                }}
                 keyboardType="phone-pad"
                 placeholderTextColor="#9ca3af"
               />
             </View>
-            <View style={styles.inputContainer}>
+            {errors.customerPhone ? (
+              <Text style={styles.errorText}>{errors.customerPhone}</Text>
+            ) : null}
+            
+            <View style={[styles.inputContainer, errors.customerAddress ? styles.inputError : null]}>
               <Ionicons name="location-outline" size={20} color="#6b7280" />
               <TextInput
                 style={[styles.input, styles.textArea]}
-                placeholder="Adresiniz"
+                placeholder="Adresiniz *"
                 value={customerAddress}
-                onChangeText={setCustomerAddress}
+                onChangeText={(text) => {
+                  setCustomerAddress(text);
+                  if (text.trim()) setErrors({...errors, customerAddress: ''});
+                }}
                 multiline
                 numberOfLines={3}
                 placeholderTextColor="#9ca3af"
               />
             </View>
+            {errors.customerAddress ? (
+              <Text style={styles.errorText}>{errors.customerAddress}</Text>
+            ) : null}
           </View>
 
           {/* Payment Method */}
@@ -414,6 +564,9 @@ const styles = StyleSheet.create({
     color: '#111827',
     flex: 1,
   },
+  placeholderText: {
+    color: '#9ca3af',
+  },
   timeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -444,6 +597,8 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     textAlign: 'center',
     padding: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -451,10 +606,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 12,
     paddingHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 4,
     gap: 12,
     borderWidth: 1,
     borderColor: '#e5e7eb',
+  },
+  inputError: {
+    borderColor: '#ef4444',
+    borderWidth: 2,
   },
   input: {
     flex: 1,
@@ -467,6 +626,13 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 12,
     textAlignVertical: 'top',
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: 8,
+    marginLeft: 4,
   },
   paymentOptions: {
     flexDirection: 'row',
@@ -558,5 +724,54 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    width: '100%',
+    maxWidth: 400,
+    overflow: 'hidden',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  calendarLegend: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  legendDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  legendText: {
+    fontSize: 14,
+    color: '#6b7280',
   },
 });

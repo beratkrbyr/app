@@ -9,6 +9,7 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -65,21 +66,35 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      'Çıkış Yap',
-      'Çıkış yapmak istediğinizden emin misiniz?',
-      [
-        { text: 'İptal', style: 'cancel' },
-        {
-          text: 'Çıkış Yap',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-            router.replace('/customer-login');
+    if (Platform.OS === 'web') {
+      // Web için confirm kullan
+      if (window.confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+        performLogout();
+      }
+    } else {
+      // Native için Alert kullan
+      Alert.alert(
+        'Çıkış Yap',
+        'Çıkış yapmak istediğinizden emin misiniz?',
+        [
+          { text: 'İptal', style: 'cancel' },
+          {
+            text: 'Çıkış Yap',
+            style: 'destructive',
+            onPress: performLogout,
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
+  };
+
+  const performLogout = async () => {
+    try {
+      await logout();
+      router.replace('/customer-login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const getStatusColor = (status: string) => {
