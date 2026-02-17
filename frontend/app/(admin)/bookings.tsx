@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
-  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -33,8 +32,7 @@ export default function BookingsScreen() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBookings();
@@ -69,13 +67,11 @@ export default function BookingsScreen() {
     }
   };
 
-  const updateStatus = async (newStatus: string) => {
-    if (!selectedBooking) return;
-    
+  const updateStatus = async (bookingId: string, newStatus: string) => {
     try {
       const token = await AsyncStorage.getItem('admin_token');
       const response = await fetch(
-        `${BACKEND_URL}/api/admin/bookings/${selectedBooking.id}`,
+        `${BACKEND_URL}/api/admin/bookings/${bookingId}`,
         {
           method: 'PUT',
           headers: {
@@ -87,18 +83,12 @@ export default function BookingsScreen() {
       );
 
       if (response.ok) {
-        setShowModal(false);
-        setSelectedBooking(null);
+        setExpandedId(null);
         fetchBookings();
       }
     } catch (error) {
       console.error('Error updating booking:', error);
     }
-  };
-
-  const openStatusModal = (booking: Booking) => {
-    setSelectedBooking(booking);
-    setShowModal(true);
   };
 
   const onRefresh = () => {
@@ -134,57 +124,93 @@ export default function BookingsScreen() {
     }
   };
 
-  const renderBooking = ({ item }: { item: Booking }) => (
-    <TouchableOpacity
-      style={styles.bookingCard}
-      onPress={() => openStatusModal(item)}
-    >
-      <View style={styles.bookingHeader}>
-        <Text style={styles.serviceName}>{item.service_name}</Text>
-        <View
-          style={[
-            styles.statusBadge,
-            { backgroundColor: getStatusColor(item.status) },
-          ]}
+  const renderBooking = ({ item }: { item: Booking }) => {
+    const isExpanded = expandedId === item.id;
+
+    return (
+      <View style={styles.bookingCard}>
+        <TouchableOpacity
+          onPress={() => setExpandedId(isExpanded ? null : item.id)}
         >
-          <Text style={styles.statusText}>{getStatusText(item.status)}</Text>
-        </View>
-      </View>
+          <View style={styles.bookingHeader}>
+            <Text style={styles.serviceName}>{item.service_name}</Text>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: getStatusColor(item.status) },
+              ]}
+            >
+              <Text style={styles.statusText}>{getStatusText(item.status)}</Text>
+            </View>
+          </View>
 
-      <View style={styles.customerInfo}>
-        <Ionicons name="person" size={16} color="#6b7280" />
-        <Text style={styles.customerText}>{item.customer_name}</Text>
-      </View>
+          <View style={styles.customerInfo}>
+            <Ionicons name="person" size={16} color="#6b7280" />
+            <Text style={styles.customerText}>{item.customer_name}</Text>
+          </View>
 
-      <View style={styles.customerInfo}>
-        <Ionicons name="call" size={16} color="#6b7280" />
-        <Text style={styles.customerText}>{item.customer_phone}</Text>
-      </View>
+          <View style={styles.customerInfo}>
+            <Ionicons name="call" size={16} color="#6b7280" />
+            <Text style={styles.customerText}>{item.customer_phone}</Text>
+          </View>
 
-      <View style={styles.customerInfo}>
-        <Ionicons name="location" size={16} color="#6b7280" />
-        <Text style={styles.customerText} numberOfLines={1}>
-          {item.customer_address}
-        </Text>
-      </View>
+          <View style={styles.customerInfo}>
+            <Ionicons name="location" size={16} color="#6b7280" />
+            <Text style={styles.customerText} numberOfLines={1}>
+              {item.customer_address}
+            </Text>
+          </View>
 
-      <View style={styles.bookingFooter}>
-        <View style={styles.dateTimeContainer}>
-          <Ionicons name="calendar" size={16} color="#2563eb" />
-          <Text style={styles.dateTimeText}>
-            {new Date(item.booking_date).toLocaleDateString('tr-TR')}
-          </Text>
-          <Ionicons name="time" size={16} color="#2563eb" />
-          <Text style={styles.dateTimeText}>{item.booking_time}</Text>
-        </View>
-        <Text style={styles.price}>₺{item.total_price.toFixed(2)}</Text>
-      </View>
+          <View style={styles.bookingFooter}>
+            <View style={styles.dateTimeContainer}>
+              <Ionicons name="calendar" size={16} color="#2563eb" />
+              <Text style={styles.dateTimeText}>
+                {new Date(item.booking_date).toLocaleDateString('tr-TR')}
+              </Text>
+              <Ionicons name="time" size={16} color="#2563eb" />
+              <Text style={styles.dateTimeText}>{item.booking_time}</Text>
+            </View>
+            <Text style={styles.price}>₺{item.total_price.toFixed(2)}</Text>
+          </View>
 
-      <View style={styles.tapHint}>
-        <Text style={styles.tapHintText}>Durumu değiştirmek için tıklayın</Text>
+          <View style={styles.tapHint}>
+            <Ionicons name={isExpanded ? "chevron-up" : "chevron-down"} size={16} color="#2563eb" />
+            <Text style={styles.tapHintText}>
+              {isExpanded ? 'Kapat' : 'Durumu Değiştir'}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {isExpanded && (
+          <View style={styles.statusButtons}>
+            <TouchableOpacity
+              style={[styles.statusButton, styles.confirmButton]}
+              onPress={() => updateStatus(item.id, 'confirmed')}
+            >
+              <Ionicons name="checkmark-circle" size={20} color="#ffffff" />
+              <Text style={styles.statusButtonText}>Onayla</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.statusButton, styles.completeButton]}
+              onPress={() => updateStatus(item.id, 'completed')}
+            >
+              <Ionicons name="checkmark-done-circle" size={20} color="#ffffff" />
+              <Text style={styles.statusButtonText}>Tamamlandı</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.statusButton, styles.cancelButton]}
+              onPress={() => updateStatus(item.id, 'cancelled')}
+            >
+              <Ionicons name="close-circle" size={20} color="#ffffff" />
+              <Text style={styles.statusButtonText}>İptal</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-    </TouchableOpacity>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -213,60 +239,6 @@ export default function BookingsScreen() {
           </View>
         }
       />
-
-      <Modal
-        visible={showModal}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Randevu Durumu</Text>
-              <TouchableOpacity onPress={() => setShowModal(false)}>
-                <Ionicons name="close" size={28} color="#6b7280" />
-              </TouchableOpacity>
-            </View>
-
-            {selectedBooking && (
-              <View style={styles.modalBody}>
-                <Text style={styles.modalCustomer}>{selectedBooking.customer_name}</Text>
-                <Text style={styles.modalService}>{selectedBooking.service_name}</Text>
-                <Text style={styles.modalDate}>
-                  {new Date(selectedBooking.booking_date).toLocaleDateString('tr-TR')} - {selectedBooking.booking_time}
-                </Text>
-
-                <View style={styles.statusButtons}>
-                  <TouchableOpacity
-                    style={[styles.statusButton, styles.confirmButton]}
-                    onPress={() => updateStatus('confirmed')}
-                  >
-                    <Ionicons name="checkmark-circle" size={24} color="#ffffff" />
-                    <Text style={styles.statusButtonText}>Onayla</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[styles.statusButton, styles.completeButton]}
-                    onPress={() => updateStatus('completed')}
-                  >
-                    <Ionicons name="checkmark-done-circle" size={24} color="#ffffff" />
-                    <Text style={styles.statusButtonText}>Tamamlandı</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[styles.statusButton, styles.cancelButton]}
-                    onPress={() => updateStatus('cancelled')}
-                  >
-                    <Ionicons name="close-circle" size={24} color="#ffffff" />
-                    <Text style={styles.statusButtonText}>İptal</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 }
@@ -363,70 +335,31 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   tapHint: {
-    marginTop: 8,
-    padding: 8,
+    marginTop: 12,
+    padding: 10,
     backgroundColor: '#eff6ff',
-    borderRadius: 6,
+    borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   tapHintText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#2563eb',
-    fontWeight: '500',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#ffffff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 32,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  modalBody: {
-    padding: 20,
-  },
-  modalCustomer: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  modalService: {
-    fontSize: 18,
-    color: '#6b7280',
-    marginBottom: 4,
-  },
-  modalDate: {
-    fontSize: 16,
-    color: '#9ca3af',
-    marginBottom: 24,
+    fontWeight: '600',
   },
   statusButtons: {
-    gap: 12,
+    marginTop: 12,
+    gap: 8,
   },
   statusButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
-    borderRadius: 12,
-    gap: 12,
+    padding: 14,
+    borderRadius: 10,
+    gap: 8,
   },
   confirmButton: {
     backgroundColor: '#10b981',
@@ -439,101 +372,7 @@ const styles = StyleSheet.create({
   },
   statusButtonText: {
     color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-});
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f9fafb',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listContainer: {
-    padding: 16,
-  },
-  bookingCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  bookingHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  serviceName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#111827',
-    flex: 1,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  customerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 6,
-  },
-  customerText: {
-    fontSize: 14,
-    color: '#6b7280',
-    flex: 1,
-  },
-  bookingFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-  },
-  dateTimeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  dateTimeText: {
-    fontSize: 13,
-    color: '#2563eb',
-    fontWeight: '500',
-  },
-  price: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#10b981',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyText: {
     fontSize: 16,
-    color: '#9ca3af',
-    marginTop: 16,
+    fontWeight: '600',
   },
 });
