@@ -307,9 +307,16 @@ export default function BookingScreen() {
               <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
                   <Text style={styles.modalTitle}>Tarih Seçin (30 gün)</Text>
-                  <TouchableOpacity onPress={() => setShowCalendarModal(false)}>
+                  <Pressable 
+                    onPress={() => setShowCalendarModal(false)}
+                    style={({ pressed }) => [
+                      pressed && { opacity: 0.7 },
+                      Platform.OS === 'web' && { cursor: 'pointer' } as any
+                    ]}
+                    accessibilityRole="button"
+                  >
                     <Ionicons name="close" size={28} color="#111827" />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
                 
                 <Calendar
