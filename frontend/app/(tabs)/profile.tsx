@@ -341,20 +341,14 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        <Pressable 
-          style={({ pressed }) => [
-            styles.logoutButton,
-            pressed && { opacity: 0.8 },
-            Platform.OS === 'web' && { cursor: 'pointer' } as any
-          ]} 
+        <TouchableOpacity 
+          style={styles.logoutButton}
           onPress={handleLogout}
-          // @ts-ignore - Web platform compatibility
-          onClick={Platform.OS === 'web' ? handleLogout : undefined}
-          accessibilityRole="button"
+          activeOpacity={0.7}
         >
           <Ionicons name="log-out-outline" size={24} color="#ef4444" />
           <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
-        </Pressable>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
