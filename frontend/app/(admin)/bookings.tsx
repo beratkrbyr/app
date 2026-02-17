@@ -260,6 +260,108 @@ export default function BookingsScreen() {
                   >
                     <Ionicons name="close-circle" size={24} color="#ffffff" />
                     <Text style={styles.statusButtonText}>İptal</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  listContainer: {
+    padding: 16,
+  },
+  bookingCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  bookingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  serviceName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#111827',
+    flex: 1,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  customerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 6,
+  },
+  customerText: {
+    fontSize: 14,
+    color: '#6b7280',
+    flex: 1,
+  },
+  bookingFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  dateTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  dateTimeText: {
+    fontSize: 13,
+    color: '#2563eb',
+    fontWeight: '500',
+  },
+  price: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#10b981',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#9ca3af',
+    marginTop: 16,
+  },
   tapHint: {
     marginTop: 8,
     padding: 8,
@@ -340,6 +442,7 @@ export default function BookingsScreen() {
     fontSize: 18,
     fontWeight: '600',
   },
+});
 
                   </TouchableOpacity>
                 </View>
