@@ -128,14 +128,17 @@ export default function CustomerLoginScreen() {
               </View>
             )}
 
-            <TouchableOpacity
-              style={styles.submitButton}
+            <Pressable
+              style={({ pressed }) => [
+                styles.submitButton,
+                pressed && { opacity: 0.8 }
+              ]}
               onPress={handleSubmit}
             >
               <Text style={styles.submitButtonText}>
                 {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <TouchableOpacity
               style={styles.switchButton}
