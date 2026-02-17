@@ -345,6 +345,50 @@ export default function ServicesScreen() {
                 placeholderTextColor="#9ca3af"
               />
 
+              <Text style={styles.label}>Hizmet Görseli</Text>
+              <View style={styles.imageSection}>
+                {formData.image ? (
+                  <View style={styles.imagePreviewContainer}>
+                    <Image
+                      source={{ uri: formData.image }}
+                      style={styles.imagePreview}
+                      resizeMode="cover"
+                    />
+                    <TouchableOpacity
+                      style={styles.removeImageButton}
+                      onPress={() => setFormData({ ...formData, image: '' })}
+                    >
+                      <Ionicons name="close-circle" size={32} color="#ef4444" />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.imagePlaceholder}>
+                    <Ionicons name="image-outline" size={48} color="#9ca3af" />
+                    <Text style={styles.imagePlaceholderText}>
+                      Henüz görsel eklenmedi
+                    </Text>
+                  </View>
+                )}
+                
+                <View style={styles.imageButtons}>
+                  <TouchableOpacity
+                    style={styles.imageButton}
+                    onPress={pickImage}
+                  >
+                    <Ionicons name="images-outline" size={20} color="#2563eb" />
+                    <Text style={styles.imageButtonText}>Galeriden Seç</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={styles.imageButton}
+                    onPress={takePhoto}
+                  >
+                    <Ionicons name="camera-outline" size={20} color="#2563eb" />
+                    <Text style={styles.imageButtonText}>Fotoğraf Çek</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
               <View style={styles.switchRow}>
                 <Text style={styles.label}>Aktif</Text>
                 <TouchableOpacity
