@@ -134,32 +134,41 @@ export default function CustomerLoginScreen() {
                 pressed && { opacity: 0.8 }
               ]}
               onPress={handleSubmit}
+              accessibilityRole="button"
             >
               <Text style={styles.submitButtonText}>
                 {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
               </Text>
             </Pressable>
 
-            <TouchableOpacity
-              style={styles.switchButton}
+            <Pressable
+              style={({ pressed }) => [
+                styles.switchButton,
+                pressed && { opacity: 0.7 }
+              ]}
               onPress={() => setIsLogin(!isLogin)}
+              accessibilityRole="button"
             >
               <Text style={styles.switchButtonText}>
                 {isLogin
                   ? 'Hesabınız yok mu? Kayıt olun'
                   : 'Zaten hesabınız var mı? Giriş yapın'}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
-              style={styles.guestButton}
+            <Pressable
+              style={({ pressed }) => [
+                styles.guestButton,
+                pressed && { opacity: 0.7 }
+              ]}
               onPress={() => router.push('/(tabs)')}
+              accessibilityRole="button"
             >
               <Ionicons name="eye-outline" size={20} color="#6b7280" />
               <Text style={styles.guestButtonText}>
                 Misafir olarak devam et
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <View style={styles.infoCard}>
