@@ -149,6 +149,9 @@ export default function ServicesScreen() {
   };
 
   const handleSave = async () => {
+    console.log('handleSave called');
+    console.log('formData:', formData);
+    
     if (!formData.name.trim() || !formData.price.trim()) {
       Alert.alert('Eksik Bilgi', 'Hizmet adı ve fiyat gereklidir.');
       return;
@@ -156,10 +159,26 @@ export default function ServicesScreen() {
 
     try {
       const token = await AsyncStorage.getItem('admin_token');
+      console.log('Token:', token ? 'exists' : 'missing');
+      
       const method = editingService ? 'PUT' : 'POST';
       const url = editingService
         ? `${BACKEND_URL}/api/admin/services/${editingService.id}`
         : `${BACKEND_URL}/api/admin/services`;
+
+      console.log('URL:', url);
+      console.log('Method:', method);
+
+      const requestBody = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        active: formData.active,
+        order: formData.order,
+        image: formData.image || null,
+      };
+      
+      console.log('Request body:', JSON.stringify(requestBody).substring(0, 200));
 
       const response = await fetch(url, {
         method,
@@ -167,20 +186,23 @@ export default function ServicesScreen() {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-        }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log('Response status:', response.status);
+      const responseText = await response.text();
+      console.log('Response:', responseText);
 
       if (response.ok) {
         Alert.alert('Başarılı', 'Hizmet kaydedildi.');
         setModalVisible(false);
         fetchServices();
+      } else {
+        Alert.alert('Hata', `Sunucu hatası: ${response.status}`);
       }
     } catch (error) {
       console.error('Error saving service:', error);
-      Alert.alert('Hata', 'Hizmet kaydedilemedi.');
+      Alert.alert('Hata', 'Hizmet kaydedilemedi: ' + (error as Error).message);
     }
   };
 
