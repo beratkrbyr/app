@@ -9,13 +9,24 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Hizmet fotoğrafları çekmek için kamera erişimi gerekli.",
+        "NSPhotoLibraryUsageDescription": "Hizmet fotoğrafları seçmek için galeri erişimi gerekli."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000"
       },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES",
+        "POST_NOTIFICATIONS"
+      ],
       "edgeToEdgeEnabled": true
     },
     "web": {
