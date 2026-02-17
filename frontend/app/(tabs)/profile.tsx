@@ -232,6 +232,8 @@ export default function ProfileScreen() {
             Platform.OS === 'web' && { cursor: 'pointer' } as any
           ]}
           onPress={() => handleCancelBooking(item.id)}
+          // @ts-ignore - Web platform compatibility
+          onClick={Platform.OS === 'web' ? () => handleCancelBooking(item.id) : undefined}
           disabled={cancellingId === item.id}
           accessibilityRole="button"
         >
@@ -269,6 +271,8 @@ export default function ProfileScreen() {
               Platform.OS === 'web' && { cursor: 'pointer' } as any
             ]}
             onPress={() => router.push('/customer-login')}
+            // @ts-ignore - Web platform compatibility
+            onClick={Platform.OS === 'web' ? () => router.push('/customer-login') : undefined}
             accessibilityRole="button"
           >
             <Ionicons name="log-in-outline" size={24} color="#ffffff" />
@@ -344,6 +348,8 @@ export default function ProfileScreen() {
             Platform.OS === 'web' && { cursor: 'pointer' } as any
           ]} 
           onPress={handleLogout}
+          // @ts-ignore - Web platform compatibility
+          onClick={Platform.OS === 'web' ? handleLogout : undefined}
           accessibilityRole="button"
         >
           <Ionicons name="log-out-outline" size={24} color="#ef4444" />
