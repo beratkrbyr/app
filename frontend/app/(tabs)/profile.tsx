@@ -106,20 +106,6 @@ export default function ProfileScreen() {
             </View>
             <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push('/admin-login')}
-          >
-            <Ionicons name="shield-outline" size={24} color="#f59e0b" />
-            <View style={styles.menuItemContent}>
-              <Text style={styles.menuItemTitle}>Yönetici Girişi</Text>
-              <Text style={styles.menuItemDescription}>
-                Yönetici paneline erişim
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
