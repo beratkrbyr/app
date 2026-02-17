@@ -202,11 +202,11 @@ class BackendTester:
         # Test non-Friday booking (no discount)
         thursday_booking = {
             "service_id": service_id,
-            "customer_name": "Mehmet Özkan",
-            "customer_phone": "5559876543",
+            "customer_name": "Can Demir",
+            "customer_phone": "5552222222",
             "customer_address": "Ankara, Çankaya",
             "booking_date": "2026-02-20",  # Thursday
-            "booking_time": "14:00",
+            "booking_time": "15:00",  # Available slot
             "payment_method": "online"
         }
         
