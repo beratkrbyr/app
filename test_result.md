@@ -143,39 +143,48 @@ backend:
 
   - task: "Booking APIs with Friday discount"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Booking endpoints implemented: POST /api/bookings, GET /api/bookings/check, GET /api/admin/bookings, PUT /api/admin/bookings/{id}. Friday discount logic (10%) implemented. Needs testing."
+      - working: true
+        agent: "testing"
+        comment: "✅ All booking APIs working correctly. Friday discount (10% = 50₺) applied correctly on 2026-02-20 (Friday). Double booking prevention working. Booking creation, checking, admin management all functional. ObjectId serialization issue fixed."
 
   - task: "Settings APIs"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Settings endpoints implemented: GET /api/admin/settings, PUT /api/admin/settings. Friday discount setting initialized to 10%. Needs testing."
+      - working: true
+        agent: "testing"
+        comment: "✅ Settings API working correctly. GET /api/admin/settings returns friday_discount = 10% setting as expected."
 
   - task: "Admin statistics API"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "GET /api/admin/stats endpoint implemented to return booking statistics. Needs testing."
+      - working: true
+        agent: "testing"
+        comment: "✅ Admin stats API working correctly. Returns total_bookings, pending_bookings, confirmed_bookings, completed_bookings counts."
 
 frontend:
   - task: "Navigation setup with tabs"
