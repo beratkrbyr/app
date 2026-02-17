@@ -204,15 +204,18 @@ frontend:
 
   - task: "Services list screen"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/(tabs)/index.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Services list screen with refresh control. Shows service cards with name, description, price. Needs testing."
+      - working: false
+        agent: "testing"
+        comment: "Cannot test - mobile app not loading. Shows static screen instead of app content."
 
   - task: "Service detail screen"
     implemented: true
