@@ -147,16 +147,16 @@ async def get_availability(year: int, month: int):
     return {"dates": dates}
 
 @api_router.get("/availability/slots")
-async def get_time_slots(date: str):
+async def get_time_slots(date_str: str = Query(..., alias="date")):
     """Get available time slots for a specific date"""
-    availability = await db.availability.find_one({"date": date})
+    availability = await db.availability.find_one({"date": date_str})
     
     if not availability or not availability.get("available"):
         return {"slots": [], "all_slots": [], "booked_slots": [], "available": False}
     
     # Get booked slots for this date
     bookings = await db.bookings.find({
-        "booking_date": date,
+        "booking_date": date_str,
         "status": {"$in": ["pending", "confirmed"]}
     }).to_list(100)
     
