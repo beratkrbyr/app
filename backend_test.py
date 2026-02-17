@@ -177,8 +177,8 @@ class BackendTester:
             "customer_name": "Zeynep Kaya",
             "customer_phone": "5551111111",
             "customer_address": "İstanbul, Beşiktaş",
-            "booking_date": "2026-02-21",  # Friday
-            "booking_time": "11:00",  # Available slot
+            "booking_date": "2026-02-20",  # Friday
+            "booking_time": "16:00",  # Available slot
             "payment_method": "cash"
         }
         
