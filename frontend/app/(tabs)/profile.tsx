@@ -35,6 +35,7 @@ export default function ProfileScreen() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAuthenticated && customer) {
@@ -65,27 +66,71 @@ export default function ProfileScreen() {
     fetchBookings();
   };
 
-  const handleLogout = () => {
+  const showAlert = (title: string, message: string, onOk?: () => void) => {
     if (Platform.OS === 'web') {
-      // Web için confirm kullan
-      if (window.confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        performLogout();
+      window.alert(`${title}\n\n${message}`);
+      if (onOk) onOk();
+    } else {
+      Alert.alert(title, message, [{ text: 'Tamam', onPress: onOk }]);
+    }
+  };
+
+  const showConfirm = (title: string, message: string, onConfirm: () => void) => {
+    if (Platform.OS === 'web') {
+      if (window.confirm(`${title}\n\n${message}`)) {
+        onConfirm();
       }
     } else {
-      // Native için Alert kullan
       Alert.alert(
-        'Çıkış Yap',
-        'Çıkış yapmak istediğinizden emin misiniz?',
+        title,
+        message,
         [
-          { text: 'İptal', style: 'cancel' },
-          {
-            text: 'Çıkış Yap',
-            style: 'destructive',
-            onPress: performLogout,
-          },
+          { text: 'Hayır', style: 'cancel' },
+          { text: 'Evet', style: 'destructive', onPress: onConfirm },
         ]
       );
     }
+  };
+
+  const handleCancelBooking = (bookingId: string) => {
+    showConfirm(
+      'Randevu İptali',
+      'Bu randevuyu iptal etmek istediğinizden emin misiniz?',
+      () => cancelBooking(bookingId)
+    );
+  };
+
+  const cancelBooking = async (bookingId: string) => {
+    if (!customer?.phone) return;
+    
+    setCancellingId(bookingId);
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/bookings/${bookingId}/cancel?phone=${encodeURIComponent(customer.phone)}`,
+        { method: 'PUT' }
+      );
+      
+      if (response.ok) {
+        showAlert('Başarılı', 'Randevunuz iptal edildi.');
+        fetchBookings();
+      } else {
+        const error = await response.json();
+        showAlert('Hata', error.detail || 'Randevu iptal edilemedi.');
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      showAlert('Hata', 'Bir hata oluştu.');
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
+  const handleLogout = () => {
+    showConfirm(
+      'Çıkış Yap',
+      'Çıkış yapmak istediğinizden emin misiniz?',
+      performLogout
+    );
   };
 
   const performLogout = async () => {
@@ -119,10 +164,14 @@ export default function ProfileScreen() {
       case 'completed':
         return 'Tamamlandı';
       case 'cancelled':
-        return 'İptal';
+        return 'İptal Edildi';
       default:
         return status;
     }
+  };
+
+  const canCancel = (status: string) => {
+    return status === 'pending' || status === 'confirmed';
   };
 
   const renderBooking = ({ item }: { item: Booking }) => (
@@ -173,6 +222,23 @@ export default function ProfileScreen() {
           <Text style={styles.priceText}>₺{item.total_price.toFixed(2)}</Text>
         </View>
       </View>
+
+      {canCancel(item.status) && (
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => handleCancelBooking(item.id)}
+          disabled={cancellingId === item.id}
+        >
+          {cancellingId === item.id ? (
+            <ActivityIndicator size="small" color="#ef4444" />
+          ) : (
+            <>
+              <Ionicons name="close-circle-outline" size={20} color="#ef4444" />
+              <Text style={styles.cancelButtonText}>Randevuyu İptal Et</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -434,6 +500,21 @@ const styles = StyleSheet.create({
     color: '#10b981',
     textAlign: 'right',
     marginBottom: 2,
+  },
+  cancelButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    gap: 8,
+  },
+  cancelButtonText: {
+    color: '#ef4444',
+    fontSize: 14,
+    fontWeight: '600',
   },
   emptyBookings: {
     alignItems: 'center',
