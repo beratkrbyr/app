@@ -69,11 +69,13 @@ export default function BookingsScreen() {
     }
   };
 
-  const updateStatus = async (bookingId: string, newStatus: string) => {
+  const updateStatus = async (newStatus: string) => {
+    if (!selectedBooking) return;
+    
     try {
       const token = await AsyncStorage.getItem('admin_token');
       const response = await fetch(
-        `${BACKEND_URL}/api/admin/bookings/${bookingId}`,
+        `${BACKEND_URL}/api/admin/bookings/${selectedBooking.id}`,
         {
           method: 'PUT',
           headers: {
@@ -85,34 +87,18 @@ export default function BookingsScreen() {
       );
 
       if (response.ok) {
-        Alert.alert('Başarılı', 'Randevu durumu güncellendi.');
+        setShowModal(false);
+        setSelectedBooking(null);
         fetchBookings();
       }
     } catch (error) {
       console.error('Error updating booking:', error);
-      Alert.alert('Hata', 'Durum güncellenemedi.');
     }
   };
 
-  const showStatusMenu = (booking: Booking) => {
-    const actions = [
-      { text: 'Onayla', value: 'confirmed' },
-      { text: 'Tamamlandı', value: 'completed' },
-      { text: 'İptal', value: 'cancelled', style: 'destructive' },
-      { text: 'Vazgeç', style: 'cancel' },
-    ];
-
-    Alert.alert(
-      'Durum Güncelle',
-      `${booking.customer_name} - ${booking.service_name}`,
-      actions.map((action) => ({
-        text: action.text,
-        style: action.style as any,
-        onPress: action.value
-          ? () => updateStatus(booking.id, action.value!)
-          : undefined,
-      }))
-    );
+  const openStatusModal = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setShowModal(true);
   };
 
   const onRefresh = () => {
