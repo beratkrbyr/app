@@ -345,10 +345,23 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Complete frontend flow"
-  stuck_tasks: []
+    - "Frontend app loading issue"
+    - "Mobile app not rendering properly"
+  stuck_tasks:
+    - "Navigation setup with tabs"
+    - "Services list screen"
+    - "Service detail screen"
+    - "Booking flow with calendar and time selection"
+    - "Booking success screen"
+    - "My bookings screen"
+    - "Admin login screen"
+    - "Admin dashboard"
+    - "Admin bookings management"
+    - "Admin services management" 
+    - "Admin calendar management"
+    - "Admin settings screen"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
