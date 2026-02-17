@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,63 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useCustomer } from '../../contexts/CustomerContext';
 
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+interface Booking {
+  id: string;
+  service_name: string;
+  booking_date: string;
+  booking_time: string;
+  total_price: number;
+  discount_applied: number;
+  status: string;
+  customer_address: string;
+}
+
 export default function ProfileScreen() {
   const router = useRouter();
   const { customer, isAuthenticated, logout } = useCustomer();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && customer) {
+      fetchBookings();
+    }
+  }, [isAuthenticated, customer]);
+
+  const fetchBookings = async () => {
+    if (!customer?.phone) return;
+    
+    setLoadingBookings(true);
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/bookings/check?phone=${encodeURIComponent(customer.phone)}`
+      );
+      const data = await response.json();
+      setBookings(data);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    } finally {
+      setLoadingBookings(false);
+      setRefreshing(false);
+    }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchBookings();
+  };
 
   const handleLogout = () => {
     Alert.alert(
@@ -33,6 +81,85 @@ export default function ProfileScreen() {
       ]
     );
   };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return '#10b981';
+      case 'completed':
+        return '#6b7280';
+      case 'cancelled':
+        return '#ef4444';
+      default:
+        return '#f59e0b';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'Bekliyor';
+      case 'confirmed':
+        return 'Onaylandı';
+      case 'completed':
+        return 'Tamamlandı';
+      case 'cancelled':
+        return 'İptal';
+      default:
+        return status;
+    }
+  };
+
+  const renderBooking = ({ item }: { item: Booking }) => (
+    <View style={styles.bookingCard}>
+      <View style={styles.bookingHeader}>
+        <Text style={styles.serviceName}>{item.service_name}</Text>
+        <View
+          style={[
+            styles.statusBadge,
+            { backgroundColor: getStatusColor(item.status) },
+          ]}
+        >
+          <Text style={styles.statusText}>{getStatusText(item.status)}</Text>
+        </View>
+      </View>
+
+      <View style={styles.bookingDetail}>
+        <Ionicons name="calendar-outline" size={16} color="#6b7280" />
+        <Text style={styles.detailText}>
+          {new Date(item.booking_date).toLocaleDateString('tr-TR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </Text>
+      </View>
+
+      <View style={styles.bookingDetail}>
+        <Ionicons name="time-outline" size={16} color="#6b7280" />
+        <Text style={styles.detailText}>{item.booking_time}</Text>
+      </View>
+
+      <View style={styles.bookingDetail}>
+        <Ionicons name="location-outline" size={16} color="#6b7280" />
+        <Text style={styles.detailText} numberOfLines={1}>
+          {item.customer_address}
+        </Text>
+      </View>
+
+      <View style={styles.priceRow}>
+        <Text style={styles.priceLabel}>Toplam Ücret:</Text>
+        <View>
+          {item.discount_applied > 0 && (
+            <Text style={styles.discountText}>
+              ₺{item.discount_applied.toFixed(2)} indirim
+            </Text>
+          )}
+          <Text style={styles.priceText}>₺{item.total_price.toFixed(2)}</Text>
+        </View>
+      </View>
+    </View>
+  );
 
   if (!isAuthenticated) {
     return (
@@ -66,7 +193,12 @@ export default function ProfileScreen() {
         <Text style={styles.headerTitle}>Profil</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
             <Ionicons name="person" size={48} color="#ffffff" />
@@ -78,21 +210,26 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        <View style={styles.menuSection}>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push('/(tabs)/my-bookings')}
-          >
-            <Ionicons name="calendar-outline" size={24} color="#2563eb" />
-            <View style={styles.menuItemContent}>
-              <Text style={styles.menuItemTitle}>Randevularım</Text>
-              <Text style={styles.menuItemDescription}>
-                Tüm randevularınızı görüntüleyin
-              </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Randevularım</Text>
+          {loadingBookings ? (
+            <ActivityIndicator color="#2563eb" style={{ marginVertical: 20 }} />
+          ) : bookings.length > 0 ? (
+            <FlatList
+              data={bookings}
+              renderItem={renderBooking}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+            />
+          ) : (
+            <View style={styles.emptyBookings}>
+              <Ionicons name="calendar-outline" size={48} color="#9ca3af" />
+              <Text style={styles.emptyText}>Henüz randevunuz yok</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-          </TouchableOpacity>
+          )}
+        </View>
 
+        <View style={styles.menuSection}>
           <TouchableOpacity
             style={styles.menuItem}
             onPress={() => router.push('/user-settings')}
@@ -205,6 +342,95 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#9ca3af',
   },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 16,
+  },
+  bookingCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  bookingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  serviceName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#111827',
+    flex: 1,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  bookingDetail: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  detailText: {
+    fontSize: 14,
+    color: '#6b7280',
+    flex: 1,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  priceLabel: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  priceText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2563eb',
+    textAlign: 'right',
+  },
+  discountText: {
+    fontSize: 12,
+    color: '#10b981',
+    textAlign: 'right',
+    marginBottom: 2,
+  },
+  emptyBookings: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#9ca3af',
+    marginTop: 12,
+  },
   menuSection: {
     backgroundColor: '#ffffff',
     borderRadius: 12,
@@ -221,8 +447,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     gap: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
   },
   menuItemContent: {
     flex: 1,
