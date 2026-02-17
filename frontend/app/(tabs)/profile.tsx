@@ -257,20 +257,14 @@ export default function ProfileScreen() {
             Profilinizi görmek ve randevularınızı takip etmek için giriş yapın
           </Text>
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.loginButton,
-              pressed && { opacity: 0.8 },
-              Platform.OS === 'web' && { cursor: 'pointer' } as any
-            ]}
+          <TouchableOpacity
+            style={styles.loginButton}
             onPress={() => router.push('/customer-login')}
-            // @ts-ignore - Web platform compatibility
-            onClick={Platform.OS === 'web' ? () => router.push('/customer-login') : undefined}
-            accessibilityRole="button"
+            activeOpacity={0.7}
           >
             <Ionicons name="log-in-outline" size={24} color="#ffffff" />
             <Text style={styles.loginButtonText}>Giriş Yap</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
