@@ -180,7 +180,7 @@ export default function ServicesScreen() {
         </View>
         <View
           style={[
-            styles.activebadge,
+            styles.activeBadge,
             { backgroundColor: item.active ? '#10b981' : '#6b7280' },
           ]}
         >
