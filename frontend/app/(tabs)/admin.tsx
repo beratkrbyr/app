@@ -57,10 +57,8 @@ export default function AdminScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
   },
   header: {
-    backgroundColor: '#2563eb',
     padding: 24,
   },
   headerTitle: {
@@ -73,12 +71,24 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: '#6b7280',
     marginBottom: 32,
     textAlign: 'center',
   },
   loginButton: {
-    backgroundColor: '#2563eb',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+    marginBottom: 16,
+  },
+  loginButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  settingsButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -86,14 +96,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 12,
     marginBottom: 24,
+    borderWidth: 1,
   },
-  loginButtonText: {
-    color: '#ffffff',
+  settingsButtonText: {
     fontSize: 18,
     fontWeight: '600',
   },
   infoCard: {
-    backgroundColor: '#eff6ff',
     padding: 16,
     borderRadius: 12,
     flexDirection: 'row',
@@ -102,7 +111,6 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 14,
-    color: '#1e40af',
     lineHeight: 20,
   },
 });
