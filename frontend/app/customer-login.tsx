@@ -151,6 +151,8 @@ export default function CustomerLoginScreen() {
                 Platform.OS === 'web' && { cursor: 'pointer' } as any
               ]}
               onPress={() => setIsLogin(!isLogin)}
+              // @ts-ignore - Web platform compatibility
+              onClick={Platform.OS === 'web' ? () => setIsLogin(!isLogin) : undefined}
               accessibilityRole="button"
             >
               <Text style={styles.switchButtonText}>
@@ -167,6 +169,8 @@ export default function CustomerLoginScreen() {
                 Platform.OS === 'web' && { cursor: 'pointer' } as any
               ]}
               onPress={() => router.push('/(tabs)')}
+              // @ts-ignore - Web platform compatibility
+              onClick={Platform.OS === 'web' ? () => router.push('/(tabs)') : undefined}
               accessibilityRole="button"
             >
               <Ionicons name="eye-outline" size={20} color="#6b7280" />
