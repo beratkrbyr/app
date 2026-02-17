@@ -87,6 +87,7 @@ export default function ServicesScreen() {
       price: service.price.toString(),
       active: service.active,
       order: service.order,
+      image: service.image || '',
     });
     setModalVisible(true);
   };
@@ -99,8 +100,52 @@ export default function ServicesScreen() {
       price: '',
       active: true,
       order: services.length,
+      image: '',
     });
     setModalVisible(true);
+  };
+
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      Alert.alert('İzin Gerekli', 'Galeriye erişim izni vermeniz gerekiyor.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.5,
+      base64: true,
+    });
+
+    if (!result.canceled && result.assets[0].base64) {
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setFormData({ ...formData, image: base64Image });
+    }
+  };
+
+  const takePhoto = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      Alert.alert('İzin Gerekli', 'Kameraya erişim izni vermeniz gerekiyor.');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.5,
+      base64: true,
+    });
+
+    if (!result.canceled && result.assets[0].base64) {
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setFormData({ ...formData, image: base64Image });
+    }
   };
 
   const handleSave = async () => {
