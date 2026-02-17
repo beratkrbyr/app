@@ -617,4 +617,62 @@ const styles = StyleSheet.create({
   switchThumbInactive: {
     alignSelf: 'flex-start',
   },
+  imageSection: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  imagePreviewContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+  },
+  imagePlaceholder: {
+    width: '100%',
+    height: 150,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  imagePlaceholderText: {
+    fontSize: 14,
+    color: '#9ca3af',
+    marginTop: 8,
+  },
+  imageButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  imageButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#eff6ff',
+    padding: 14,
+    borderRadius: 10,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#2563eb',
+  },
+  imageButtonText: {
+    color: '#2563eb',
+    fontSize: 14,
+    fontWeight: '600'
+  },
 });
