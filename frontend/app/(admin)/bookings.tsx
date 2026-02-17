@@ -443,16 +443,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
-  );
 }
 
 const styles = StyleSheet.create({
