@@ -260,6 +260,87 @@ export default function BookingsScreen() {
                   >
                     <Ionicons name="close-circle" size={24} color="#ffffff" />
                     <Text style={styles.statusButtonText}>İptal</Text>
+  tapHint: {
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: '#eff6ff',
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  tapHintText: {
+    fontSize: 12,
+    color: '#2563eb',
+    fontWeight: '500',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 32,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#111827',
+  },
+  modalBody: {
+    padding: 20,
+  },
+  modalCustomer: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 8,
+  },
+  modalService: {
+    fontSize: 18,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
+  modalDate: {
+    fontSize: 16,
+    color: '#9ca3af',
+    marginBottom: 24,
+  },
+  statusButtons: {
+    gap: 12,
+  },
+  statusButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+  },
+  confirmButton: {
+    backgroundColor: '#10b981',
+  },
+  completeButton: {
+    backgroundColor: '#6b7280',
+  },
+  cancelButton: {
+    backgroundColor: '#ef4444',
+  },
+  statusButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+
                   </TouchableOpacity>
                 </View>
               </View>
