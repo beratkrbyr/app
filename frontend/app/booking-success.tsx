@@ -16,7 +16,8 @@ export default function BookingSuccessScreen() {
 
         <Text style={styles.title}>Randevunuz Oluşturuldu!</Text>
         <Text style={styles.message}>
-          Randevunuz başarıyla kaydedildi. En kısa sürede sizinle iletişime geçeceğiz.
+          Randevunuz başarıyla kaydedildi. Randevunuz yönetici onayı bekliyor. 
+          Onaylandığında telefonunuza bildirim gelecektir.
         </Text>
 
         <View style={styles.buttonContainer}>
