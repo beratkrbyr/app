@@ -213,6 +213,60 @@ export default function BookingsScreen() {
           </View>
         }
       />
+
+      <Modal
+        visible={showModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Randevu Durumu</Text>
+              <TouchableOpacity onPress={() => setShowModal(false)}>
+                <Ionicons name="close" size={28} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+
+            {selectedBooking && (
+              <View style={styles.modalBody}>
+                <Text style={styles.modalCustomer}>{selectedBooking.customer_name}</Text>
+                <Text style={styles.modalService}>{selectedBooking.service_name}</Text>
+                <Text style={styles.modalDate}>
+                  {new Date(selectedBooking.booking_date).toLocaleDateString('tr-TR')} - {selectedBooking.booking_time}
+                </Text>
+
+                <View style={styles.statusButtons}>
+                  <TouchableOpacity
+                    style={[styles.statusButton, styles.confirmButton]}
+                    onPress={() => updateStatus('confirmed')}
+                  >
+                    <Ionicons name="checkmark-circle" size={24} color="#ffffff" />
+                    <Text style={styles.statusButtonText}>Onayla</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.statusButton, styles.completeButton]}
+                    onPress={() => updateStatus('completed')}
+                  >
+                    <Ionicons name="checkmark-done-circle" size={24} color="#ffffff" />
+                    <Text style={styles.statusButtonText}>Tamamlandı</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.statusButton, styles.cancelButton]}
+                    onPress={() => updateStatus('cancelled')}
+                  >
+                    <Ionicons name="close-circle" size={24} color="#ffffff" />
+                    <Text style={styles.statusButtonText}>İptal</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
