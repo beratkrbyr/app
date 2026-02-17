@@ -249,6 +249,33 @@ async def check_bookings(phone: str):
     bookings = await db.bookings.find({"customer_phone": phone}).sort("created_at", -1).to_list(100)
     return [{**serialize_doc(b), "id": str(b["_id"])} for b in bookings]
 
+@api_router.put("/bookings/{booking_id}/cancel")
+async def cancel_booking(booking_id: str, phone: str):
+    """Cancel a booking by customer"""
+    try:
+        booking = await db.bookings.find_one({"_id": ObjectId(booking_id)})
+    except:
+        raise HTTPException(status_code=400, detail="Invalid booking ID")
+    
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    # Verify phone number matches
+    if booking["customer_phone"] != phone:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    
+    # Check if booking can be cancelled
+    if booking["status"] in ["cancelled", "completed"]:
+        raise HTTPException(status_code=400, detail="Booking cannot be cancelled")
+    
+    # Update status to cancelled
+    await db.bookings.update_one(
+        {"_id": ObjectId(booking_id)},
+        {"$set": {"status": "cancelled"}}
+    )
+    
+    return {"message": "Booking cancelled successfully", "id": booking_id}
+
 # ============== ADMIN APIs ==============
 
 @api_router.post("/admin/login")
