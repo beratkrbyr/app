@@ -6,8 +6,8 @@ import json
 from datetime import datetime, date
 from typing import Dict, Any
 
-# Use the public endpoint URL from frontend/.env
-BASE_URL = "https://schedule-clean.preview.emergentagent.com/api"
+# Use the internal backend URL since external has Cloudflare issues
+BASE_URL = "http://localhost:8001/api"
 
 class BackendTester:
     def __init__(self):
