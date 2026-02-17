@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../../contexts/ThemeContext';
-import type { ThemeMode } from '../../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
+import type { ThemeMode } from '../contexts/ThemeContext';
 
 export default function UserSettingsScreen() {
   const { theme, themeMode, setThemeMode, isDark } = useTheme();
