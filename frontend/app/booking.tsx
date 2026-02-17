@@ -558,10 +558,16 @@ export default function BookingScreen() {
             </View>
           </View>
 
-          <TouchableOpacity
-            style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+          <Pressable
+            style={({ pressed }) => [
+              styles.submitButton,
+              submitting && styles.submitButtonDisabled,
+              pressed && { opacity: 0.8 },
+              Platform.OS === 'web' && { cursor: 'pointer' } as any
+            ]}
             onPress={handleSubmit}
             disabled={submitting}
+            accessibilityRole="button"
           >
             {submitting ? (
               <ActivityIndicator color="#ffffff" />
@@ -571,7 +577,7 @@ export default function BookingScreen() {
                 <Ionicons name="checkmark-circle" size={24} color="#ffffff" />
               </>
             )}
-          </TouchableOpacity>
+          </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
