@@ -148,10 +148,8 @@ export default function BookingScreen() {
 
   const onDateChange = (event: any, date?: Date) => {
     setShowDatePicker(false);
-    if (date && isDateAvailable(date)) {
+    if (date) {
       setSelectedDate(date);
-    } else if (date) {
-      Alert.alert('Uygun Değil', 'Bu tarih için randevu alınamaz.');
     }
   };
 
