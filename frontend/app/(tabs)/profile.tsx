@@ -33,19 +33,11 @@ interface Booking {
   status: string;
   customer_address: string;
   has_review?: boolean;
-  location_status?: string;
-}
-
-interface LocationData {
-  status: string;
-  latitude: number | null;
-  longitude: number | null;
-  updated_at?: string;
 }
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { customer, isAuthenticated, logout, refreshProfile } = useCustomer();
+  const { customer, isAuthenticated, logout } = useCustomer();
   const { hasPermission, requestPermission } = useNotification();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
@@ -64,9 +56,6 @@ export default function ProfileScreen() {
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralCode, setReferralCode] = useState('');
   const [applyingReferral, setApplyingReferral] = useState(false);
-  
-  // Location tracking state
-  const [bookingLocations, setBookingLocations] = useState<{[key: string]: LocationData}>({});
 
   // Track if initial load is done
   const [initialLoadDone, setInitialLoadDone] = useState(false);
