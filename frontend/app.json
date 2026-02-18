@@ -1,24 +1,27 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Titan 360",
+    "slug": "titan360",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "frontend",
+    "icon": "./assets/titan360_icon.png",
+    "scheme": "titan360",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "owner": "beratkrbyr",
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.beratkrbyr.titan360",
       "infoPlist": {
         "NSCameraUsageDescription": "Hizmet fotoğrafları çekmek için kamera erişimi gerekli.",
         "NSPhotoLibraryUsageDescription": "Hizmet fotoğrafları seçmek için galeri erişimi gerekli."
       }
     },
     "android": {
+      "package": "com.beratkrbyr.titan360",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000"
+        "foregroundImage": "./assets/titan360_icon.png",
+        "backgroundColor": "#2563eb"
       },
       "permissions": [
         "CAMERA",
@@ -32,22 +35,27 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/titan360_icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/titan360_logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#000"
+          "backgroundColor": "#2563eb"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "titan360"
+      }
     }
   }
 }
