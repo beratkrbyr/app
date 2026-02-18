@@ -69,10 +69,22 @@ export default function ProfileScreen() {
   const [bookingLocations, setBookingLocations] = useState<{[key: string]: LocationData}>({});
 
   useEffect(() => {
-    if (isAuthenticated && customer?.phone) {
-      fetchBookings();
-      refreshProfile();
-    }
+    let isMounted = true;
+    
+    const loadData = async () => {
+      if (isAuthenticated && customer?.phone) {
+        await fetchBookings();
+        if (isMounted) {
+          refreshProfile();
+        }
+      }
+    };
+    
+    loadData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [isAuthenticated, customer?.phone]);
 
   useEffect(() => {
