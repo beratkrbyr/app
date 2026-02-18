@@ -69,11 +69,11 @@ export default function ProfileScreen() {
   const [bookingLocations, setBookingLocations] = useState<{[key: string]: LocationData}>({});
 
   useEffect(() => {
-    if (isAuthenticated && customer) {
+    if (isAuthenticated && customer?.phone) {
       fetchBookings();
       refreshProfile();
     }
-  }, [isAuthenticated, customer]);
+  }, [isAuthenticated, customer?.phone]);
 
   useEffect(() => {
     setNotificationsEnabled(hasPermission);
