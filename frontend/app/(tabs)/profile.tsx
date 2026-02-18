@@ -13,11 +13,13 @@ import {
   Modal,
   TextInput,
   Share,
+  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useCustomer } from '../../contexts/CustomerContext';
+import { useNotification } from '../../contexts/NotificationContext';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
