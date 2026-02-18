@@ -2,14 +2,14 @@ import React, { createContext, useContext, useEffect, useState, ReactNode, useRe
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -27,8 +27,8 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState(false);
-  const notificationListener = useRef<any>();
-  const responseListener = useRef<any>();
+  const notificationListener = useRef<Notifications.Subscription | null>(null);
+  const responseListener = useRef<Notifications.Subscription | null>(null);
 
   useEffect(() => {
     // Check and request permissions on mount
@@ -51,10 +51,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
     };
   }, []);
@@ -147,6 +147,9 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       const now = new Date();
 
       if (reminderTime > now) {
+        // Calculate seconds until reminder
+        const secondsUntilReminder = Math.floor((reminderTime.getTime() - now.getTime()) / 1000);
+        
         const notificationId = await Notifications.scheduleNotificationAsync({
           content: {
             title: 'Randevu Hatırlatması',
@@ -154,7 +157,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
             data: { bookingId, type: 'reminder' },
             sound: true,
           },
-          trigger: reminderTime,
+          trigger: { seconds: secondsUntilReminder },
         });
         return notificationId;
       }
