@@ -8,6 +8,7 @@ interface Customer {
   name: string;
   phone: string;
   email?: string;
+  address?: string;
   loyalty_points: number;
   total_bookings: number;
   referral_code: string;
@@ -19,9 +20,9 @@ interface CustomerContextType {
   isAuthenticated: boolean;
   loading: boolean;
   login: (phone: string) => Promise<void>;
-  register: (name: string, phone: string, email?: string) => Promise<void>;
+  register: (name: string, phone: string, email?: string, address?: string) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (data: Partial<Customer>) => Promise<void>;
+  updateAddress: (address: string) => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -70,6 +71,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
         name: data.name,
         phone: data.phone,
         email: data.email,
+        address: data.address,
         loyalty_points: data.loyalty_points || 0,
         total_bookings: data.total_bookings || 0,
         referral_code: data.referral_code || '',
@@ -84,12 +86,12 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (name: string, phone: string, email?: string) => {
+  const register = async (name: string, phone: string, email?: string, address?: string) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/customers/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, email }),
+        body: JSON.stringify({ name, phone, email, address }),
       });
 
       if (!response.ok) {
@@ -103,6 +105,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
         name: data.name,
         phone: data.phone,
         email: data.email,
+        address: data.address,
         loyalty_points: data.loyalty_points || 0,
         total_bookings: data.total_bookings || 0,
         referral_code: data.referral_code || '',
@@ -123,6 +126,26 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(false);
   };
 
+  const updateAddress = async (address: string) => {
+    if (!customer?.phone) return;
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/customers/address`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: customer.phone, address }),
+      });
+
+      if (response.ok) {
+        const updatedCustomer = { ...customer, address };
+        await AsyncStorage.setItem('customer_data', JSON.stringify(updatedCustomer));
+        setCustomer(updatedCustomer);
+      }
+    } catch (error) {
+      console.error('Error updating address:', error);
+    }
+  };
+
   const refreshProfile = async () => {
     if (!customer?.phone) return;
 
@@ -132,6 +155,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
         const data = await response.json();
         const updatedCustomer: Customer = {
           ...customer,
+          address: data.address,
           loyalty_points: data.loyalty_points || 0,
           total_bookings: data.total_bookings || 0,
           referral_code: data.referral_code || '',
@@ -144,14 +168,6 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateProfile = async (data: Partial<Customer>) => {
-    if (customer) {
-      const updatedCustomer = { ...customer, ...data };
-      await AsyncStorage.setItem('customer_data', JSON.stringify(updatedCustomer));
-      setCustomer(updatedCustomer);
-    }
-  };
-
   return (
     <CustomerContext.Provider
       value={{ 
@@ -161,7 +177,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
         login, 
         register, 
         logout, 
-        updateProfile,
+        updateAddress,
         refreshProfile 
       }}
     >
