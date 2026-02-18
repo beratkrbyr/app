@@ -11,11 +11,13 @@ import {
   Platform,
   Alert,
   Modal,
+  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { useCustomer } from '../contexts/CustomerContext';
 
 // Türkçe takvim ayarları
 LocaleConfig.locales['tr'] = {
@@ -45,11 +47,12 @@ interface TimeSlotInfo {
 export default function BookingScreen() {
   const router = useRouter();
   const { serviceId, serviceName, servicePrice } = useLocalSearchParams();
+  const { customer, isAuthenticated, updateAddress } = useCustomer();
   
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash'>('cash');
+  const [saveAddress, setSaveAddress] = useState(true);
   
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -70,6 +73,17 @@ export default function BookingScreen() {
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 30);
   const maxDateStr = maxDate.toISOString().split('T')[0];
+
+  // Kullanıcı bilgilerini otomatik doldur
+  useEffect(() => {
+    if (isAuthenticated && customer) {
+      setCustomerName(customer.name || '');
+      setCustomerPhone(customer.phone || '');
+      if (customer.address) {
+        setCustomerAddress(customer.address);
+      }
+    }
+  }, [isAuthenticated, customer]);
 
   useEffect(() => {
     fetchAvailability();
@@ -205,6 +219,11 @@ export default function BookingScreen() {
 
     setSubmitting(true);
     try {
+      // Adresi kaydet seçiliyse ve adres değiştiyse güncelle
+      if (saveAddress && customer && customerAddress !== customer.address) {
+        await updateAddress(customerAddress);
+      }
+
       const booking = {
         service_id: serviceId as string,
         customer_name: customerName,
@@ -212,7 +231,7 @@ export default function BookingScreen() {
         customer_address: customerAddress,
         booking_date: selectedDate,
         booking_time: selectedTime,
-        payment_method: paymentMethod,
+        payment_method: 'cash', // Sadece nakit ödeme
       };
 
       const response = await fetch(`${BACKEND_URL}/api/bookings`, {
@@ -417,6 +436,13 @@ export default function BookingScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>İletişim Bilgileri</Text>
             
+            {isAuthenticated && (
+              <View style={styles.autoFillInfo}>
+                <Ionicons name="checkmark-circle" size={18} color="#10b981" />
+                <Text style={styles.autoFillText}>Bilgileriniz hesabınızdan alındı</Text>
+              </View>
+            )}
+            
             <View style={[styles.inputContainer, errors.customerName ? styles.inputError : null]}>
               <Ionicons name="person-outline" size={20} color="#6b7280" />
               <TextInput
@@ -428,6 +454,7 @@ export default function BookingScreen() {
                   if (text.trim()) setErrors({...errors, customerName: ''});
                 }}
                 placeholderTextColor="#9ca3af"
+                editable={!isAuthenticated}
               />
             </View>
             {errors.customerName ? (
@@ -446,14 +473,15 @@ export default function BookingScreen() {
                 }}
                 keyboardType="phone-pad"
                 placeholderTextColor="#9ca3af"
+                editable={!isAuthenticated}
               />
             </View>
             {errors.customerPhone ? (
               <Text style={styles.errorText}>{errors.customerPhone}</Text>
             ) : null}
             
-            <View style={[styles.inputContainer, errors.customerAddress ? styles.inputError : null]}>
-              <Ionicons name="location-outline" size={20} color="#6b7280" />
+            <View style={[styles.inputContainer, styles.addressInput, errors.customerAddress ? styles.inputError : null]}>
+              <Ionicons name="location-outline" size={20} color="#6b7280" style={{ alignSelf: 'flex-start', marginTop: 14 }} />
               <TextInput
                 style={[styles.input, styles.textArea]}
                 placeholder="Adresiniz *"
@@ -470,56 +498,27 @@ export default function BookingScreen() {
             {errors.customerAddress ? (
               <Text style={styles.errorText}>{errors.customerAddress}</Text>
             ) : null}
+
+            {/* Adresi Kaydet Toggle */}
+            {isAuthenticated && (
+              <View style={styles.saveAddressRow}>
+                <Text style={styles.saveAddressText}>Bu adresi kaydet</Text>
+                <Switch
+                  value={saveAddress}
+                  onValueChange={setSaveAddress}
+                  trackColor={{ false: '#d1d5db', true: '#93c5fd' }}
+                  thumbColor={saveAddress ? '#2563eb' : '#f4f4f5'}
+                />
+              </View>
+            )}
           </View>
 
-          {/* Payment Method */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ödeme Yöntemi</Text>
-            <View style={styles.paymentOptions}>
-              <TouchableOpacity
-                style={[
-                  styles.paymentOption,
-                  paymentMethod === 'cash' && styles.paymentOptionSelected,
-                ]}
-                onPress={() => setPaymentMethod('cash')}
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name="cash-outline"
-                  size={24}
-                  color={paymentMethod === 'cash' ? '#2563eb' : '#6b7280'}
-                />
-                <Text
-                  style={[
-                    styles.paymentOptionText,
-                    paymentMethod === 'cash' && styles.paymentOptionTextSelected,
-                  ]}
-                >
-                  Nakit
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.paymentOption,
-                  paymentMethod === 'online' && styles.paymentOptionSelected,
-                ]}
-                onPress={() => setPaymentMethod('online')}
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name="card-outline"
-                  size={24}
-                  color={paymentMethod === 'online' ? '#2563eb' : '#6b7280'}
-                />
-                <Text
-                  style={[
-                    styles.paymentOptionText,
-                    paymentMethod === 'online' && styles.paymentOptionTextSelected,
-                  ]}
-                >
-                  Online
-                </Text>
-              </TouchableOpacity>
+          {/* Payment Info */}
+          <View style={styles.paymentInfo}>
+            <Ionicons name="cash-outline" size={24} color="#10b981" />
+            <View style={styles.paymentInfoContent}>
+              <Text style={styles.paymentInfoTitle}>Nakit Ödeme</Text>
+              <Text style={styles.paymentInfoText}>Ödeme hizmet sonrasında nakit olarak alınacaktır</Text>
             </View>
           </View>
 
@@ -608,6 +607,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111827',
     marginBottom: 12,
+  },
+  autoFillInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ecfdf5',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 12,
+    gap: 8,
+  },
+  autoFillText: {
+    fontSize: 14,
+    color: '#065f46',
   },
   dateButton: {
     flexDirection: 'row',
@@ -711,6 +723,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e7eb',
   },
+  addressInput: {
+    alignItems: 'flex-start',
+  },
   inputError: {
     borderColor: '#ef4444',
     borderWidth: 2,
@@ -734,33 +749,40 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginLeft: 4,
   },
-  paymentOptions: {
+  saveAddressRow: {
     flexDirection: 'row',
-    gap: 12,
-  },
-  paymentOption: {
-    flex: 1,
-    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f3f4f6',
     padding: 16,
     borderRadius: 12,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
+    marginTop: 8,
   },
-  paymentOptionSelected: {
-    backgroundColor: '#eff6ff',
-    borderColor: '#2563eb',
-  },
-  paymentOptionText: {
+  saveAddressText: {
     fontSize: 16,
-    color: '#6b7280',
-    fontWeight: '500',
+    color: '#374151',
   },
-  paymentOptionTextSelected: {
-    color: '#2563eb',
+  paymentInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ecfdf5',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 24,
+    gap: 12,
+  },
+  paymentInfoContent: {
+    flex: 1,
+  },
+  paymentInfoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#065f46',
+    marginBottom: 4,
+  },
+  paymentInfoText: {
+    fontSize: 14,
+    color: '#047857',
   },
   summaryCard: {
     backgroundColor: '#ffffff',
