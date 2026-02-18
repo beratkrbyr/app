@@ -38,10 +38,12 @@ interface Booking {
 export default function ProfileScreen() {
   const router = useRouter();
   const { customer, isAuthenticated, logout, refreshProfile } = useCustomer();
+  const { hasPermission, requestPermission } = useNotification();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   
   // Review modal state
   const [showReviewModal, setShowReviewModal] = useState(false);
