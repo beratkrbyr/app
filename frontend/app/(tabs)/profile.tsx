@@ -339,9 +339,6 @@ export default function ProfileScreen() {
   const canReview = (status: string, hasReview?: boolean) => status === 'completed' && !hasReview;
 
   const renderBooking = ({ item }: { item: Booking }) => {
-    const locationData = bookingLocations[item.id];
-    const showLocationTracking = item.status === 'confirmed' && locationData && locationData.status !== 'not_started';
-    
     return (
       <View style={styles.bookingCard}>
         <View style={styles.bookingHeader}>
@@ -364,30 +361,6 @@ export default function ProfileScreen() {
           <Ionicons name="time-outline" size={16} color="#6b7280" />
           <Text style={styles.detailText}>{item.booking_time}</Text>
         </View>
-
-        {/* Konum Takibi Bölümü */}
-        {showLocationTracking && (
-          <View style={styles.locationTrackingCard}>
-            <View style={styles.locationTrackingHeader}>
-              <Ionicons name="navigate" size={18} color={getLocationStatusColor(locationData.status)} />
-              <Text style={[styles.locationTrackingTitle, { color: getLocationStatusColor(locationData.status) }]}>
-                {getLocationStatusText(locationData.status)}
-              </Text>
-            </View>
-            {locationData.updated_at && (
-              <Text style={styles.locationTrackingTime}>
-                Son güncelleme: {new Date(locationData.updated_at).toLocaleTimeString('tr-TR')}
-              </Text>
-            )}
-            <TouchableOpacity 
-              style={styles.refreshLocationButton}
-              onPress={() => fetchBookingLocation(item.id)}
-            >
-              <Ionicons name="refresh" size={16} color="#2563eb" />
-              <Text style={styles.refreshLocationText}>Konumu Yenile</Text>
-            </TouchableOpacity>
-          </View>
-        )}
 
         <View style={styles.priceRow}>
           <Text style={styles.priceLabel}>Toplam:</Text>
@@ -430,6 +403,10 @@ export default function ProfileScreen() {
               <Text style={styles.reviewedText}>Değerlendirildi</Text>
             </View>
           )}
+        </View>
+      </View>
+    );
+  };
       </View>
     </View>
     );
