@@ -21,8 +21,11 @@ Temizlik şirketi müşterileri için profesyonel randevu rezervasyon sistemi. R
 - [x] 🎁 Sadakat programı (puan sistemi)
 - [x] 👥 Referans sistemi (arkadaşını getir)
 - [x] Profil sayfasında puan ve referans kodu
+- [x] **Adres kaydetme** - "Bu adresi kaydet" toggle (TESTLENDİ ✅)
+- [x] **Adres auto-fill** - Kaydedilen adres sonraki randevuda otomatik gelir (TESTLENDİ ✅)
+- [x] **Sadece nakit ödeme** - Online ödeme kaldırıldı (TESTLENDİ ✅)
 
-### Admin Paneli (YENİ GÜNCELLENDİ)
+### Admin Paneli
 - [x] Admin girişi (admin/admin123)
 - [x] **Dashboard** - Gelişmiş istatistikler
   - Toplam gelir
@@ -30,10 +33,10 @@ Temizlik şirketi müşterileri için profesyonel randevu rezervasyon sistemi. R
   - Müşteri sayısı
   - Değerlendirme sayısı
 - [x] **Randevu Yönetimi** - Onaylama/reddetme
-- [x] **Hizmet Yönetimi** - Ekleme/düzenleme/silme
-- [x] **Müşteri Yönetimi** (YENİ) - Müşteri listesi, puan bakiyesi, referans kodları
-- [x] **Değerlendirme Yönetimi** (YENİ) - Yorumlar ve puanlama istatistikleri
-- [x] **Paket Yönetimi** (YENİ) - Haftalık/aylık paket oluşturma
+- [x] **Hizmet Yönetimi** - Ekleme/düzenleme/silme (Kaydet butonu TESTLENDİ ✅)
+- [x] **Müşteri Yönetimi** - Müşteri listesi, puan bakiyesi, referans kodları
+- [x] **Değerlendirme Yönetimi** - Yorumlar ve puanlama istatistikleri
+- [x] **Paket Yönetimi** - Haftalık/aylık paket oluşturma
 - [x] **Takvim Yönetimi** - Müsaitlik ayarlama
 - [x] **Ayarlar** - İndirim oranları ve sistem ayarları
 
