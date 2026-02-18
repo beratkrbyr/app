@@ -72,16 +72,11 @@ export default function ProfileScreen() {
   const [initialLoadDone, setInitialLoadDone] = useState(false);
   
   useEffect(() => {
-    const loadData = async () => {
-      if (isAuthenticated && customer?.phone && !initialLoadDone) {
-        setInitialLoadDone(true);
-        await fetchBookings();
-        refreshProfile();
-      }
-    };
-    
-    loadData();
-  }, [isAuthenticated, customer?.phone, initialLoadDone]);
+    if (isAuthenticated && customer?.phone && !initialLoadDone) {
+      setInitialLoadDone(true);
+      fetchBookings();
+    }
+  }, [isAuthenticated, customer?.phone]);
 
   useEffect(() => {
     setNotificationsEnabled(hasPermission);
