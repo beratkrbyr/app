@@ -243,6 +243,26 @@ export default function BookingScreen() {
       });
 
       if (response.ok) {
+        const bookingData = await response.json();
+        
+        // Bildirim izni iste ve bildirimler gönder
+        await requestPermission();
+        
+        // Anında bildirim gönder - randevu alındı
+        await sendLocalNotification(
+          'Randevunuz Alındı!',
+          `${serviceName} için ${selectedDate} tarihli randevunuz başarıyla oluşturuldu. Onay bekleniyor.`,
+          { bookingId: bookingData.id, type: 'booking_created' }
+        );
+        
+        // Randevu hatırlatması planla (1 saat önce)
+        await scheduleReminder(
+          bookingData.id,
+          serviceName as string,
+          selectedDate,
+          selectedTime
+        );
+        
         router.replace('/booking-success');
       } else {
         const error = await response.json();
