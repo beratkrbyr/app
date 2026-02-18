@@ -402,6 +402,25 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Notification Settings */}
+        <View style={styles.settingsCard}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Ionicons name="notifications" size={24} color="#2563eb" />
+              <View style={styles.settingTextContainer}>
+                <Text style={styles.settingTitle}>Bildirimler</Text>
+                <Text style={styles.settingDescription}>Randevu hatırlatmaları ve güncellemeler</Text>
+              </View>
+            </View>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={handleNotificationToggle}
+              trackColor={{ false: '#d1d5db', true: '#93c5fd' }}
+              thumbColor={notificationsEnabled ? '#2563eb' : '#f4f4f5'}
+            />
+          </View>
+        </View>
+
         {/* Referral Section */}
         <View style={styles.referralCard}>
           <View style={styles.referralHeader}>
