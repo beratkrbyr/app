@@ -339,6 +339,8 @@ export default function ProfileScreen() {
   const canReview = (status: string, hasReview?: boolean) => status === 'completed' && !hasReview;
 
   const renderBooking = ({ item }: { item: Booking }) => {
+    const showTrackingButton = item.status === 'confirmed';
+    
     return (
       <View style={styles.bookingCard}>
         <View style={styles.bookingHeader}>
@@ -368,6 +370,25 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.bookingActions}>
+          {showTrackingButton && (
+            <TouchableOpacity
+              style={styles.trackingButton}
+              onPress={() => router.push({
+                pathname: '/booking-tracking',
+                params: {
+                  bookingId: item.id,
+                  serviceName: item.service_name,
+                  bookingDate: item.booking_date,
+                  bookingTime: item.booking_time,
+                }
+              })}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="navigate" size={18} color="#2563eb" />
+              <Text style={styles.trackingButtonText}>Konum Takip</Text>
+            </TouchableOpacity>
+          )}
+          
           {canCancel(item.status) && (
             <TouchableOpacity
               style={styles.cancelButton}
