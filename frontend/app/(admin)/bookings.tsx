@@ -369,6 +369,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     gap: 8,
   },
+  detailButton: {
+    backgroundColor: '#2563eb',
+  },
   confirmButton: {
     backgroundColor: '#10b981',
   },
