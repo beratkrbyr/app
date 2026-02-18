@@ -417,8 +417,10 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        showsVerticalScrollIndicator={true}
       >
         {/* Profile Card */}
         <View style={styles.profileCard}>
