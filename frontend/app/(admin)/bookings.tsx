@@ -184,6 +184,14 @@ export default function BookingsScreen() {
         {isExpanded && (
           <View style={styles.statusButtons}>
             <TouchableOpacity
+              style={[styles.statusButton, styles.detailButton]}
+              onPress={() => router.push(`/(admin)/booking-detail?bookingId=${item.id}`)}
+            >
+              <Ionicons name="eye" size={20} color="#ffffff" />
+              <Text style={styles.statusButtonText}>Detay & Fotoğraf</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={[styles.statusButton, styles.confirmButton]}
               onPress={() => updateStatus(item.id, 'confirmed')}
             >
