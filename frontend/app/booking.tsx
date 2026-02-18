@@ -121,9 +121,15 @@ export default function BookingScreen() {
       const today = new Date().toISOString().split('T')[0];
       available.forEach((dateStr: string) => {
         if (dateStr >= today && dateStr <= maxDateStr) {
+          const dateObj = new Date(dateStr);
+          const isFriday = dateObj.getDay() === 5;
           marked[dateStr] = {
             marked: true,
-            dotColor: '#10b981',
+            dotColor: isFriday ? '#f59e0b' : '#10b981',
+            customStyles: isFriday ? {
+              container: { backgroundColor: '#fef3c7' },
+              text: { color: '#92400e', fontWeight: 'bold' }
+            } : undefined,
           };
         }
       });
