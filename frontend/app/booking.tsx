@@ -6,7 +6,6 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Pressable,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -84,13 +83,11 @@ export default function BookingScreen() {
 
   const fetchAvailability = async () => {
     try {
-      // Fetch current month and next month for 30 day coverage
       const response = await fetch(
         `${BACKEND_URL}/api/availability?year=${currentMonth.getFullYear()}&month=${currentMonth.getMonth() + 1}`
       );
       const data = await response.json();
       
-      // Also fetch next month if needed
       const nextMonth = new Date(currentMonth);
       nextMonth.setMonth(nextMonth.getMonth() + 1);
       const response2 = await fetch(
@@ -104,7 +101,6 @@ export default function BookingScreen() {
         .map((d: any) => d.date);
       setAvailableDates(available);
       
-      // Create marked dates for calendar
       const marked: any = {};
       const today = new Date().toISOString().split('T')[0];
       available.forEach((dateStr: string) => {
@@ -131,7 +127,6 @@ export default function BookingScreen() {
       );
       const data = await response.json();
       
-      // Create time slots with availability info
       const allSlots = data.all_slots || [];
       const bookedSlots = data.booked_slots || [];
       
@@ -154,7 +149,7 @@ export default function BookingScreen() {
     const price = parseFloat(servicePrice as string);
     const dateObj = new Date(selectedDate);
     const dayOfWeek = dateObj.getDay();
-    if (dayOfWeek === 5) { // Friday
+    if (dayOfWeek === 5) {
       return price * 0.1;
     }
     return 0;
@@ -227,7 +222,6 @@ export default function BookingScreen() {
       });
 
       if (response.ok) {
-        const result = await response.json();
         router.replace('/booking-success');
       } else {
         const error = await response.json();
@@ -275,24 +269,17 @@ export default function BookingScreen() {
           {/* Date Selection */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tarih Seçin * (30 gün içinde)</Text>
-            <Pressable
-              style={({ pressed }) => [
-                styles.dateButton,
-                errors.selectedDate ? styles.inputError : null,
-                pressed && { opacity: 0.8 },
-                Platform.OS === 'web' && { cursor: 'pointer' } as any
-              ]}
+            <TouchableOpacity
+              style={[styles.dateButton, errors.selectedDate ? styles.inputError : null]}
               onPress={() => setShowCalendarModal(true)}
-              // @ts-ignore - Web platform compatibility
-              onClick={Platform.OS === 'web' ? () => setShowCalendarModal(true) : undefined}
-              accessibilityRole="button"
+              activeOpacity={0.7}
             >
               <Ionicons name="calendar-outline" size={20} color="#2563eb" />
               <Text style={[styles.dateButtonText, !selectedDate && styles.placeholderText]}>
                 {formatSelectedDate()}
               </Text>
               <Ionicons name="chevron-down" size={20} color="#6b7280" />
-            </Pressable>
+            </TouchableOpacity>
             {errors.selectedDate ? (
               <Text style={styles.errorText}>{errors.selectedDate}</Text>
             ) : null}
@@ -309,18 +296,12 @@ export default function BookingScreen() {
               <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
                   <Text style={styles.modalTitle}>Tarih Seçin (30 gün)</Text>
-                  <Pressable 
+                  <TouchableOpacity 
                     onPress={() => setShowCalendarModal(false)}
-                    // @ts-ignore - Web platform compatibility
-                    onClick={Platform.OS === 'web' ? () => setShowCalendarModal(false) : undefined}
-                    style={({ pressed }) => [
-                      pressed && { opacity: 0.7 },
-                      Platform.OS === 'web' && { cursor: 'pointer' } as any
-                    ]}
-                    accessibilityRole="button"
+                    activeOpacity={0.7}
                   >
                     <Ionicons name="close" size={28} color="#111827" />
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
                 
                 <Calendar
@@ -395,6 +376,7 @@ export default function BookingScreen() {
                           }
                         }}
                         disabled={!slot.available}
+                        activeOpacity={0.7}
                       >
                         <Text
                           style={[
@@ -500,6 +482,7 @@ export default function BookingScreen() {
                   paymentMethod === 'cash' && styles.paymentOptionSelected,
                 ]}
                 onPress={() => setPaymentMethod('cash')}
+                activeOpacity={0.7}
               >
                 <Ionicons
                   name="cash-outline"
@@ -521,6 +504,7 @@ export default function BookingScreen() {
                   paymentMethod === 'online' && styles.paymentOptionSelected,
                 ]}
                 onPress={() => setPaymentMethod('online')}
+                activeOpacity={0.7}
               >
                 <Ionicons
                   name="card-outline"
@@ -562,18 +546,11 @@ export default function BookingScreen() {
             </View>
           </View>
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.submitButton,
-              submitting && styles.submitButtonDisabled,
-              pressed && { opacity: 0.8 },
-              Platform.OS === 'web' && { cursor: 'pointer' } as any
-            ]}
+          <TouchableOpacity
+            style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
             onPress={handleSubmit}
-            // @ts-ignore - Web platform compatibility
-            onClick={Platform.OS === 'web' ? handleSubmit : undefined}
             disabled={submitting}
-            accessibilityRole="button"
+            activeOpacity={0.7}
           >
             {submitting ? (
               <ActivityIndicator color="#ffffff" />
@@ -583,7 +560,7 @@ export default function BookingScreen() {
                 <Ionicons name="checkmark-circle" size={24} color="#ffffff" />
               </>
             )}
-          </Pressable>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -848,7 +825,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  // Modal styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
