@@ -64,6 +64,9 @@ export default function ProfileScreen() {
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralCode, setReferralCode] = useState('');
   const [applyingReferral, setApplyingReferral] = useState(false);
+  
+  // Location tracking state
+  const [bookingLocations, setBookingLocations] = useState<{[key: string]: LocationData}>({});
 
   useEffect(() => {
     if (isAuthenticated && customer) {
