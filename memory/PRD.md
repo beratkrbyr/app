@@ -109,20 +109,24 @@ Temizlik şirketi müşterileri için profesyonel randevu rezervasyon sistemi. R
 ## Yapılacaklar
 
 ### P1 - Yüksek Öncelik
-- [x] **Push Bildirimleri** - Expo Notifications entegrasyonu tamamlandı (TESTLENDİ ✅)
-- [x] **Fotoğraflı İş Takibi** - Admin panelden öncesi/sonrası fotoğraf yükleme (TESTLENDİ ✅)
-- [x] **Canlı Konum Takibi** - Ekip konum durumu güncelleme ve müşteri görüntüleme (TESTLENDİ ✅)
-- [ ] WhatsApp bildirimi (kullanıcı istedi, Twilio API key gerekli)
+- [x] **Push Bildirimleri** - Expo Notifications entegrasyonu (TESTLENDİ ✅)
+- [x] **Fotoğraflı İş Takibi** - Admin panelden öncesi/sonrası fotoğraf (TESTLENDİ ✅)
+- [x] **Canlı Konum Takibi** - Manuel durum güncelleme (TESTLENDİ ✅)
+- [ ] WhatsApp bildirimi (Twilio API key gerekli)
 
 ### P2 - Orta Öncelik
-- [x] **Yorumlar sistemi** - Tamamlanmış randevular için yorum ve puan (TESTLENDİ ✅)
-- [x] **Sadakat puanları** - Randevu, yorum, referans ile puan kazanma (TESTLENDİ ✅)
+- [x] **Yorumlar sistemi** - Tamamlanmış randevular için yorum/puan (TESTLENDİ ✅)
+- [x] **Sadakat puanları** - Randevu, yorum, referans ile puan (TESTLENDİ ✅)
 - [x] **Referans sistemi** - Arkadaşını getir, 50 puan (TESTLENDİ ✅)
 
 ### P3 - Düşük Öncelik
 - [ ] Dış cephe temizlik hizmeti ekleme
 - [ ] SMS bildirimleri
-- [ ] server.py modüler refactoring (APIRouter ile bölme)
+- [ ] server.py modüler refactoring
+
+## Konum Takibi Kullanımı
+**Admin:** Randevular → Detay & Fotoğraf → Yola Çık/Vardım/Başladım/Bitti
+**Müşteri:** Profil → Onaylı randevu → "Konum Takip" butonu
 
 ## Son Test Raporu (Aralık 2025 - iteration 4)
 - Backend: 15/15 test BAŞARILI (%100) - Work Photos & Location APIs
