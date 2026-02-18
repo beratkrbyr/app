@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Titan 360",
-    "slug": "titan360",
+    "slug": "titan360-cleaning",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/titan360_icon.png",
@@ -51,11 +51,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "eas": {
-        "projectId": "titan360"
-      }
     }
   }
 }
