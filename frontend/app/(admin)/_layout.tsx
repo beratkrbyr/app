@@ -5,6 +5,7 @@ export default function AdminLayout() {
     <Stack screenOptions={{ headerShown: true }}>
       <Stack.Screen name="dashboard" options={{ title: 'Admin Dashboard' }} />
       <Stack.Screen name="bookings" options={{ title: 'Randevu Yönetimi' }} />
+      <Stack.Screen name="booking-detail" options={{ title: 'Randevu Detayı' }} />
       <Stack.Screen name="services" options={{ title: 'Hizmet Yönetimi' }} />
       <Stack.Screen name="customers" options={{ title: 'Müşteri Yönetimi' }} />
       <Stack.Screen name="reviews" options={{ title: 'Değerlendirmeler' }} />
