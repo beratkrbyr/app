@@ -18,6 +18,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useCustomer } from '../contexts/CustomerContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 // Türkçe takvim ayarları
 LocaleConfig.locales['tr'] = {
