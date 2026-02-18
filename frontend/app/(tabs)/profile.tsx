@@ -324,70 +324,98 @@ export default function ProfileScreen() {
   const canCancel = (status: string) => status === 'pending' || status === 'confirmed';
   const canReview = (status: string, hasReview?: boolean) => status === 'completed' && !hasReview;
 
-  const renderBooking = ({ item }: { item: Booking }) => (
-    <View style={styles.bookingCard}>
-      <View style={styles.bookingHeader}>
-        <Text style={styles.serviceName}>{item.service_name}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-          <Text style={styles.statusText}>{getStatusText(item.status)}</Text>
+  const renderBooking = ({ item }: { item: Booking }) => {
+    const locationData = bookingLocations[item.id];
+    const showLocationTracking = item.status === 'confirmed' && locationData && locationData.status !== 'not_started';
+    
+    return (
+      <View style={styles.bookingCard}>
+        <View style={styles.bookingHeader}>
+          <Text style={styles.serviceName}>{item.service_name}</Text>
+          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+            <Text style={styles.statusText}>{getStatusText(item.status)}</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.bookingDetail}>
-        <Ionicons name="calendar-outline" size={16} color="#6b7280" />
-        <Text style={styles.detailText}>
-          {new Date(item.booking_date).toLocaleDateString('tr-TR', {
-            day: 'numeric', month: 'long', year: 'numeric',
-          })}
-        </Text>
-      </View>
+        <View style={styles.bookingDetail}>
+          <Ionicons name="calendar-outline" size={16} color="#6b7280" />
+          <Text style={styles.detailText}>
+            {new Date(item.booking_date).toLocaleDateString('tr-TR', {
+              day: 'numeric', month: 'long', year: 'numeric',
+            })}
+          </Text>
+        </View>
 
-      <View style={styles.bookingDetail}>
-        <Ionicons name="time-outline" size={16} color="#6b7280" />
-        <Text style={styles.detailText}>{item.booking_time}</Text>
-      </View>
+        <View style={styles.bookingDetail}>
+          <Ionicons name="time-outline" size={16} color="#6b7280" />
+          <Text style={styles.detailText}>{item.booking_time}</Text>
+        </View>
 
-      <View style={styles.priceRow}>
-        <Text style={styles.priceLabel}>Toplam:</Text>
-        <Text style={styles.priceText}>₺{item.total_price.toFixed(2)}</Text>
-      </View>
-
-      <View style={styles.bookingActions}>
-        {canCancel(item.status) && (
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => handleCancelBooking(item.id)}
-            disabled={cancellingId === item.id}
-            activeOpacity={0.7}
-          >
-            {cancellingId === item.id ? (
-              <ActivityIndicator size="small" color="#ef4444" />
-            ) : (
-              <>
-                <Ionicons name="close-circle-outline" size={18} color="#ef4444" />
-                <Text style={styles.cancelButtonText}>İptal Et</Text>
-              </>
+        {/* Konum Takibi Bölümü */}
+        {showLocationTracking && (
+          <View style={styles.locationTrackingCard}>
+            <View style={styles.locationTrackingHeader}>
+              <Ionicons name="navigate" size={18} color={getLocationStatusColor(locationData.status)} />
+              <Text style={[styles.locationTrackingTitle, { color: getLocationStatusColor(locationData.status) }]}>
+                {getLocationStatusText(locationData.status)}
+              </Text>
+            </View>
+            {locationData.updated_at && (
+              <Text style={styles.locationTrackingTime}>
+                Son güncelleme: {new Date(locationData.updated_at).toLocaleTimeString('tr-TR')}
+              </Text>
             )}
-          </TouchableOpacity>
-        )}
-        
-        {canReview(item.status, item.has_review) && (
-          <TouchableOpacity
-            style={styles.reviewButton}
-            onPress={() => openReviewModal(item.id)}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="star-outline" size={18} color="#f59e0b" />
-            <Text style={styles.reviewButtonText}>Değerlendir</Text>
-          </TouchableOpacity>
-        )}
-        
-        {item.has_review && (
-          <View style={styles.reviewedBadge}>
-            <Ionicons name="checkmark-circle" size={16} color="#10b981" />
-            <Text style={styles.reviewedText}>Değerlendirildi</Text>
+            <TouchableOpacity 
+              style={styles.refreshLocationButton}
+              onPress={() => fetchBookingLocation(item.id)}
+            >
+              <Ionicons name="refresh" size={16} color="#2563eb" />
+              <Text style={styles.refreshLocationText}>Konumu Yenile</Text>
+            </TouchableOpacity>
           </View>
         )}
+
+        <View style={styles.priceRow}>
+          <Text style={styles.priceLabel}>Toplam:</Text>
+          <Text style={styles.priceText}>₺{item.total_price.toFixed(2)}</Text>
+        </View>
+
+        <View style={styles.bookingActions}>
+          {canCancel(item.status) && (
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => handleCancelBooking(item.id)}
+              disabled={cancellingId === item.id}
+              activeOpacity={0.7}
+            >
+              {cancellingId === item.id ? (
+                <ActivityIndicator size="small" color="#ef4444" />
+              ) : (
+                <>
+                  <Ionicons name="close-circle-outline" size={18} color="#ef4444" />
+                  <Text style={styles.cancelButtonText}>İptal Et</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          )}
+          
+          {canReview(item.status, item.has_review) && (
+            <TouchableOpacity
+              style={styles.reviewButton}
+              onPress={() => openReviewModal(item.id)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="star-outline" size={18} color="#f59e0b" />
+              <Text style={styles.reviewButtonText}>Değerlendir</Text>
+            </TouchableOpacity>
+          )}
+          
+          {item.has_review && (
+            <View style={styles.reviewedBadge}>
+              <Ionicons name="checkmark-circle" size={16} color="#10b981" />
+              <Text style={styles.reviewedText}>Değerlendirildi</Text>
+            </View>
+          )}
       </View>
     </View>
   );
