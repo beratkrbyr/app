@@ -102,11 +102,49 @@ export default function ProfileScreen() {
       );
       const data = await response.json();
       setBookings(data);
+      
+      // Onaylanmış randevular için konum bilgisini al
+      const confirmedBookings = data.filter((b: Booking) => b.status === 'confirmed');
+      for (const booking of confirmedBookings) {
+        fetchBookingLocation(booking.id);
+      }
     } catch (error) {
       console.error('Error fetching bookings:', error);
     } finally {
       setLoadingBookings(false);
       setRefreshing(false);
+    }
+  };
+
+  const fetchBookingLocation = async (bookingId: string) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/location/${bookingId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setBookingLocations(prev => ({ ...prev, [bookingId]: data }));
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error);
+    }
+  };
+
+  const getLocationStatusText = (status: string) => {
+    switch (status) {
+      case 'on_the_way': return 'Ekibimiz yolda';
+      case 'arrived': return 'Ekibimiz ulaştı';
+      case 'in_progress': return 'Temizlik devam ediyor';
+      case 'completed': return 'Tamamlandı';
+      default: return '';
+    }
+  };
+
+  const getLocationStatusColor = (status: string) => {
+    switch (status) {
+      case 'on_the_way': return '#f59e0b';
+      case 'arrived': return '#3b82f6';
+      case 'in_progress': return '#8b5cf6';
+      case 'completed': return '#10b981';
+      default: return '#9ca3af';
     }
   };
 
