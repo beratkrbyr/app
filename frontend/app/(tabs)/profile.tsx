@@ -216,7 +216,6 @@ export default function ProfileScreen() {
         showAlert('Teşekkürler!', 'Değerlendirmeniz için teşekkür ederiz. 10 puan kazandınız!');
         setShowReviewModal(false);
         fetchBookings();
-        refreshProfile();
       } else {
         const error = await response.json();
         showAlert('Hata', error.detail || 'Değerlendirme gönderilemedi.');
