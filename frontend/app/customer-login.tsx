@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Pressable,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -49,14 +48,12 @@ export default function CustomerLoginScreen() {
 
     try {
       if (isLogin) {
-        // For login, we just need phone - name will be from previous registration
-        // In real app, you'd verify against database
         await login(phone, name || 'Müşteri');
       } else {
         await register(name, phone, email);
       }
       router.replace('/(tabs)');
-    } catch (error) {
+    } catch (err) {
       showAlert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
     }
   };
@@ -128,56 +125,38 @@ export default function CustomerLoginScreen() {
               </View>
             )}
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.submitButton,
-                pressed && { opacity: 0.8 },
-                Platform.OS === 'web' && { cursor: 'pointer' } as any
-              ]}
+            <TouchableOpacity
+              style={styles.submitButton}
               onPress={handleSubmit}
-              // @ts-ignore - Web platform compatibility
-              onClick={Platform.OS === 'web' ? handleSubmit : undefined}
-              accessibilityRole="button"
+              activeOpacity={0.7}
             >
               <Text style={styles.submitButtonText}>
                 {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.switchButton,
-                pressed && { opacity: 0.7 },
-                Platform.OS === 'web' && { cursor: 'pointer' } as any
-              ]}
+            <TouchableOpacity
+              style={styles.switchButton}
               onPress={() => setIsLogin(!isLogin)}
-              // @ts-ignore - Web platform compatibility
-              onClick={Platform.OS === 'web' ? () => setIsLogin(!isLogin) : undefined}
-              accessibilityRole="button"
+              activeOpacity={0.7}
             >
               <Text style={styles.switchButtonText}>
                 {isLogin
                   ? 'Hesabınız yok mu? Kayıt olun'
                   : 'Zaten hesabınız var mı? Giriş yapın'}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.guestButton,
-                pressed && { opacity: 0.7 },
-                Platform.OS === 'web' && { cursor: 'pointer' } as any
-              ]}
+            <TouchableOpacity
+              style={styles.guestButton}
               onPress={() => router.push('/(tabs)')}
-              // @ts-ignore - Web platform compatibility
-              onClick={Platform.OS === 'web' ? () => router.push('/(tabs)') : undefined}
-              accessibilityRole="button"
+              activeOpacity={0.7}
             >
               <Ionicons name="eye-outline" size={20} color="#6b7280" />
               <Text style={styles.guestButtonText}>
                 Misafir olarak devam et
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.infoCard}>
