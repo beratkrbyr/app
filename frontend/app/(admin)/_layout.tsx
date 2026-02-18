@@ -6,6 +6,9 @@ export default function AdminLayout() {
       <Stack.Screen name="dashboard" options={{ title: 'Admin Dashboard' }} />
       <Stack.Screen name="bookings" options={{ title: 'Randevu Yönetimi' }} />
       <Stack.Screen name="services" options={{ title: 'Hizmet Yönetimi' }} />
+      <Stack.Screen name="customers" options={{ title: 'Müşteri Yönetimi' }} />
+      <Stack.Screen name="reviews" options={{ title: 'Değerlendirmeler' }} />
+      <Stack.Screen name="packages" options={{ title: 'Paket Yönetimi' }} />
       <Stack.Screen name="calendar" options={{ title: 'Takvim Yönetimi' }} />
       <Stack.Screen name="settings" options={{ title: 'Ayarlar' }} />
     </Stack>
