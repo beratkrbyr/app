@@ -64,6 +64,23 @@ export default function ProfileScreen() {
     }
   }, [isAuthenticated, customer]);
 
+  useEffect(() => {
+    setNotificationsEnabled(hasPermission);
+  }, [hasPermission]);
+
+  const handleNotificationToggle = async (value: boolean) => {
+    if (value) {
+      const granted = await requestPermission();
+      setNotificationsEnabled(granted);
+      if (granted) {
+        showAlert('Bildirimler Açık', 'Randevu hatırlatmaları ve güncellemeleri alacaksınız.');
+      }
+    } else {
+      setNotificationsEnabled(false);
+      showAlert('Bildirimler Kapalı', 'Bildirimler kapatıldı. Cihaz ayarlarından yeniden açabilirsiniz.');
+    }
+  };
+
   const fetchBookings = async () => {
     if (!customer?.phone) return;
     
