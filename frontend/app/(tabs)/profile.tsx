@@ -258,7 +258,7 @@ export default function ProfileScreen() {
         showAlert('Başarılı!', '50 puan kazandınız!');
         setShowReferralModal(false);
         setReferralCode('');
-        refreshProfile();
+        fetchBookings();
       } else {
         const error = await response.json();
         showAlert('Hata', error.detail || 'Referans kodu kullanılamadı.');
