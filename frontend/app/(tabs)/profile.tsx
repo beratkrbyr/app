@@ -407,10 +407,6 @@ export default function ProfileScreen() {
       </View>
     );
   };
-      </View>
-    </View>
-    );
-  };
 
   if (!isAuthenticated) {
     return (
