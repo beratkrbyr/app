@@ -273,6 +273,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#2563eb',
     padding: 24,
     paddingBottom: 32,
+    alignItems: 'center',
+  },
+  headerLogo: {
+    width: 180,
+    height: 80,
+    marginBottom: 8,
   },
   headerTitle: {
     fontSize: 28,
@@ -283,6 +289,7 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 16,
     color: '#dbeafe',
+    textAlign: 'center',
   },
   loadingContainer: {
     flex: 1,
