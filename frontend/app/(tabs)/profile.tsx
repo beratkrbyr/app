@@ -109,7 +109,6 @@ export default function ProfileScreen() {
     setLoadingBookings(true);
     try {
       const url = `${BACKEND_URL}/api/bookings/check?phone=${encodeURIComponent(customer.phone)}`;
-      console.log('Fetching bookings from:', url);
       
       const response = await fetch(url);
       
@@ -120,7 +119,6 @@ export default function ProfileScreen() {
       }
       
       const data = await response.json();
-      console.log('Bookings received:', data.length);
       
       // Ensure each booking has an id
       const processedData = data.map((booking: any) => ({
@@ -129,12 +127,6 @@ export default function ProfileScreen() {
       }));
       
       setBookings(processedData);
-      
-      // Onaylanmış randevular için konum bilgisini al
-      const confirmedBookings = processedData.filter((b: Booking) => b.status === 'confirmed');
-      for (const booking of confirmedBookings) {
-        fetchBookingLocation(booking.id);
-      }
     } catch (error) {
       console.error('Error fetching bookings:', error);
     } finally {
