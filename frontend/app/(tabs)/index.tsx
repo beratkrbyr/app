@@ -149,7 +149,11 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Temizlik Hizmetlerimiz</Text>
+          <Image 
+            source={require('../../assets/titan360_logo.png')} 
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
           <Text style={styles.headerSubtitle}>Cuma günleri %10 indirimli!</Text>
         </View>
 
