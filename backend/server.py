@@ -308,10 +308,28 @@ async def get_customer_profile(phone: str):
         "name": customer["name"],
         "phone": customer["phone"],
         "email": customer.get("email"),
+        "address": customer.get("address"),
         "loyalty_points": customer.get("loyalty_points", 0),
         "total_bookings": customer.get("total_bookings", 0),
         "referral_code": customer.get("referral_code", "")
     }
+
+class CustomerAddressUpdate(BaseModel):
+    phone: str
+    address: str
+
+@api_router.put("/customers/address")
+async def update_customer_address(data: CustomerAddressUpdate):
+    """Update customer address"""
+    result = await db.customers.update_one(
+        {"phone": data.phone},
+        {"$set": {"address": data.address}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Müşteri bulunamadı")
+    
+    return {"message": "Adres güncellendi"}
 
 # ============== REFERRAL APIs ==============
 
