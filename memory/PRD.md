@@ -109,14 +109,21 @@ Temizlik şirketi müşterileri için profesyonel randevu rezervasyon sistemi. R
 ## Yapılacaklar
 
 ### P1 - Yüksek Öncelik
-- [ ] WhatsApp bildirimi
-- [ ] Online ödeme (Stripe/iyzico)
+- [ ] WhatsApp bildirimi (kullanıcı istedi)
+- [ ] Push bildirimleri (useNotification.ts mevcut ama kullanılmıyor)
 
 ### P2 - Orta Öncelik
-- [ ] Frontend paket seçim sayfası
+- [ ] Frontend paket seçim sayfası (uçtan uca test gerekli)
+- [ ] Yorumlar, Referans, Sadakat puanları özelliklerinin uçtan uca testi
 - [ ] Fotoğraflı iş takibi frontend
 - [ ] Canlı konum takibi frontend
 
 ### P3 - Düşük Öncelik
-- [ ] Push bildirimleri
+- [ ] Dış cephe temizlik hizmeti ekleme
 - [ ] SMS bildirimleri
+- [ ] server.py modüler refactoring (APIRouter ile bölme)
+
+## Son Test Raporu (Aralık 2025)
+- Backend: 19/19 test BAŞARILI (%100)
+- Frontend: %100 BAŞARILI
+- Test dosyası: /app/test_reports/iteration_2.json
