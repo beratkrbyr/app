@@ -611,6 +611,8 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9fafb' },
+  scrollView: { flex: 1 },
+  scrollContent: { padding: 16, paddingBottom: 100 },
   header: { backgroundColor: '#2563eb', padding: 24 },
   headerTitle: { fontSize: 28, fontWeight: 'bold', color: '#ffffff' },
   notAuthContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
