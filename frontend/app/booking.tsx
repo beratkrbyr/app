@@ -49,6 +49,7 @@ export default function BookingScreen() {
   const router = useRouter();
   const { serviceId, serviceName, servicePrice } = useLocalSearchParams();
   const { customer, isAuthenticated, updateAddress } = useCustomer();
+  const { sendLocalNotification, scheduleReminder, requestPermission } = useNotification();
   
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
