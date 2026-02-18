@@ -109,12 +109,13 @@ Temizlik şirketi müşterileri için profesyonel randevu rezervasyon sistemi. R
 ## Yapılacaklar
 
 ### P1 - Yüksek Öncelik
+- [x] **Push Bildirimleri** - Expo Notifications entegrasyonu tamamlandı (TESTLENDİ ✅)
 - [ ] WhatsApp bildirimi (kullanıcı istedi)
-- [ ] Push bildirimleri (useNotification.ts mevcut ama kullanılmıyor)
 
 ### P2 - Orta Öncelik
-- [ ] Frontend paket seçim sayfası (uçtan uca test gerekli)
-- [ ] Yorumlar, Referans, Sadakat puanları özelliklerinin uçtan uca testi
+- [x] **Yorumlar sistemi** - Tamamlanmış randevular için yorum ve puan (TESTLENDİ ✅)
+- [x] **Sadakat puanları** - Randevu, yorum, referans ile puan kazanma (TESTLENDİ ✅)
+- [x] **Referans sistemi** - Arkadaşını getir, 50 puan (TESTLENDİ ✅)
 - [ ] Fotoğraflı iş takibi frontend
 - [ ] Canlı konum takibi frontend
 
@@ -123,7 +124,7 @@ Temizlik şirketi müşterileri için profesyonel randevu rezervasyon sistemi. R
 - [ ] SMS bildirimleri
 - [ ] server.py modüler refactoring (APIRouter ile bölme)
 
-## Son Test Raporu (Aralık 2025)
-- Backend: 19/19 test BAŞARILI (%100)
-- Frontend: %100 BAŞARILI
-- Test dosyası: /app/test_reports/iteration_2.json
+## Son Test Raporu (Aralık 2025 - iteration 3)
+- Backend: 16/16 test BAŞARILI (%100) - Yeni özellikler
+- Önceki testler: 19/19 BAŞARILI
+- Test dosyası: /app/test_reports/iteration_3.json
