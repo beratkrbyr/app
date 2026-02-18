@@ -316,6 +316,7 @@ export default function ProfileScreen() {
           <TouchableOpacity
             style={styles.menuItem}
             onPress={() => router.push('/user-settings')}
+            activeOpacity={0.7}
           >
             <Ionicons name="color-palette-outline" size={24} color="#2563eb" />
             <View style={styles.menuItemContent}>
