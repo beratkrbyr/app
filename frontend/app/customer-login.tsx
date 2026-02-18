@@ -55,10 +55,13 @@ export default function CustomerLoginScreen() {
       } else {
         await register(name, phone, email || undefined);
       }
-      router.replace('/(tabs)');
+      // Small delay to ensure state is updated before navigation
+      setTimeout(() => {
+        router.replace('/(tabs)');
+      }, 100);
     } catch (err: any) {
+      console.error('Login/Register error:', err);
       setError(err.message || 'Bir hata oluştu. Lütfen tekrar deneyin.');
-    } finally {
       setLoading(false);
     }
   };
