@@ -154,7 +154,6 @@ export default function ProfileScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     fetchBookings();
-    refreshProfile();
   };
 
   const showAlert = (title: string, message: string, onOk?: () => void) => {
