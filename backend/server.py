@@ -55,6 +55,7 @@ class CustomerRegister(BaseModel):
     name: str
     phone: str
     email: Optional[str] = None
+    address: Optional[str] = None
 
 class CustomerLogin(BaseModel):
     phone: str
