@@ -133,7 +133,11 @@ export default function HomeScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Temizlik Hizmetlerimiz</Text>
+          <Image 
+            source={require('../../assets/titan360_logo.png')} 
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
           <Text style={styles.headerSubtitle}>Cuma günleri %10 indirimli!</Text>
         </View>
         <View style={styles.loadingContainer}>
