@@ -289,6 +289,7 @@ async def login_customer(login: CustomerLogin):
         "name": customer["name"],
         "phone": customer["phone"],
         "email": customer.get("email"),
+        "address": customer.get("address"),
         "loyalty_points": customer.get("loyalty_points", 0),
         "total_bookings": customer.get("total_bookings", 0),
         "referral_code": customer.get("referral_code", ""),
