@@ -68,24 +68,20 @@ export default function ProfileScreen() {
   // Location tracking state
   const [bookingLocations, setBookingLocations] = useState<{[key: string]: LocationData}>({});
 
+  // Track if initial load is done
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  
   useEffect(() => {
-    let isMounted = true;
-    
     const loadData = async () => {
-      if (isAuthenticated && customer?.phone) {
+      if (isAuthenticated && customer?.phone && !initialLoadDone) {
+        setInitialLoadDone(true);
         await fetchBookings();
-        if (isMounted) {
-          refreshProfile();
-        }
+        refreshProfile();
       }
     };
     
     loadData();
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [isAuthenticated, customer?.phone]);
+  }, [isAuthenticated, customer?.phone, initialLoadDone]);
 
   useEffect(() => {
     setNotificationsEnabled(hasPermission);
