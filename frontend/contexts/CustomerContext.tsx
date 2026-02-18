@@ -1,20 +1,28 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
 interface Customer {
   id: string;
   name: string;
   phone: string;
   email?: string;
+  loyalty_points: number;
+  total_bookings: number;
+  referral_code: string;
+  token?: string;
 }
 
 interface CustomerContextType {
   customer: Customer | null;
   isAuthenticated: boolean;
-  login: (phone: string, name: string) => Promise<void>;
+  loading: boolean;
+  login: (phone: string) => Promise<void>;
   register: (name: string, phone: string, email?: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<Customer>) => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(undefined);
@@ -22,6 +30,7 @@ const CustomerContext = createContext<CustomerContextType | undefined>(undefined
 export const CustomerProvider = ({ children }: { children: ReactNode }) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadCustomer();
@@ -37,38 +46,102 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error('Error loading customer:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const login = async (phone: string, name: string) => {
-    const customerData: Customer = {
-      id: Date.now().toString(),
-      phone,
-      name,
-    };
-    
-    await AsyncStorage.setItem('customer_data', JSON.stringify(customerData));
-    setCustomer(customerData);
-    setIsAuthenticated(true);
+  const login = async (phone: string) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/customers/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Giriş başarısız');
+      }
+
+      const data = await response.json();
+      const customerData: Customer = {
+        id: data.id,
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        loyalty_points: data.loyalty_points || 0,
+        total_bookings: data.total_bookings || 0,
+        referral_code: data.referral_code || '',
+        token: data.token,
+      };
+
+      await AsyncStorage.setItem('customer_data', JSON.stringify(customerData));
+      setCustomer(customerData);
+      setIsAuthenticated(true);
+    } catch (error: any) {
+      throw error;
+    }
   };
 
   const register = async (name: string, phone: string, email?: string) => {
-    const customerData: Customer = {
-      id: Date.now().toString(),
-      name,
-      phone,
-      email,
-    };
-    
-    await AsyncStorage.setItem('customer_data', JSON.stringify(customerData));
-    setCustomer(customerData);
-    setIsAuthenticated(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/customers/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Kayıt başarısız');
+      }
+
+      const data = await response.json();
+      const customerData: Customer = {
+        id: data.id,
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        loyalty_points: data.loyalty_points || 0,
+        total_bookings: data.total_bookings || 0,
+        referral_code: data.referral_code || '',
+        token: data.token,
+      };
+
+      await AsyncStorage.setItem('customer_data', JSON.stringify(customerData));
+      setCustomer(customerData);
+      setIsAuthenticated(true);
+    } catch (error: any) {
+      throw error;
+    }
   };
 
   const logout = async () => {
     await AsyncStorage.removeItem('customer_data');
     setCustomer(null);
     setIsAuthenticated(false);
+  };
+
+  const refreshProfile = async () => {
+    if (!customer?.phone) return;
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/customers/profile?phone=${encodeURIComponent(customer.phone)}`);
+      if (response.ok) {
+        const data = await response.json();
+        const updatedCustomer: Customer = {
+          ...customer,
+          loyalty_points: data.loyalty_points || 0,
+          total_bookings: data.total_bookings || 0,
+          referral_code: data.referral_code || '',
+        };
+        await AsyncStorage.setItem('customer_data', JSON.stringify(updatedCustomer));
+        setCustomer(updatedCustomer);
+      }
+    } catch (error) {
+      console.error('Error refreshing profile:', error);
+    }
   };
 
   const updateProfile = async (data: Partial<Customer>) => {
@@ -81,7 +154,16 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CustomerContext.Provider
-      value={{ customer, isAuthenticated, login, register, logout, updateProfile }}
+      value={{ 
+        customer, 
+        isAuthenticated, 
+        loading,
+        login, 
+        register, 
+        logout, 
+        updateProfile,
+        refreshProfile 
+      }}
     >
       {children}
     </CustomerContext.Provider>
