@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -18,16 +19,17 @@ import { useCustomer } from '../contexts/CustomerContext';
 export default function CustomerLoginScreen() {
   const router = useRouter();
   const { login, register } = useCustomer();
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false); // Default to register
   
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const showAlert = (title: string, message: string) => {
     if (Platform.OS === 'web') {
-      setError(message);
+      window.alert(`${title}\n\n${message}`);
     } else {
       Alert.alert(title, message);
     }
@@ -37,24 +39,27 @@ export default function CustomerLoginScreen() {
     setError('');
     
     if (!phone.trim()) {
-      showAlert('Hata', 'Telefon numarası gereklidir.');
+      setError('Telefon numarası gereklidir.');
       return;
     }
 
     if (!isLogin && !name.trim()) {
-      showAlert('Hata', 'Adınızı giriniz.');
+      setError('Adınızı giriniz.');
       return;
     }
 
+    setLoading(true);
     try {
       if (isLogin) {
-        await login(phone, name || 'Müşteri');
+        await login(phone);
       } else {
-        await register(name, phone, email);
+        await register(name, phone, email || undefined);
       }
       router.replace('/(tabs)');
-    } catch (err) {
-      showAlert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
+    } catch (err: any) {
+      setError(err.message || 'Bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,7 +77,7 @@ export default function CustomerLoginScreen() {
             </Text>
             <Text style={styles.subtitle}>
               {isLogin
-                ? 'Randevularınızı görmek için giriş yapın'
+                ? 'Kayıtlı telefon numaranızla giriş yapın'
                 : 'Randevu almak için kayıt olun'}
             </Text>
           </View>
@@ -90,7 +95,7 @@ export default function CustomerLoginScreen() {
                 <Ionicons name="person-outline" size={20} color="#6b7280" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Adınız Soyadınız"
+                  placeholder="Adınız Soyadınız *"
                   value={name}
                   onChangeText={setName}
                   placeholderTextColor="#9ca3af"
@@ -102,7 +107,7 @@ export default function CustomerLoginScreen() {
               <Ionicons name="call-outline" size={20} color="#6b7280" />
               <TextInput
                 style={styles.input}
-                placeholder="Telefon Numaranız"
+                placeholder="Telefon Numaranız *"
                 value={phone}
                 onChangeText={setPhone}
                 keyboardType="phone-pad"
@@ -126,18 +131,26 @@ export default function CustomerLoginScreen() {
             )}
 
             <TouchableOpacity
-              style={styles.submitButton}
+              style={[styles.submitButton, loading && styles.submitButtonDisabled]}
               onPress={handleSubmit}
               activeOpacity={0.7}
+              disabled={loading}
             >
-              <Text style={styles.submitButtonText}>
-                {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
-              </Text>
+              {loading ? (
+                <ActivityIndicator color="#ffffff" />
+              ) : (
+                <Text style={styles.submitButtonText}>
+                  {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
+                </Text>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.switchButton}
-              onPress={() => setIsLogin(!isLogin)}
+              onPress={() => {
+                setIsLogin(!isLogin);
+                setError('');
+              }}
               activeOpacity={0.7}
             >
               <Text style={styles.switchButtonText}>
@@ -146,23 +159,47 @@ export default function CustomerLoginScreen() {
                   : 'Zaten hesabınız var mı? Giriş yapın'}
               </Text>
             </TouchableOpacity>
+          </View>
 
-            <TouchableOpacity
-              style={styles.guestButton}
-              onPress={() => router.push('/(tabs)')}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="eye-outline" size={20} color="#6b7280" />
-              <Text style={styles.guestButtonText}>
-                Misafir olarak devam et
-              </Text>
-            </TouchableOpacity>
+          {/* Benefits Section */}
+          <View style={styles.benefitsSection}>
+            <Text style={styles.benefitsTitle}>Üyelik Avantajları</Text>
+            
+            <View style={styles.benefitItem}>
+              <View style={styles.benefitIcon}>
+                <Ionicons name="gift-outline" size={24} color="#2563eb" />
+              </View>
+              <View style={styles.benefitContent}>
+                <Text style={styles.benefitTitle}>Sadakat Puanları</Text>
+                <Text style={styles.benefitText}>Her randevuda puan kazanın, indirim yapın</Text>
+              </View>
+            </View>
+            
+            <View style={styles.benefitItem}>
+              <View style={styles.benefitIcon}>
+                <Ionicons name="people-outline" size={24} color="#2563eb" />
+              </View>
+              <View style={styles.benefitContent}>
+                <Text style={styles.benefitTitle}>Arkadaşını Getir</Text>
+                <Text style={styles.benefitText}>Referans kodunuzla 50₺ kazanın</Text>
+              </View>
+            </View>
+            
+            <View style={styles.benefitItem}>
+              <View style={styles.benefitIcon}>
+                <Ionicons name="star-outline" size={24} color="#2563eb" />
+              </View>
+              <View style={styles.benefitContent}>
+                <Text style={styles.benefitTitle}>Değerlendirme</Text>
+                <Text style={styles.benefitText}>Yorum yaparak 10 puan kazanın</Text>
+              </View>
+            </View>
           </View>
 
           <View style={styles.infoCard}>
-            <Ionicons name="information-circle" size={24} color="#2563eb" />
+            <Ionicons name="shield-checkmark" size={24} color="#10b981" />
             <Text style={styles.infoText}>
-              Giriş yaparak randevularınızı takip edebilir ve profilinizi yönetebilirsiniz.
+              Bilgileriniz güvenle saklanır ve üçüncü şahıslarla paylaşılmaz.
             </Text>
           </View>
         </ScrollView>
@@ -186,7 +223,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: 32,
   },
   title: {
     fontSize: 32,
@@ -226,6 +263,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
   },
+  submitButtonDisabled: {
+    opacity: 0.6,
+  },
   submitButtonText: {
     color: '#ffffff',
     fontSize: 18,
@@ -240,29 +280,58 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  guestButton: {
+  benefitsSection: {
+    marginTop: 32,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 20,
+  },
+  benefitsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 12,
-    gap: 8,
+    marginBottom: 16,
+    gap: 12,
   },
-  guestButtonText: {
-    color: '#6b7280',
+  benefitIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#eff6ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  benefitContent: {
+    flex: 1,
+  },
+  benefitTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 2,
+  },
+  benefitText: {
     fontSize: 14,
+    color: '#6b7280',
   },
   infoCard: {
-    backgroundColor: '#eff6ff',
+    backgroundColor: '#ecfdf5',
     padding: 16,
     borderRadius: 12,
     flexDirection: 'row',
     gap: 12,
-    marginTop: 32,
+    marginTop: 24,
   },
   infoText: {
     flex: 1,
     fontSize: 14,
-    color: '#1e40af',
+    color: '#065f46',
     lineHeight: 20,
   },
   errorContainer: {
