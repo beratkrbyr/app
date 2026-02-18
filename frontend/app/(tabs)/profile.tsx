@@ -33,6 +33,14 @@ interface Booking {
   status: string;
   customer_address: string;
   has_review?: boolean;
+  location_status?: string;
+}
+
+interface LocationData {
+  status: string;
+  latitude: number | null;
+  longitude: number | null;
+  updated_at?: string;
 }
 
 export default function ProfileScreen() {
