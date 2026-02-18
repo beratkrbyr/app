@@ -206,40 +206,57 @@ export default function ServicesScreen() {
     }
   };
 
-  const handleDelete = async (serviceId: string) => {
-    Alert.alert(
-      'Sil',
-      'Bu hizmeti silmek istediğinizden emin misiniz?',
-      [
-        { text: 'Vazgeç', style: 'cancel' },
-        {
-          text: 'Sil',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const token = await AsyncStorage.getItem('admin_token');
-              const response = await fetch(
-                `${BACKEND_URL}/api/admin/services/${serviceId}`,
-                {
-                  method: 'DELETE',
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
 
-              if (response.ok) {
-                Alert.alert('Başarılı', 'Hizmet silindi.');
-                fetchServices();
-              }
-            } catch (error) {
-              console.error('Error deleting service:', error);
-              Alert.alert('Hata', 'Hizmet silinemedi.');
-            }
+  const handleDelete = async (serviceId: string) => {
+    const confirmDelete = () => {
+      return new Promise<boolean>((resolve) => {
+        if (Platform.OS === 'web') {
+          resolve(window.confirm('Bu hizmeti silmek istediğinizden emin misiniz?'));
+        } else {
+          Alert.alert(
+            'Sil',
+            'Bu hizmeti silmek istediğinizden emin misiniz?',
+            [
+              { text: 'Vazgeç', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Sil', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        }
+      });
+    };
+
+    const confirmed = await confirmDelete();
+    if (!confirmed) return;
+
+    try {
+      const token = await AsyncStorage.getItem('admin_token');
+      const response = await fetch(
+        `${BACKEND_URL}/api/admin/services/${serviceId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        },
-      ]
-    );
+        }
+      );
+
+      if (response.ok) {
+        showAlert('Başarılı', 'Hizmet silindi.');
+        fetchServices();
+      } else {
+        showAlert('Hata', 'Hizmet silinemedi.');
+      }
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      showAlert('Hata', 'Hizmet silinemedi.');
+    }
   };
 
   const renderService = ({ item }: { item: Service }) => (
