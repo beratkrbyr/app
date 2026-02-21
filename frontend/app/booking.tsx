@@ -1013,4 +1013,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
   },
+  photoDescription: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 12,
+  },
+  photosGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  photoContainer: {
+    position: 'relative',
+  },
+  photoPreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+  },
+  removePhotoButton: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+  },
+  addPhotoButton: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#e5e7eb',
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9fafb',
+  },
+  addPhotoText: {
+    fontSize: 12,
+    color: '#2563eb',
+    marginTop: 4,
+    fontWeight: '600',
+  },
 });
