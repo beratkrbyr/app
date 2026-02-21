@@ -115,7 +115,7 @@ export default function CalendarScreen() {
 
   const handleSave = async () => {
     if (!selectedDate) {
-      Alert.alert('Hata', 'Lütfen bir tarih seçin.');
+      showAlert('Hata', 'Lütfen bir tarih seçin.');
       return;
     }
 
@@ -135,12 +135,12 @@ export default function CalendarScreen() {
       });
 
       if (response.ok) {
-        Alert.alert('Başarılı', 'Müsaitlik güncellendi.');
+        showAlert('Başarılı', 'Müsaitlik güncellendi.');
         fetchAvailability();
       }
     } catch (error) {
       console.error('Error saving availability:', error);
-      Alert.alert('Hata', 'Müsaitlik kaydedilemedi.');
+      showAlert('Hata', 'Müsaitlik kaydedilemedi.');
     }
   };
 
