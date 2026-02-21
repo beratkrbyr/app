@@ -230,6 +230,47 @@ export default function BookingScreen() {
     }
   };
 
+  // Photo picking functions
+  const pickPhoto = async () => {
+    if (customerPhotos.length >= 3) {
+      showAlert('Limit', 'En fazla 3 fotoğraf ekleyebilirsiniz.');
+      return;
+    }
+
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        showAlert('İzin Gerekli', 'Fotoğraf seçmek için galeri iznine ihtiyacımız var.');
+        return;
+      }
+
+      setUploadingPhoto(true);
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.5,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets[0].base64) {
+        setCustomerPhotos(prev => [...prev, {
+          uri: result.assets[0].uri,
+          base64: result.assets[0].base64 || '',
+        }]);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      showAlert('Hata', 'Fotoğraf seçilemedi.');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setCustomerPhotos(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async () => {
     if (!validateForm()) {
       showAlert('Eksik Bilgi', 'Lütfen tüm zorunlu alanları doldurun.');
