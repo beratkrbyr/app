@@ -47,6 +47,11 @@ interface TimeSlotInfo {
   available: boolean;
 }
 
+interface CustomerPhoto {
+  uri: string;
+  base64: string;
+}
+
 export default function BookingScreen() {
   const router = useRouter();
   const { serviceId, serviceName, servicePrice } = useLocalSearchParams();
@@ -69,6 +74,10 @@ export default function BookingScreen() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  
+  // Customer photos state
+  const [customerPhotos, setCustomerPhotos] = useState<CustomerPhoto[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   
   // Validation errors
   const [errors, setErrors] = useState<{[key: string]: string}>({});
