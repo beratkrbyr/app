@@ -295,6 +295,59 @@ export default function BookingDetailScreen() {
           </View>
         </View>
 
+        {/* Customer Photos Section */}
+        {booking.customer_photos && booking.customer_photos.length > 0 && (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>
+              <Ionicons name="images" size={20} color="#f59e0b" /> Müşteri Fotoğrafları
+            </Text>
+            <Text style={styles.photoDescription}>
+              Müşterinin randevu sırasında yüklediği alanın fotoğrafları
+            </Text>
+            <View style={styles.photosGrid}>
+              {booking.customer_photos.map((photo, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setSelectedPhoto(`data:image/jpeg;base64,${photo}`)}
+                >
+                  <Image
+                    source={{ uri: `data:image/jpeg;base64,${photo}` }}
+                    style={styles.customerPhotoThumb}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Photo Modal */}
+        <Modal
+          visible={selectedPhoto !== null}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSelectedPhoto(null)}
+        >
+          <TouchableOpacity
+            style={styles.photoModal}
+            activeOpacity={1}
+            onPress={() => setSelectedPhoto(null)}
+          >
+            {selectedPhoto && (
+              <Image
+                source={{ uri: selectedPhoto }}
+                style={styles.fullPhoto}
+                resizeMode="contain"
+              />
+            )}
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={() => setSelectedPhoto(null)}
+            >
+              <Ionicons name="close-circle" size={40} color="#ffffff" />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
+
         {/* Location Tracking */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Konum Takibi</Text>
