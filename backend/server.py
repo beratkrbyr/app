@@ -969,6 +969,16 @@ async def get_admin_availability(year: int, month: int, credentials: HTTPAuthori
     
     return [{**serialize_doc(a), "id": str(a["_id"])} for a in availability_docs]
 
+@api_router.get("/admin/availability/date")
+async def get_availability_by_date(date: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get availability for a specific date"""
+    verify_token(credentials)
+    
+    availability = await db.availability.find_one({"date": date})
+    if availability:
+        return {**serialize_doc(availability), "id": str(availability["_id"])}
+    return {"date": date, "available": False, "time_slots": []}
+
 @api_router.post("/admin/availability")
 async def set_availability(availability: AvailabilityDate, credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Set availability"""
