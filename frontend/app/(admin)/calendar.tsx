@@ -91,17 +91,37 @@ export default function CalendarScreen() {
     }
   };
 
-  const handleDayPress = (day: any) => {
+  const handleDayPress = async (day: any) => {
     setSelectedDate(day.dateString);
-    // Find existing availability for this date
-    const existing = Object.entries(markedDates).find(
-      ([date]) => date === day.dateString
-    );
-    if (existing) {
-      // Load existing slots (you'd need to fetch this from backend)
+    
+    // Backend'den bu tarih için mevcut müsaitlik bilgisini al
+    try {
+      const token = await AsyncStorage.getItem('admin_token');
+      const response = await fetch(
+        `${BACKEND_URL}/api/admin/availability/date?date=${day.dateString}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.time_slots && data.time_slots.length > 0) {
+          setAvailableSlots(data.time_slots);
+        } else {
+          // Yeni bir tarih - tüm slotları varsayılan olarak aç
+          setAvailableSlots(TIME_SLOTS);
+        }
+      } else {
+        // API hatası - tüm slotları varsayılan olarak aç
+        setAvailableSlots(TIME_SLOTS);
+      }
+    } catch (error) {
+      console.error('Error fetching date availability:', error);
+      // Hata durumunda - tüm slotları varsayılan olarak aç
       setAvailableSlots(TIME_SLOTS);
-    } else {
-      setAvailableSlots([]);
     }
   };
 
