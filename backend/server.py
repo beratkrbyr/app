@@ -872,7 +872,14 @@ async def get_admin_bookings(credentials: HTTPAuthorizationCredentials = Depends
     """Get all bookings"""
     verify_token(credentials)
     bookings = await db.bookings.find().sort("created_at", -1).to_list(1000)
-    return [{**serialize_doc(b), "id": str(b["_id"])} for b in bookings]
+    result = []
+    for b in bookings:
+        booking_data = {**serialize_doc(b), "id": str(b["_id"])}
+        # Include customer_photos if present
+        if "customer_photos" in b:
+            booking_data["customer_photos"] = b["customer_photos"]
+        result.append(booking_data)
+    return result
 
 @api_router.put("/admin/bookings/{booking_id}")
 async def update_booking_status(
