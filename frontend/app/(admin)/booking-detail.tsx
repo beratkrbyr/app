@@ -549,4 +549,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9fafb',
   },
   addPhotoText: { fontSize: 12, color: '#2563eb', marginTop: 4, fontWeight: '600' },
+  photoDescription: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 12,
+  },
+  customerPhotoThumb: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#f59e0b',
+  },
+  photoModal: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullPhoto: {
+    width: '90%',
+    height: '80%',
+  },
+  closeModalButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+  },
 });
