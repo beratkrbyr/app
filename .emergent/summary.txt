@@ -1,60 +1,61 @@
-<analysis>**original_problem_statement**: The user, a cleaning company owner, requested a modern, corporate mobile application for customers to book services and for an admin to manage the business. The application is named TİTAN 360.
+<analysis>**original_problem_statement**: The user, a cleaning company owner, requested a modern, corporate mobile application named TİTAN 360. Customers should be able to book services, and an admin should manage the business.
 
 **PRODUCT REQUIREMENTS**:
 1.  **Core Features**:
-    *   **Appointment Booking**: Customers can book appointments via a calendar. A 10% discount is automatically applied for Friday bookings.
+    *   **Appointment Booking**: Customers can book appointments. A 10% discount is automatically applied for Friday bookings.
     *   **Authentication**: Separate customer and admin logins. Users must be logged in to book.
-    *   **Admin Panel**: Manage services (CRUD), prices, dates, and appointments (approve/complete/cancel).
-    *   **Appointment Workflow**: New bookings are pending until admin approval.
+    *   **Admin Panel**: Manage services, prices, dates, and appointments.
+    *   **Customer Photo Upload**: Customers can upload photos of the area to be cleaned when booking.
+    *   **Admin Password Change**: Admins can change their password from the settings panel.
+    *   **Custom Discount Management**: Admins can create and manage custom discounts.
 2.  **Customer-Facing Features**:
-    *   **Saved Address**: Customer address is saved and auto-filled for future bookings.
-    *   **Customer Reviews & Ratings**: Users can leave reviews for services.
-    *   **Loyalty Program**: Customers earn points for completed bookings.
-    *   **Referral System**: Users have a referral code to share.
-    *   **Push Notifications**: Users receive notifications for booking confirmations and can manage notification settings in their profile.
-    *   **Job Tracking**: Users can track the status of their service (En Route, Arrived, Started, Finished) on a dedicated page.
-    *   **Logout & Cancel**: A working Logout button and the ability to cancel their own appointments.
+    *   Saved address, customer reviews, loyalty program, referral system, and push notifications.
+    *   Job tracking with status updates (En Route, Arrived, etc.).
+    *   Logout & appointment cancellation.
 3.  **Admin Panel Features**:
-    *   Enhanced dashboard with detailed analytics (revenue, booking stats).
-    *   Management pages for Customers, Reviews, and Service Packages.
-    *   **Photo-based Job Tracking**: Admins/cleaners can upload before/after photos for each job.
-    *   **Manual Location/Status Updates**: Admins can update the job status, which is then visible to the customer.
+    *   Dashboard with analytics, management pages for customers, reviews, and services.
+    *   Ability to view customer-uploaded photos for a booking.
+    *   Ability to upload before/after photos for each job.
+    *   Manual location/status updates.
 4.  **UI/UX**:
-    *   A custom logo for TİTAN 360 is displayed in the header.
-    *   The calendar is localized to Turkish and shows availability for 30 days. Fridays are marked with an orange dot to indicate a discount.
-    *   The booking form has validation for empty fields.
+    *   Custom TİTAN 360 logo in the header.
+    *   Turkish calendar with a 30-day view and visual indicator for Friday discounts.
 5.  **Removed/Deprioritized**:
-    *   Online payment functionality has been removed; only Cash Payment is supported.
+    *   Online payment is not supported; only Cash Payment.
 
 **User's preferred language**: The user's primary language is **Turkish**. The next agent MUST respond in Turkish.
 
 **what currently exists?**
-A feature-complete full-stack application with a React Native (Expo) frontend and a FastAPI/MongoDB backend. The app supports the full lifecycle of a cleaning service business, from customer booking and tracking to admin management and analytics. All core features listed in the product requirements have been implemented and tested. The project is configured for EAS Build to generate Android APKs.
+A full-stack application with a React Native (Expo) frontend and a FastAPI/MongoDB backend. In the last session, several new features were added based on user requests, including customer photo uploads during booking, admin password changes, and custom discount management. A bug preventing the admin from selecting availability on the calendar was also fixed. The application was tested on the web preview environment. However, the Android APK generated for the user is non-functional due to a configuration error.
 
 **Last working item**:
-The agent guided the user to generate an Android APK file using Expo Application Services (EAS) on the user's local machine. This was a complex process involving extensive user guidance to install Node.js, use the command line, and troubleshoot various errors related to the user's local environment and Expo account. The build was successfully completed, and the agent provided the user with the link to download the generated APK.
+The agent identified the cause of the failing Android application: it was built using a temporary  URL, which is inaccessible from a mobile device. The user provided their permanent deployment URL, and the agent confirmed it was active. The agent was about to modify the project configuration to use this permanent URL and guide the user to build a new, functional APK.
 
--   **Last item agent was working**: Guiding the user to download the successfully built Android APK from the Expo build details page.
--   **Status**: USER VERIFICATION PENDING
+-   **Last item agent was working**: Preparing to re-build the Android APK using the correct permanent backend URL.
+-   **Status**: IN PROGRESS
 -   **Agent Testing Done**: N/A
--   **Which testing method agent to use?**: Manual testing by the user. The user needs to download the APK from the provided URL, install it on their Android device, and confirm that the application runs correctly.
+-   **Which testing method agent to use?**: Manual testing by the user after the new APK is built and installed. The user will need to be guided through the build process on their local machine.
 -   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: APK Installation and Testing (P0)
+-   **Issue 1**: Broken Android APK gives JSON Parse error (P0)
 
 **Issues Detail**:
--   **Issue 1: APK Installation and Testing**
-    -   **Attempted fixes**: An Android APK was successfully built using EAS Build. The user was given the direct URL to the build page for downloading.
+-   **Issue 1: Broken Android APK gives JSON Parse error**
+    -   **Attempted fixes**: An APK was built, but it failed on the user's device. The root cause was identified as the APK being built with a temporary preview URL () instead of the permanent production URL. The correct URL () has been obtained from the user.
     -   **Next debug checklist**:
-        1.  Instruct the user to navigate to the build URL: .
-        2.  Guide them to find the Download button (possibly under the '...' menu).
-        3.  Instruct them on how to transfer the APK to their phone and install it.
-        4.  Ask for confirmation that the app installs and opens without crashing.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is the final step of the development process, delivering the standalone mobile application to the user.
-    -   **Status**: USER VERIFICATION PENDING
+        1.  Determine the correct way to set the backend URL for an EAS build. This is likely by setting an environment variable in  under the  profile. The variable should be .
+        2.  Modify  to include the permanent URL: .
+        3.  Guide the user to run the build command again on their local machine:  followed by An Expo user account is required to proceed.
+
+Log in to EAS with email or username (exit and run eas login --help to see other login options)
+Input is required, but stdin is not readable. Failed to display prompt: Email or username.
+        4.  Guide the user to download and install the newly generated APK.
+        5.  Ask the user to confirm that the app opens and functions correctly without the JSON Parse error.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is the final delivery step. The application is currently unusable on a mobile device, and fixing this will provide the user with a working app.
+    -   **Status**: IN PROGRESS
     -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: Frontend (via APK).
+    -   **Should Test frontend/backend/both after fix?**: Frontend (the final APK on a device).
     -   **Blocked on other issue**: None.
 
 **In progress Task List**:
@@ -62,114 +63,90 @@ The agent guided the user to generate an Android APK file using Expo Application
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks**:
-    -   **(P1) WhatsApp Notifications**: Implement WhatsApp integration for notifications as an alternative to push notifications.
-    -   **(P2) Upload to Google Play Store**: Once the APK is verified, guide the user through the process of publishing the app on the Google Play Store.
+    -   **(P0) iOS APK Generation**: The user has expressed a desire to have an iOS version of the app.
+    -   **(P1) Upload to Google Play Store**: Once the Android APK is verified, guide the user through publishing it.
+    -   **(P2) WhatsApp Notifications**: Implement WhatsApp integration for notifications.
 -   **Future Tasks**:
-    -   **(P2) Live GPS Location Tracking**: Enhance the current manual status update system with real-time GPS tracking of the cleaning staff.
-    -   **(P3) Add Exterior Cleaning Service**: Add a new service category to the application.
-    -   **(P3) Refactor **: Break down the monolithic  file into a modular structure using FastAPI's  for better maintainability.
+    -   **(P2) Live GPS Location Tracking**: Enhance the job tracking with real-time GPS of the cleaning staff.
+    -   **(P3) Add Exterior Cleaning Service**: Add a new service category.
+    -   **(P3) Refactor **: Break down the monolithic  into a modular structure using FastAPI's .
 
 **Completed work in this session**
--   **Final Feature Delivery (APK Build)**: Successfully guided the user through the complex process of building an Android APK, including local environment setup and troubleshooting.
--   **Bug Fixes**:
-    -   Resolved a critical infinite loop on the profile page by refactoring location tracking logic into a separate page, fixing app crashes on mobile.
-    -   Fixed the non-functional Delete button in the admin's service management panel.
--   **Feature Implementation & Integration**:
-    -   **Push Notifications**: Fully integrated push notifications for booking confirmations.
-    -   **Photo & Location Tracking**: Implemented admin-side photo uploading and manual job status updates, with a corresponding customer-facing tracking page.
-    -   **Logo Integration**: Generated and integrated the TİTAN 360 company logo into the app's header.
-    -   **Friday Discount UI**: Made the existing Friday discount more visible by adding a visual indicator to the calendar.
--   **End-to-End Testing**: Used the testing agent to verify all major features, including address saving, payment flow, professional features (reviews, loyalty), and admin functions.
--   **Code Management**: Guided the user to successfully commit and push the entire codebase to their GitHub repository.
+-   **Feature: Customer Photo Upload**: Customers can now upload photos when creating a booking. The photos are viewable by the admin. (, ).
+-   **Feature: Admin Password Change**: Added a password change form for the admin in their settings panel. (, ).
+-   **Feature: Custom Discount Management**: Implemented a UI for the admin to add and manage custom discounts. ().
+-   **Bug Fix: Admin Calendar Unavailability**: Fixed a bug where the admin calendar would not show available time slots for booking on the web preview. ().
+-   **Bug Fix: Admin Settings UI**: Resolved a rendering issue where the Custom Discounts section was not visible.
+-   **End-to-End Testing**: Used the testing agent to successfully verify all new features on the web preview environment.
 
 **Earlier issues found/mentioned but not fixed**
--   The task to implement **WhatsApp notifications** was mentioned in the previous handoff and is still pending.
+-   The task to implement **WhatsApp notifications** remains pending.
 
 **Known issue recurrence from previous fork**
 -   **Issue recurrence in previous fork**: Unresponsive UI components on the web due to platform-specific API usage (e.g., ).
--   **Recurrence count**: 1 in this session (Admin delete button).
--   **Status**: RESOLVED by implementing platform checks (). The agent should remain mindful of this pattern.
+-   **Recurrence count**: 1 in this session (Admin calendar bug).
+-   **Status**: RESOLVED by implementing a platform check (). The agent must remain vigilant for this pattern.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: React Native, Expo, Expo Router, React Context
+-   **Frontend**: React Native, Expo, Expo Router
 -   **Backend**: FastAPI, Python, MongoDB ()
 -   **Builds**: Expo Application Services (EAS) CLI (An Expo user account is required to proceed.
 
 Log in to EAS with email or username (exit and run eas login --help to see other login options)
 Input is required, but stdin is not readable. Failed to display prompt: Email or username)
--   **Integrations**: , 
--   **Platform-Specific Logic**: Using  to handle differences between web and mobile.
+-   **Build Configuration**: Using  to configure environment variables for different build profiles (, ).
 
 **key DB schema**
--   : 
--   : 
--   : 
--   : 
--   :  (Implicitly updated)
+-   :  (Added)
+-   :  (Password is hashed)
+-   :  (New, managed via Admin settings)
 
 **changes in tech stack**
--   Project is now configured for and built with **EAS Build**.
--    and  were integrated.
+-   None.
 
 **All files of reference**
--   : Refactored to remove performance-killing infinite loops and link to the new tracking page.
--   : **New file** for viewing job status.
--   : **New file** for admin to manage a specific job (photos/status).
--   : Modified to fix the web Delete button.
--   : Modified to include the header logo.
--   : **New file** for EAS configuration.
--   : Modified with  and  for EAS.
+-   : **Crucial file** that needs to be edited to fix the APK build.
+-   : Modified to add photo upload functionality.
+-   : Modified to add password change and custom discount features.
+-   : Modified to fix the availability selection bug.
+-   : Modified to display customer-uploaded photos.
+-   : Modified to add ,  endpoints and update the  endpoint to handle photos.
 
 **Areas that need refactoring**:
--   The  file remains a large monolith and is the top candidate for refactoring into smaller, routed modules.
+-    is a large monolith and a prime candidate for refactoring into smaller, routed modules for better maintainability.
 
 **key api endpoints**
--   : To update job status.
--   : To upload job photos.
--   : To delete a service.
+-   : (New) Allows admin to change their password.
+-   : (New) Fetches available slots for a given date.
+-   : (Updated) Now accepts an optional  array of strings.
+-   : (Updated) The response for individual bookings now includes .
 
 **Critical Info for New Agent**
--   **User Proficiency**: The user is not a developer. All instructions for local development or command-line tasks must be extremely simple, clear, and step-by-step. Assume no prior knowledge.
--   **APK Status**: The Android APK is successfully built. The immediate next step is to guide the user to download and test it. Do not start new features until the user confirms the APK works.
--   **Expo Account**: The user has had trouble with their Expo account credentials. Be prepared for potential login issues if further EAS services are needed. The correct username is .
+-   **User Proficiency**: The user is not a developer. All command-line instructions must be extremely clear, simple, and copy-paste friendly. The user builds the app on their own local machine.
+-   **APK Status**: The current APK installed by the user is **broken**. The immediate and only priority is to guide the user to build a new, working APK using their permanent deployment URL. Do not start any new feature development until the user confirms the new APK works.
+-   **URLs**: The temporary preview URL causes errors in the mobile build. The permanent production URL is  and must be embedded in the next build.
 
 **documents and test reports created in this job**
--    (updated multiple times)
 -   
--   
--   
+-    (updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **HATA VERMİŞ GÖRMÜYON MU**: User pointed out an error in the terminal output, confusing an optional emulator error with a build failure. (Agent clarified the APK was ready).
-2.  **NERDE DOWLAND**: User couldn't find the download button on the Expo build page. (Agent provided guidance).
-3.  **? (Image of successful build)**: User shared a screenshot showing the build was finished. (Agent confirmed success).
-4.  **? (Image of Git error)**: User encountered a Git error while trying to build. (Agent provided a workaround).
-5.  **kodlar hatalı**: User reported an error after installing Node.js. (Agent diagnosed that 
-up to date, audited 1021 packages in 40s
-
-186 packages are looking for funding
-  run `npm fund` for details
-
-37 vulnerabilities (1 low, 3 moderate, 33 high)
-
-To address issues that do not require attention, run:
-  npm audit fix
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details. was needed).
-6.  **olmuyor ben bitirmek istiyorum yeter artık**: User expressed frustration with the APK build process. (Agent reassured them and offered a path forward).
-7.  **şifre yanlış diyor**: User reported their Expo password was incorrect in the terminal. (Agent suggested SSO login or an access token).
-8.  **ŞİMDİ APK YÜKLEYELİM**: User requested to build the APK. (Agent started the process).
-9.  **ÜSTTEKİ LOGO OLSUN**: User chose which of the generated logos to use. (Agent implemented it).
-10. **CUMA GÜNÜ SEÇİLİNE İNDİRİM KENDİ YAPSIN**: User requested an automatic discount for Friday bookings. (Agent confirmed this feature already exists and improved its visibility).
+1.  **Hata verdi / (Image of error)**: User reported the JSON Parse error after installing the APK.
+2.  **Kendi sunucumu alayım / benim sunucum var zaten sizin uygulamamda**: User was confused about preview vs. deployed servers.
+3.  **https://service-pro-27.emergent.host/**: User provided their permanent deployment URL.
+4.  **Deploy etmiştim / Sen göremiyorsun**: User stated they had already deployed the app but forgot the URL, and correctly noted the agent cannot see their dashboard.
+5.  **tamam şimdi indirelim apkyı**: User requested to download the APK after the latest web-based fixes were done.
+6.  **2**: User chose to build a new, updated APK rather than download the old, outdated one.
+7.  **(Image of Run this command inside a project directory error)**: User encountered a CLI error.
+8.  **(Image of git error during build)**: User encountered another CLI error.
+9.  **(Image of successful build start)**: User confirmed the build process had started.
+10. **indirdim**: User confirmed they downloaded the generated APK, before reporting that it failed.
 
 **Project Health Check:**
--   **Broken**: None. An app-crashing bug on mobile was identified and fixed during the session.
+-   **Broken**: The user-installed Android APK is non-functional due to an incorrect backend URL configuration during the build process.
 -   **Mocked**: None.
 
 **3rd Party Integrations**
@@ -179,7 +156,7 @@ Run `npm audit` for details. was needed).
 -   Expo Application Services (EAS)
 
 **Testing status**
--   **Testing agent used after significant changes**: YES. Multiple times to verify bug fixes and new features.
+-   **Testing agent used after significant changes**: YES, for web preview features.
 -   **Troubleshoot agent used after agent stuck in loop**: NO.
 -   **Test files created**: None.
 -   **Known regressions**: None.
@@ -192,5 +169,4 @@ Run `npm audit` for details. was needed).
 -   **Customer**: Create via the app's registration page.
 
 **What agent forgot to execute**
--   The implementation of **WhatsApp Notifications** remains an unstarted task from the product backlog.
--   The refactoring of  has not been addressed.</analysis>
+-   The agent correctly identified the problem (wrong URL in APK build) and the solution (use the permanent URL). However, the session ended just before the critical step of modifying  to implement this solution. The next agent must start here.</analysis>
