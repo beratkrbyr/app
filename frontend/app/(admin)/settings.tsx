@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -17,11 +18,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
+interface CustomDiscount {
+  id?: string;
+  name: string;
+  percentage: string;
+  active: boolean;
+}
+
 export default function SettingsScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [fridayDiscount, setFridayDiscount] = useState('10');
+  
+  // Custom discounts state
+  const [customDiscounts, setCustomDiscounts] = useState<CustomDiscount[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newDiscountName, setNewDiscountName] = useState('');
+  const [newDiscountPercentage, setNewDiscountPercentage] = useState('');
+  const [savingDiscount, setSavingDiscount] = useState(false);
   
   // Password change state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -64,6 +79,19 @@ export default function SettingsScreen() {
         );
         if (fridaySetting) {
           setFridayDiscount(fridaySetting.value);
+        }
+        
+        // Load custom discounts
+        const discountsSetting = data.find(
+          (s: any) => s.key === 'custom_discounts'
+        );
+        if (discountsSetting && discountsSetting.value) {
+          try {
+            const discounts = JSON.parse(discountsSetting.value);
+            setCustomDiscounts(discounts);
+          } catch (e) {
+            console.error('Error parsing custom discounts:', e);
+          }
         }
       } else if (response.status === 401) {
         await AsyncStorage.removeItem('admin_token');
@@ -111,6 +139,112 @@ export default function SettingsScreen() {
       showAlert('Hata', 'Ayarlar kaydedilemedi.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAddDiscount = async () => {
+    if (!newDiscountName.trim()) {
+      showAlert('Hata', 'İndirim adı girin.');
+      return;
+    }
+    
+    if (!newDiscountPercentage.trim()) {
+      showAlert('Hata', 'İndirim oranı girin.');
+      return;
+    }
+
+    const percentage = parseFloat(newDiscountPercentage);
+    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+      showAlert('Hata', 'Lütfen 0-100 arasında bir değer girin.');
+      return;
+    }
+
+    setSavingDiscount(true);
+    try {
+      const newDiscount: CustomDiscount = {
+        id: Date.now().toString(),
+        name: newDiscountName,
+        percentage: newDiscountPercentage,
+        active: true,
+      };
+      
+      const updatedDiscounts = [...customDiscounts, newDiscount];
+      
+      const token = await AsyncStorage.getItem('admin_token');
+      const response = await fetch(`${BACKEND_URL}/api/admin/settings`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: 'custom_discounts',
+          value: JSON.stringify(updatedDiscounts),
+        }),
+      });
+
+      if (response.ok) {
+        setCustomDiscounts(updatedDiscounts);
+        setShowAddModal(false);
+        setNewDiscountName('');
+        setNewDiscountPercentage('');
+        showAlert('Başarılı', 'İndirim eklendi.');
+      }
+    } catch (error) {
+      console.error('Error adding discount:', error);
+      showAlert('Hata', 'İndirim eklenemedi.');
+    } finally {
+      setSavingDiscount(false);
+    }
+  };
+
+  const toggleDiscountActive = async (id: string) => {
+    const updatedDiscounts = customDiscounts.map(d => 
+      d.id === id ? { ...d, active: !d.active } : d
+    );
+    
+    try {
+      const token = await AsyncStorage.getItem('admin_token');
+      await fetch(`${BACKEND_URL}/api/admin/settings`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: 'custom_discounts',
+          value: JSON.stringify(updatedDiscounts),
+        }),
+      });
+      
+      setCustomDiscounts(updatedDiscounts);
+    } catch (error) {
+      console.error('Error toggling discount:', error);
+    }
+  };
+
+  const deleteDiscount = async (id: string) => {
+    const updatedDiscounts = customDiscounts.filter(d => d.id !== id);
+    
+    try {
+      const token = await AsyncStorage.getItem('admin_token');
+      await fetch(`${BACKEND_URL}/api/admin/settings`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: 'custom_discounts',
+          value: JSON.stringify(updatedDiscounts),
+        }),
+      });
+      
+      setCustomDiscounts(updatedDiscounts);
+      showAlert('Başarılı', 'İndirim silindi.');
+    } catch (error) {
+      console.error('Error deleting discount:', error);
+      showAlert('Hata', 'İndirim silinemedi.');
     }
   };
 
@@ -201,25 +335,89 @@ export default function SettingsScreen() {
               Cuma günleri tüm hizmetlerde uygulanacak indirim oranı
             </Text>
           </View>
+
+          <TouchableOpacity
+            style={[styles.saveButton, saving && styles.saveButtonDisabled, { marginTop: 12 }]}
+            onPress={handleSave}
+            disabled={saving}
+          >
+            {saving ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <>
+                <Ionicons name="save" size={20} color="#ffffff" />
+                <Text style={styles.saveButtonText}>Kaydet</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={[styles.saveButton, saving && styles.saveButtonDisabled]}
-          onPress={handleSave}
-          disabled={saving}
-        >
-          {saving ? (
-            <ActivityIndicator color="#ffffff" />
+        {/* Custom Discounts Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Özel İndirimler</Text>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => setShowAddModal(true)}
+            >
+              <Ionicons name="add-circle" size={24} color="#2563eb" />
+              <Text style={styles.addButtonText}>Yeni Ekle</Text>
+            </TouchableOpacity>
+          </View>
+
+          {customDiscounts.length === 0 ? (
+            <View style={styles.emptyCard}>
+              <Ionicons name="pricetags-outline" size={48} color="#9ca3af" />
+              <Text style={styles.emptyText}>Henüz özel indirim eklenmemiş</Text>
+              <Text style={styles.emptySubtext}>
+                Yeni Ekle butonuna tıklayarak indirim ekleyebilirsiniz
+              </Text>
+            </View>
           ) : (
-            <>
-              <Ionicons name="save" size={24} color="#ffffff" />
-              <Text style={styles.saveButtonText}>İndirim Ayarlarını Kaydet</Text>
-            </>
+            customDiscounts.map((discount) => (
+              <View key={discount.id} style={styles.discountCard}>
+                <View style={styles.discountInfo}>
+                  <View style={styles.discountHeader}>
+                    <Text style={styles.discountName}>{discount.name}</Text>
+                    <View style={[
+                      styles.statusBadge,
+                      { backgroundColor: discount.active ? '#dcfce7' : '#fee2e2' }
+                    ]}>
+                      <Text style={[
+                        styles.statusText,
+                        { color: discount.active ? '#16a34a' : '#dc2626' }
+                      ]}>
+                        {discount.active ? 'Aktif' : 'Pasif'}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.discountPercentage}>%{discount.percentage} indirim</Text>
+                </View>
+                <View style={styles.discountActions}>
+                  <TouchableOpacity
+                    style={[styles.actionButton, { backgroundColor: discount.active ? '#fef3c7' : '#dcfce7' }]}
+                    onPress={() => toggleDiscountActive(discount.id!)}
+                  >
+                    <Ionicons
+                      name={discount.active ? 'pause' : 'play'}
+                      size={18}
+                      color={discount.active ? '#d97706' : '#16a34a'}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionButton, { backgroundColor: '#fee2e2' }]}
+                    onPress={() => deleteDiscount(discount.id!)}
+                  >
+                    <Ionicons name="trash" size={18} color="#dc2626" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
           )}
-        </TouchableOpacity>
+        </View>
 
         {/* Password Change Section */}
-        <View style={[styles.section, { marginTop: 32 }]}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Şifre Değiştir</Text>
 
           <View style={styles.settingCard}>
@@ -283,22 +481,22 @@ export default function SettingsScreen() {
               Yönetici hesabının şifresini değiştirin
             </Text>
           </View>
-        </View>
 
-        <TouchableOpacity
-          style={[styles.passwordButton, changingPassword && styles.saveButtonDisabled]}
-          onPress={handleChangePassword}
-          disabled={changingPassword}
-        >
-          {changingPassword ? (
-            <ActivityIndicator color="#ffffff" />
-          ) : (
-            <>
-              <Ionicons name="key" size={24} color="#ffffff" />
-              <Text style={styles.saveButtonText}>Şifreyi Değiştir</Text>
-            </>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.passwordButton, changingPassword && styles.saveButtonDisabled, { marginTop: 12 }]}
+            onPress={handleChangePassword}
+            disabled={changingPassword}
+          >
+            {changingPassword ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <>
+                <Ionicons name="key" size={20} color="#ffffff" />
+                <Text style={styles.saveButtonText}>Şifreyi Değiştir</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.infoCard}>
           <Ionicons name="information-circle" size={24} color="#2563eb" />
@@ -307,6 +505,66 @@ export default function SettingsScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      {/* Add Discount Modal */}
+      <Modal
+        visible={showAddModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowAddModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Yeni İndirim Ekle</Text>
+              <TouchableOpacity onPress={() => setShowAddModal(false)}>
+                <Ionicons name="close" size={24} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalBody}>
+              <Text style={styles.inputLabel}>İndirim Adı</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={newDiscountName}
+                onChangeText={setNewDiscountName}
+                placeholder="Örn: Yeni Müşteri İndirimi"
+                placeholderTextColor="#9ca3af"
+              />
+
+              <Text style={[styles.inputLabel, { marginTop: 16 }]}>İndirim Oranı (%)</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={newDiscountPercentage}
+                onChangeText={setNewDiscountPercentage}
+                keyboardType="decimal-pad"
+                placeholder="Örn: 15"
+                placeholderTextColor="#9ca3af"
+              />
+            </View>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setShowAddModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>İptal</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.confirmButton, savingDiscount && styles.saveButtonDisabled]}
+                onPress={handleAddDiscount}
+                disabled={savingDiscount}
+              >
+                {savingDiscount ? (
+                  <ActivityIndicator color="#ffffff" size="small" />
+                ) : (
+                  <Text style={styles.confirmButtonText}>Ekle</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -326,6 +584,12 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   section: {
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
   sectionTitle: {
@@ -333,6 +597,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#111827',
     marginBottom: 16,
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  addButtonText: {
+    color: '#2563eb',
+    fontSize: 14,
+    fontWeight: '600',
   },
   settingCard: {
     backgroundColor: '#ffffff',
@@ -395,7 +669,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: 'row',
     gap: 12,
-    marginTop: 24,
+    marginTop: 8,
   },
   infoText: {
     flex: 1,
@@ -408,25 +682,174 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
-    gap: 12,
+    gap: 8,
   },
   passwordButton: {
     backgroundColor: '#ef4444',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
-    gap: 12,
+    gap: 8,
   },
   saveButtonDisabled: {
     opacity: 0.6,
   },
   saveButtonText: {
     color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  emptyCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 32,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderStyle: 'dashed',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#6b7280',
+    marginTop: 12,
+    fontWeight: '500',
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#9ca3af',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  discountCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  discountInfo: {
+    flex: 1,
+  },
+  discountHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  discountName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  discountPercentage: {
+    fontSize: 14,
+    color: '#10b981',
+    fontWeight: '500',
+  },
+  discountActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    width: '100%',
+    maxWidth: 400,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  modalTitle: {
     fontSize: 18,
     fontWeight: '600',
+    color: '#111827',
+  },
+  modalBody: {
+    padding: 20,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  modalInput: {
+    backgroundColor: '#f9fafb',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: '#111827',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  cancelButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  cancelButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#6b7280',
+  },
+  confirmButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#2563eb',
+  },
+  confirmButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#ffffff',
   },
 });
