@@ -20,8 +20,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useCustomer } from '../../contexts/CustomerContext';
 import { useNotification } from '../../contexts/NotificationContext';
-
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+import { BACKEND_URL } from '../../config';
 
 interface Booking {
   id: string;
