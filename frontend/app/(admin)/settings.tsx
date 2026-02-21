@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -21,10 +22,26 @@ export default function SettingsScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [fridayDiscount, setFridayDiscount] = useState('10');
+  
+  // Password change state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   useEffect(() => {
     fetchSettings();
   }, []);
+
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
 
   const fetchSettings = async () => {
     try {
@@ -61,13 +78,13 @@ export default function SettingsScreen() {
 
   const handleSave = async () => {
     if (!fridayDiscount.trim()) {
-      Alert.alert('Hata', 'Lütfen bir değer girin.');
+      showAlert('Hata', 'Lütfen bir değer girin.');
       return;
     }
 
     const discount = parseFloat(fridayDiscount);
     if (isNaN(discount) || discount < 0 || discount > 100) {
-      Alert.alert('Hata', 'Lütfen 0-100 arasında bir değer girin.');
+      showAlert('Hata', 'Lütfen 0-100 arasında bir değer girin.');
       return;
     }
 
@@ -87,13 +104,66 @@ export default function SettingsScreen() {
       });
 
       if (response.ok) {
-        Alert.alert('Başarılı', 'Ayarlar kaydedildi.');
+        showAlert('Başarılı', 'Ayarlar kaydedildi.');
       }
     } catch (error) {
       console.error('Error saving settings:', error);
-      Alert.alert('Hata', 'Ayarlar kaydedilemedi.');
+      showAlert('Hata', 'Ayarlar kaydedilemedi.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!currentPassword.trim()) {
+      showAlert('Hata', 'Mevcut şifrenizi girin.');
+      return;
+    }
+
+    if (!newPassword.trim()) {
+      showAlert('Hata', 'Yeni şifrenizi girin.');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      showAlert('Hata', 'Yeni şifre en az 6 karakter olmalıdır.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      showAlert('Hata', 'Yeni şifreler eşleşmiyor.');
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const token = await AsyncStorage.getItem('admin_token');
+      const response = await fetch(`${BACKEND_URL}/api/admin/change-password`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
+      });
+
+      if (response.ok) {
+        showAlert('Başarılı', 'Şifreniz başarıyla değiştirildi.');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        const error = await response.json();
+        showAlert('Hata', error.detail || 'Şifre değiştirilemedi.');
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      showAlert('Hata', 'Şifre değiştirilemedi.');
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -110,6 +180,7 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Discount Settings Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>İndirim Ayarları</Text>
 
@@ -132,13 +203,6 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <View style={styles.infoCard}>
-          <Ionicons name="information-circle" size={24} color="#2563eb" />
-          <Text style={styles.infoText}>
-            Diğer indirim türlerini gelecekte ekleyebilirsiniz.
-          </Text>
-        </View>
-
         <TouchableOpacity
           style={[styles.saveButton, saving && styles.saveButtonDisabled]}
           onPress={handleSave}
@@ -149,10 +213,99 @@ export default function SettingsScreen() {
           ) : (
             <>
               <Ionicons name="save" size={24} color="#ffffff" />
-              <Text style={styles.saveButtonText}>Değişiklikleri Kaydet</Text>
+              <Text style={styles.saveButtonText}>İndirim Ayarlarını Kaydet</Text>
             </>
           )}
         </TouchableOpacity>
+
+        {/* Password Change Section */}
+        <View style={[styles.section, { marginTop: 32 }]}>
+          <Text style={styles.sectionTitle}>Şifre Değiştir</Text>
+
+          <View style={styles.settingCard}>
+            <View style={styles.settingHeader}>
+              <Ionicons name="lock-closed" size={24} color="#ef4444" />
+              <Text style={styles.settingLabel}>Admin Şifresi</Text>
+            </View>
+
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                secureTextEntry={!showCurrentPassword}
+                placeholder="Mevcut Şifre"
+                placeholderTextColor="#9ca3af"
+              />
+              <TouchableOpacity
+                onPress={() => setShowCurrentPassword(!showCurrentPassword)}
+                style={styles.eyeButton}
+              >
+                <Ionicons
+                  name={showCurrentPassword ? 'eye-off' : 'eye'}
+                  size={20}
+                  color="#6b7280"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                value={newPassword}
+                onChangeText={setNewPassword}
+                secureTextEntry={!showNewPassword}
+                placeholder="Yeni Şifre (en az 6 karakter)"
+                placeholderTextColor="#9ca3af"
+              />
+              <TouchableOpacity
+                onPress={() => setShowNewPassword(!showNewPassword)}
+                style={styles.eyeButton}
+              >
+                <Ionicons
+                  name={showNewPassword ? 'eye-off' : 'eye'}
+                  size={20}
+                  color="#6b7280"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <TextInput
+              style={[styles.input, { marginTop: 8 }]}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              placeholder="Yeni Şifre (Tekrar)"
+              placeholderTextColor="#9ca3af"
+            />
+
+            <Text style={styles.settingDescription}>
+              Yönetici hesabının şifresini değiştirin
+            </Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.passwordButton, changingPassword && styles.saveButtonDisabled]}
+          onPress={handleChangePassword}
+          disabled={changingPassword}
+        >
+          {changingPassword ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <>
+              <Ionicons name="key" size={24} color="#ffffff" />
+              <Text style={styles.saveButtonText}>Şifreyi Değiştir</Text>
+            </>
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.infoCard}>
+          <Ionicons name="information-circle" size={24} color="#2563eb" />
+          <Text style={styles.infoText}>
+            Şifrenizi değiştirdikten sonra yeni şifrenizle giriş yapmanız gerekecektir.
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -170,9 +323,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
+    paddingBottom: 40,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 20,
@@ -207,15 +361,33 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
     borderRadius: 8,
     padding: 12,
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 16,
     color: '#111827',
     marginBottom: 8,
+  },
+  passwordInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9fafb',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+    fontSize: 16,
+    color: '#111827',
+  },
+  eyeButton: {
+    padding: 12,
   },
   settingDescription: {
     fontSize: 14,
     color: '#6b7280',
     lineHeight: 20,
+    marginTop: 8,
   },
   infoCard: {
     backgroundColor: '#eff6ff',
@@ -223,7 +395,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 24,
+    marginTop: 24,
   },
   infoText: {
     flex: 1,
@@ -233,6 +405,15 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#2563eb',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+  },
+  passwordButton: {
+    backgroundColor: '#ef4444',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
