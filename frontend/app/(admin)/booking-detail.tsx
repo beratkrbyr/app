@@ -10,6 +10,7 @@ import {
   Alert,
   Platform,
   TextInput,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -29,6 +30,7 @@ interface Booking {
   booking_time: string;
   total_price: number;
   status: string;
+  customer_photos?: string[];
 }
 
 interface WorkPhoto {
@@ -54,6 +56,7 @@ export default function BookingDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [updatingLocation, setUpdatingLocation] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   useEffect(() => {
     if (bookingId) {
