@@ -995,6 +995,35 @@ async def update_setting(setting: SettingUpdate, credentials: HTTPAuthorizationC
     
     return {"message": "Ayar güncellendi"}
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+@api_router.put("/admin/change-password")
+async def change_admin_password(request: ChangePasswordRequest, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Change admin password"""
+    verify_token(credentials)
+    
+    # Get current admin
+    admin = await db.admins.find_one({"username": "admin"})
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin bulunamadı")
+    
+    # Verify current password
+    if not bcrypt.checkpw(request.current_password.encode('utf-8'), admin["password"].encode('utf-8')):
+        raise HTTPException(status_code=400, detail="Mevcut şifre yanlış")
+    
+    # Hash new password
+    new_hashed = bcrypt.hashpw(request.new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Update password
+    await db.admins.update_one(
+        {"username": "admin"},
+        {"$set": {"password": new_hashed}}
+    )
+    
+    return {"message": "Şifre başarıyla değiştirildi"}
+
 @api_router.get("/admin/stats")
 async def get_stats(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Get dashboard statistics"""
