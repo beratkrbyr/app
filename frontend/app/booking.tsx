@@ -292,6 +292,7 @@ export default function BookingScreen() {
         booking_date: selectedDate,
         booking_time: selectedTime,
         payment_method: 'cash', // Sadece nakit ödeme
+        customer_photos: customerPhotos.map(p => p.base64), // Müşteri fotoğrafları
       };
 
       const response = await fetch(`${BACKEND_URL}/api/bookings`, {
