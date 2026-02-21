@@ -1,7 +1,39 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import { useCustomer } from '../../contexts/CustomerContext';
+import { View, ActivityIndicator } from 'react-native';
 
 export default function TabLayout() {
+  const router = useRouter();
+  const { isAuthenticated, loading } = useCustomer();
+  const [redirecting, setRedirecting] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated && !redirecting) {
+      setRedirecting(true);
+      router.replace('/customer-login');
+    }
+  }, [isAuthenticated, loading, redirecting]);
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f9fafb' }}>
+        <ActivityIndicator size="large" color="#2563eb" />
+      </View>
+    );
+  }
+
+  // If not authenticated, show loading while redirecting
+  if (!isAuthenticated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f9fafb' }}>
+        <ActivityIndicator size="large" color="#2563eb" />
+      </View>
+    );
+  }
+
   return (
     <Tabs
       screenOptions={{
