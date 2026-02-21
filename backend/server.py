@@ -80,6 +80,7 @@ class BookingCreate(BaseModel):
     booking_time: str
     payment_method: str
     package_id: Optional[str] = None  # For package bookings
+    customer_photos: Optional[List[str]] = []  # Base64 encoded photos from customer
 
 class BookingResponse(BaseModel):
     id: str
@@ -95,6 +96,7 @@ class BookingResponse(BaseModel):
     payment_method: str
     status: str
     created_at: str
+    customer_photos: Optional[List[str]] = []
 
 # Review Models
 class ReviewCreate(BaseModel):
