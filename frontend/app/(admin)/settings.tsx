@@ -354,8 +354,8 @@ export default function SettingsScreen() {
 
         {/* Custom Discounts Section */}
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Özel İndirimler</Text>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitleNoMargin}>Özel İndirimler</Text>
             <TouchableOpacity
               style={styles.addButton}
               onPress={() => setShowAddModal(true)}
