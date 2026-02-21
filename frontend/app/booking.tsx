@@ -594,6 +594,43 @@ export default function BookingScreen() {
             )}
           </View>
 
+          {/* Customer Photos Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Temizlenecek Alan Fotoğrafları</Text>
+            <Text style={styles.photoDescription}>
+              Temizletmek istediğiniz alanın fotoğrafını ekleyin (isteğe bağlı, en fazla 3 adet)
+            </Text>
+            <View style={styles.photosGrid}>
+              {customerPhotos.map((photo, index) => (
+                <View key={index} style={styles.photoContainer}>
+                  <Image source={{ uri: photo.uri }} style={styles.photoPreview} />
+                  <TouchableOpacity
+                    style={styles.removePhotoButton}
+                    onPress={() => removePhoto(index)}
+                  >
+                    <Ionicons name="close-circle" size={24} color="#ef4444" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+              {customerPhotos.length < 3 && (
+                <TouchableOpacity
+                  style={styles.addPhotoButton}
+                  onPress={pickPhoto}
+                  disabled={uploadingPhoto}
+                >
+                  {uploadingPhoto ? (
+                    <ActivityIndicator color="#2563eb" />
+                  ) : (
+                    <>
+                      <Ionicons name="camera" size={32} color="#2563eb" />
+                      <Text style={styles.addPhotoText}>Fotoğraf Ekle</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
           {/* Payment Info */}
           <View style={styles.paymentInfo}>
             <Ionicons name="cash-outline" size={24} color="#10b981" />
