@@ -592,6 +592,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  sectionTitleNoMargin: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#111827',
+  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
