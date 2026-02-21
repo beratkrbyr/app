@@ -200,13 +200,21 @@ class TestBookingWithPhotos:
     
     def test_booking_creation_with_photos(self, service_id, available_date_time):
         """Test creating booking with customer photos"""
+        # First ensure customer is registered
+        test_phone = "5558888888"
+        requests.post(f"{BASE_URL}/api/customers/register", json={
+            "name": "Photo Test Customer",
+            "phone": test_phone,
+            "address": "Test Address 456"
+        })
+        
         # Small test image in base64 (1x1 pixel PNG)
         test_photo_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
         
         booking_data = {
             "service_id": service_id,
             "customer_name": "Photo Test Customer",
-            "customer_phone": "5558888888",
+            "customer_phone": test_phone,
             "customer_address": "Test Address 456",
             "booking_date": available_date_time["date"],
             "booking_time": available_date_time["time"],
