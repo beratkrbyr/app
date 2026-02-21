@@ -31,7 +31,7 @@ LocaleConfig.locales['tr'] = {
 };
 LocaleConfig.defaultLocale = 'tr';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+import { BACKEND_URL } from '../../config';
 
 interface TimeSlotInfo {
   time: string;
