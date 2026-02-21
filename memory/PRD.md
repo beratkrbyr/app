@@ -12,7 +12,7 @@ TİTAN 360 - Temizlik şirketi müşterileri için profesyonel randevu rezervasy
 - [x] Çıkış yapma
 - [x] Hizmet listesi görüntüleme
 - [x] Randevu oluşturma (tarih ve saat seçimi)
-- [x] **Randevu sırasında fotoğraf yükleme** - Temizlenecek alanın fotoğrafını ekleyebilir (3 adet max)
+- [x] **Randevu sırasında fotoğraf yükleme** - Temizlenecek alanın fotoğrafını ekleyebilir (max 3 adet)
 - [x] Türkçe takvim desteği
 - [x] 30 günlük müsait tarih görüntüleme
 - [x] Dolu saatlerin görüntülenmesi
@@ -29,6 +29,7 @@ TİTAN 360 - Temizlik şirketi müşterileri için profesyonel randevu rezervasy
 ### Admin Paneli
 - [x] Admin girişi (admin/admin123)
 - [x] **Şifre Değiştirme** - Ayarlar sayfasında admin şifresi değiştirebilir
+- [x] **Özel İndirimler** - Yeni indirim ekleme, aktif/pasif yapma, silme
 - [x] **Dashboard** - Gelişmiş istatistikler
   - Toplam gelir
   - Randevu sayıları (bekleyen, onaylı, tamamlanan)
@@ -40,8 +41,8 @@ TİTAN 360 - Temizlik şirketi müşterileri için profesyonel randevu rezervasy
 - [x] **Müşteri Yönetimi** - Müşteri listesi, puan bakiyesi, referans kodları
 - [x] **Değerlendirme Yönetimi** - Yorumlar ve puanlama istatistikleri
 - [x] **Paket Yönetimi** - Haftalık/aylık paket oluşturma
-- [x] **Takvim Yönetimi** - Müsaitlik ayarlama
-- [x] **Ayarlar** - İndirim oranları ve şifre değiştirme
+- [x] **Takvim Yönetimi** - Müsaitlik ayarlama (tarih seçimi + saat seçimi düzeltildi)
+- [x] **Ayarlar** - İndirim oranları, özel indirimler ve şifre değiştirme
 
 ## API Endpoints
 
@@ -79,7 +80,8 @@ TİTAN 360 - Temizlik şirketi müşterileri için profesyonel randevu rezervasy
 - GET/POST /api/admin/packages
 - CRUD /api/admin/services
 - CRUD /api/admin/bookings
-- CRUD /api/admin/availability
+- GET/POST /api/admin/availability
+- **GET /api/admin/availability/date** - Yeni: Tek tarih için müsaitlik
 - GET/PUT /api/admin/settings
 - **PUT /api/admin/change-password** - Yeni: Admin şifre değiştirme
 
@@ -102,29 +104,19 @@ TİTAN 360 - Temizlik şirketi müşterileri için profesyonel randevu rezervasy
 
 ## Güncellemeler
 
-### 18 Şubat 2026
-- ✅ Kayıt zorunluluğu eklendi
-- ✅ Müşteri yorumları sistemi
-- ✅ Sadakat puanları sistemi
-- ✅ Referans sistemi
-- ✅ Admin paneline müşteri yönetimi
-- ✅ Admin paneline değerlendirme yönetimi
-- ✅ Admin paneline paket yönetimi
-- ✅ Dashboard gelişmiş istatistikler
-- ✅ **Tabs layout auth kontrolü** - Giriş yapılmadan önce sadece login sayfası görünür
-- ✅ **Müşteri fotoğraf yükleme** - Randevu sırasında temizlenecek alanın fotoğrafı eklenebilir
-- ✅ **Admin şifre değiştirme** - Ayarlar sayfasında şifre değiştirebilir
-- ✅ **Admin müşteri fotoğrafları** - Randevu detayında müşteri fotoğrafları görüntülenebilir
+### 21 Şubat 2026
+- ✅ Takvim müsaitlik seçimi düzeltildi - her tarih seçildiğinde saat seçenekleri görünüyor
+- ✅ Özel indirimler özelliği eklendi - admin yeni indirimler ekleyebilir, aktif/pasif yapabilir
+- ✅ Platform.OS web kontrolleri eklendi (Alert.alert yerine window.alert)
+- ✅ Tabs layout auth kontrolü eklendi - giriş yapılmadan önce sadece login sayfası görünür
+- ✅ Müşteri fotoğraf yükleme özelliği eklendi - randevu sırasında 3 fotoğraf yüklenebilir
+- ✅ Admin şifre değiştirme özelliği eklendi
+- ✅ Admin müşteri fotoğrafları görüntüleme özelliği eklendi
 
-## Son Test Raporu (Şubat 2026 - iteration 5)
-- Backend: 13/13 test BAŞARILI (%100)
-- Frontend: Tüm UI bileşenleri doğrulandı
+## Son Test Raporu
+- Takvim: Tarih seçimi ve saat seçimi çalışıyor ✅
+- Ayarlar: İndirim ayarları, özel indirimler ve şifre değiştirme çalışıyor ✅
 - Test dosyası: /app/test_reports/iteration_5.json
-- Tüm yeni özellikler çalışıyor:
-  - Auth kontrolü ✅
-  - Müşteri fotoğraf yükleme ✅
-  - Admin şifre değiştirme ✅
-  - Müşteri fotoğrafları görüntüleme ✅
 
 ## Yapılacaklar
 
