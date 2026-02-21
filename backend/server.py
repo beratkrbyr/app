@@ -730,6 +730,7 @@ async def create_booking(booking: BookingCreate):
         "discount_applied": total_discount,
         "discount_details": discount_details,
         "payment_method": booking.payment_method,
+        "customer_photos": booking.customer_photos or [],  # Store customer's photos
         "status": "pending",
         "created_at": datetime.utcnow().isoformat()
     }
