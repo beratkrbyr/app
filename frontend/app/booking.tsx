@@ -12,6 +12,7 @@ import {
   Alert,
   Modal,
   Switch,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -19,6 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useCustomer } from '../contexts/CustomerContext';
 import { useNotification } from '../contexts/NotificationContext';
+import * as ImagePicker from 'expo-image-picker';
 
 // Türkçe takvim ayarları
 LocaleConfig.locales['tr'] = {
