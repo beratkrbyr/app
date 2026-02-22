@@ -1044,6 +1044,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 12,
   },
+  confirmPhotoButton: {
+    position: 'absolute',
+    bottom: -8,
+    right: -8,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+  },
   addPhotoButton: {
     width: 100,
     height: 100,
