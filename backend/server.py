@@ -756,6 +756,17 @@ async def create_booking(booking: BookingCreate):
     # Add loyalty points
     await add_loyalty_points(booking.customer_phone, total_price)
     
+    # Admin'e bildirim gönder
+    await db.notifications.insert_one({
+        "title": "Yeni Randevu",
+        "message": f"{booking_doc['customer_name']} - {booking_doc['service_name']} - {booking_doc['booking_date']} {booking_doc['booking_time']}",
+        "type": "admin",
+        "target_id": "admin",
+        "booking_id": str(result.inserted_id),
+        "read": False,
+        "created_at": datetime.utcnow().isoformat()
+    })
+    
     return {
         "id": str(result.inserted_id),
         "service_id": booking_doc["service_id"],
