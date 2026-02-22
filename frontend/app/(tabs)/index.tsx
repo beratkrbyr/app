@@ -262,6 +262,15 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
+
+        {/* Admin Login Link */}
+        <TouchableOpacity
+          style={styles.adminLink}
+          onPress={() => router.push('/admin-login')}
+        >
+          <Ionicons name="settings-outline" size={18} color="#6b7280" />
+          <Text style={styles.adminLinkText}>Yönetici Girişi</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
