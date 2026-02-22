@@ -151,15 +151,6 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         showsVerticalScrollIndicator={false}
       >
-        {/* Modern Header with Logo Only */}
-        <View style={styles.header}>
-          <Image 
-            source={require('../../assets/titan360_logo.png')} 
-            style={styles.headerLogo}
-            resizeMode="contain"
-          />
-        </View>
-
         {/* Promo Banner */}
         <View style={styles.promoBanner}>
           <View style={styles.promoIcon}>
