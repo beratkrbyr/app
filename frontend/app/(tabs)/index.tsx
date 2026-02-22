@@ -506,12 +506,12 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: '#ffffff',
     marginBottom: 2,
   },
   featureText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#94a3b8',
   },
   adminLink: {
     flexDirection: 'row',
@@ -523,6 +523,6 @@ const styles = StyleSheet.create({
   },
   adminLinkText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#64748b',
   },
 });
