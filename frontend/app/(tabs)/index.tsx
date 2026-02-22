@@ -385,6 +385,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
   },
+  servicesHeader: {
+    backgroundColor: '#1e40af',
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  servicesLogo: {
+    width: 160,
+    height: 60,
+    marginBottom: 12,
+  },
   sectionHeader: {
     paddingHorizontal: 16,
     paddingTop: 24,
@@ -393,7 +407,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#111827',
+    color: '#ffffff',
   },
   serviceCard: {
     backgroundColor: '#ffffff',
