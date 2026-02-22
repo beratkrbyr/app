@@ -104,6 +104,14 @@ class ReviewCreate(BaseModel):
     rating: int  # 1-5
     comment: Optional[str] = None
 
+# Notification Model
+class NotificationCreate(BaseModel):
+    title: str
+    message: str
+    type: str  # "admin", "customer"
+    target_id: Optional[str] = None  # customer_id or "admin"
+    booking_id: Optional[str] = None
+
 class ReviewResponse(BaseModel):
     id: str
     booking_id: str
