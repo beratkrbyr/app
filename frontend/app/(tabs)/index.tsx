@@ -175,8 +175,13 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {/* Services */}
-        <View style={styles.sectionHeader}>
+        {/* Services with Logo */}
+        <View style={styles.servicesHeader}>
+          <Image 
+            source={require('../../assets/titan360_logo.png')} 
+            style={styles.servicesLogo}
+            resizeMode="contain"
+          />
           <Text style={styles.sectionTitle}>Hizmetlerimiz</Text>
         </View>
         
