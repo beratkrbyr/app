@@ -283,9 +283,13 @@ async def login_customer(login: CustomerLogin):
     if not customer:
         raise HTTPException(status_code=404, detail="Bu telefon numarası kayıtlı değil. Lütfen önce kayıt olun.")
     
-    # Generate JWT token
+    # Generate JWT token - 30 gün geçerli
     token = jwt.encode(
-        {"customer_id": str(customer["_id"]), "phone": customer["phone"]},
+        {
+            "customer_id": str(customer["_id"]), 
+            "phone": customer["phone"],
+            "exp": datetime.utcnow() + timedelta(days=30)
+        },
         JWT_SECRET,
         algorithm="HS256"
     )
