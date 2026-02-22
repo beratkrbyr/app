@@ -137,10 +137,9 @@ export default function HomeScreen() {
             style={styles.headerLogo}
             resizeMode="contain"
           />
-          <Text style={styles.headerSubtitle}>Cuma günleri %10 indirimli!</Text>
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2563eb" />
+          <ActivityIndicator size="large" color="#1e40af" />
         </View>
       </SafeAreaView>
     );
@@ -150,23 +149,37 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        showsVerticalScrollIndicator={false}
       >
+        {/* Modern Header with Logo Only */}
         <View style={styles.header}>
           <Image 
             source={require('../../assets/titan360_logo.png')} 
             style={styles.headerLogo}
             resizeMode="contain"
           />
-          <Text style={styles.headerSubtitle}>Cuma günleri %10 indirimli!</Text>
+        </View>
+
+        {/* Promo Banner */}
+        <View style={styles.promoBanner}>
+          <View style={styles.promoIcon}>
+            <Ionicons name="pricetag" size={24} color="#ffffff" />
+          </View>
+          <View style={styles.promoContent}>
+            <Text style={styles.promoTitle}>Cuma İndirimi</Text>
+            <Text style={styles.promoText}>Her Cuma %10 indirim!</Text>
+          </View>
+          <Text style={styles.promoPercent}>%10</Text>
         </View>
 
         {/* Rating Summary */}
         {reviewStats && reviewStats.total_reviews > 0 && (
           <View style={styles.ratingSummary}>
             <View style={styles.ratingBig}>
-              <Ionicons name="star" size={32} color="#f59e0b" />
+              <Ionicons name="star" size={28} color="#f59e0b" />
               <Text style={styles.ratingValue}>{reviewStats.average_rating}</Text>
             </View>
+            <View style={styles.ratingDivider} />
             <Text style={styles.ratingCount}>{reviewStats.total_reviews} değerlendirme</Text>
           </View>
         )}
