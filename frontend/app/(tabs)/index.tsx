@@ -288,29 +288,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8fafc',
   },
-  header: {
-    backgroundColor: '#1e40af',
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  headerLogo: {
-    width: 180,
-    height: 70,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#dbeafe',
-    textAlign: 'center',
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
