@@ -372,7 +372,25 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 12,
     color: '#9ca3af',
-    textAlign: 'right',
+  },
+  reviewFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#fee2e2',
+    gap: 4,
+  },
+  deleteButtonText: {
+    fontSize: 12,
+    color: '#ef4444',
+    fontWeight: '600',
   },
   emptyContainer: {
     alignItems: 'center',
