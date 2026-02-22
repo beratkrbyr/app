@@ -94,6 +94,7 @@ export default function DashboardScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     fetchStats();
+    fetchNotifications();
   };
 
   const handleLogout = async () => {
