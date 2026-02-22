@@ -4,7 +4,7 @@
     "slug": "titan360-cleaning",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/titan360_icon.png",
+    "icon": "./assets/titan360_logo.png",
     "scheme": "titan360",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -20,7 +20,7 @@
     "android": {
       "package": "com.beratkrbyr.titan360",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/titan360_icon.png",
+        "foregroundImage": "./assets/titan360_logo.png",
         "backgroundColor": "#2563eb"
       },
       "permissions": [
@@ -35,7 +35,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/titan360_icon.png"
+      "favicon": "./assets/titan360_logo.png"
     },
     "plugins": [
       "expo-router",
