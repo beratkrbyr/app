@@ -24,15 +24,45 @@ interface Stats {
   total_revenue: number;
 }
 
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+}
+
 export default function DashboardScreen() {
   const router = useRouter();
   const [stats, setStats] = useState<Stats | null>(null);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchStats();
+    fetchNotifications();
   }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const token = await AsyncStorage.getItem('admin_token');
+      if (!token) return;
+
+      const response = await fetch(`${BACKEND_URL}/api/admin/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data);
+        setUnreadCount(data.filter((n: Notification) => !n.read).length);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
 
   const fetchStats = async () => {
     try {
