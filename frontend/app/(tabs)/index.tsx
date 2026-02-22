@@ -279,6 +279,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0f172a',
   },
+  scrollContent: {
+    paddingBottom: 20,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
