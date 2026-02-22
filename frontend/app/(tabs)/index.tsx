@@ -355,29 +355,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
   },
-  servicesHeader: {
-    backgroundColor: '#1e40af',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 20,
-    borderRadius: 16,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  servicesLogo: {
-    width: 160,
-    height: 60,
-    marginBottom: 12,
-  },
   sectionHeader: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 20,
     paddingBottom: 12,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#0f172a',
   },
   serviceCard: {
     backgroundColor: '#ffffff',
