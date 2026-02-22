@@ -157,13 +157,22 @@ export default function ReviewsScreen() {
 
       {item.comment && <Text style={styles.comment}>{item.comment}</Text>}
 
-      <Text style={styles.date}>
-        {new Date(item.created_at).toLocaleDateString('tr-TR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })}
-      </Text>
+      <View style={styles.reviewFooter}>
+        <Text style={styles.date}>
+          {new Date(item.created_at).toLocaleDateString('tr-TR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </Text>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => deleteReview(item.id)}
+        >
+          <Ionicons name="trash-outline" size={18} color="#ef4444" />
+          <Text style={styles.deleteButtonText}>Sil</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
