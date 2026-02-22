@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: '#3b82f6',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -312,10 +312,11 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   promoTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
-    color: '#ffffff',
-    opacity: 0.9,
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   promoText: {
     fontSize: 16,
@@ -323,15 +324,15 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   promoPercent: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#3b82f6',
   },
   ratingSummary: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1e293b',
     marginHorizontal: 16,
     marginTop: 16,
     padding: 16,
@@ -346,16 +347,16 @@ const styles = StyleSheet.create({
   ratingValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#111827',
+    color: '#ffffff',
   },
   ratingDivider: {
     width: 1,
     height: 24,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: '#334155',
   },
   ratingCount: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#94a3b8',
   },
   sectionHeader: {
     paddingHorizontal: 16,
@@ -365,20 +366,20 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#0f172a',
+    color: '#ffffff',
   },
   serviceCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1e293b',
     marginHorizontal: 16,
     marginBottom: 16,
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#334155',
   },
   serviceImageContainer: {
     height: 140,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: '#0f172a',
   },
   serviceImage: {
     width: '100%',
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f1f5f9',
+    backgroundColor: '#1e293b',
   },
   serviceContent: {
     padding: 16,
@@ -396,12 +397,12 @@ const styles = StyleSheet.create({
   serviceName: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#0f172a',
+    color: '#ffffff',
     marginBottom: 6,
   },
   serviceDescription: {
     fontSize: 14,
-    color: '#64748b',
+    color: '#94a3b8',
     marginBottom: 12,
     lineHeight: 20,
   },
@@ -411,9 +412,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   price: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: '#3b82f6',
   },
   emptyContainer: {
     alignItems: 'center',
