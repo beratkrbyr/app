@@ -1137,6 +1137,47 @@ async def get_admin_packages(credentials: HTTPAuthorizationCredentials = Depends
     packages = await db.packages.find().to_list(100)
     return [{**serialize_doc(p), "id": str(p["_id"])} for p in packages]
 
+# Notification Endpoints
+@api_router.post("/notifications")
+async def create_notification(notification: NotificationCreate):
+    """Create a notification"""
+    notif_doc = {
+        "title": notification.title,
+        "message": notification.message,
+        "type": notification.type,
+        "target_id": notification.target_id,
+        "booking_id": notification.booking_id,
+        "read": False,
+        "created_at": datetime.utcnow().isoformat()
+    }
+    
+    result = await db.notifications.insert_one(notif_doc)
+    return {"id": str(result.inserted_id), "message": "Bildirim oluşturuldu"}
+
+@api_router.get("/admin/notifications")
+async def get_admin_notifications(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get admin notifications"""
+    verify_token(credentials)
+    notifications = await db.notifications.find({"type": "admin"}).sort("created_at", -1).to_list(50)
+    return [{**serialize_doc(n), "id": str(n["_id"])} for n in notifications]
+
+@api_router.get("/customer/notifications")
+async def get_customer_notifications(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get customer notifications"""
+    payload = verify_customer_token(credentials)
+    customer_id = payload.get("customer_id")
+    notifications = await db.notifications.find({"type": "customer", "target_id": customer_id}).sort("created_at", -1).to_list(50)
+    return [{**serialize_doc(n), "id": str(n["_id"])} for n in notifications]
+
+@api_router.put("/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str):
+    """Mark notification as read"""
+    await db.notifications.update_one(
+        {"_id": ObjectId(notification_id)},
+        {"$set": {"read": True}}
+    )
+    return {"message": "Bildirim okundu"}
+
 # Include router
 app.include_router(api_router)
 
