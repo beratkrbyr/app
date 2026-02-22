@@ -608,7 +608,13 @@ export default function BookingScreen() {
                     style={styles.removePhotoButton}
                     onPress={() => removePhoto(index)}
                   >
-                    <Ionicons name="close-circle" size={24} color="#ef4444" />
+                    <Ionicons name="close-circle" size={24} color="#2563eb" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.confirmPhotoButton}
+                    onPress={() => showAlert('Onaylandı', 'Fotoğraf onaylandı!')}
+                  >
+                    <Ionicons name="checkmark-circle" size={24} color="#10b981" />
                   </TouchableOpacity>
                 </View>
               ))}
