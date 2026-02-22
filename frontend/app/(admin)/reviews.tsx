@@ -105,6 +105,28 @@ export default function ReviewsScreen() {
     fetchData();
   };
 
+  const deleteReview = async (reviewId: string) => {
+    showConfirm('Değerlendirmeyi Sil', 'Bu değerlendirmeyi silmek istediğinize emin misiniz?', async () => {
+      try {
+        const token = await AsyncStorage.getItem('admin_token');
+        const response = await fetch(`${BACKEND_URL}/api/admin/reviews/${reviewId}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (response.ok) {
+          showAlert('Başarılı', 'Değerlendirme silindi.');
+          fetchData();
+        } else {
+          showAlert('Hata', 'Değerlendirme silinemedi.');
+        }
+      } catch (error) {
+        console.error('Error deleting review:', error);
+        showAlert('Hata', 'Bir hata oluştu.');
+      }
+    });
+  };
+
   const renderStars = (rating: number) => {
     return (
       <View style={styles.starsRow}>
