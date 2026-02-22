@@ -67,14 +67,18 @@ export default function CustomerLoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.header}>
-            <Ionicons name="person-circle" size={80} color="#2563eb" />
+            <Ionicons name="person-circle" size={80} color="#3b82f6" />
             <Text style={styles.title}>
               {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
             </Text>
