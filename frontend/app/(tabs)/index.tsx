@@ -315,6 +315,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f8fafc',
+  },
+  loadingLogo: {
+    width: 200,
+    height: 80,
   },
   promoBanner: {
     flexDirection: 'row',
