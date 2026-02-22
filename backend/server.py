@@ -252,9 +252,13 @@ async def register_customer(customer: CustomerRegister):
     
     result = await db.customers.insert_one(customer_doc)
     
-    # Generate JWT token
+    # Generate JWT token - 30 gün geçerli
     token = jwt.encode(
-        {"customer_id": str(result.inserted_id), "phone": customer.phone},
+        {
+            "customer_id": str(result.inserted_id), 
+            "phone": customer.phone,
+            "exp": datetime.utcnow() + timedelta(days=30)
+        },
         JWT_SECRET,
         algorithm="HS256"
     )
