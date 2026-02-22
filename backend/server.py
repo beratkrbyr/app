@@ -922,13 +922,37 @@ async def update_booking_status(
     """Update booking status"""
     verify_token(credentials)
     
+    # Önce booking'i al
+    booking = await db.bookings.find_one({"_id": ObjectId(booking_id)})
+    if not booking:
+        raise HTTPException(status_code=404, detail="Randevu bulunamadı")
+    
     result = await db.bookings.update_one(
         {"_id": ObjectId(booking_id)},
         {"$set": {"status": update.status}}
     )
     
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Randevu bulunamadı")
+    # Müşteriye bildirim gönder
+    status_messages = {
+        "confirmed": "Randevunuz onaylandı",
+        "completed": "Randevunuz tamamlandı",
+        "cancelled": "Randevunuz iptal edildi",
+        "in_progress": "Randevunuz başladı"
+    }
+    
+    if update.status in status_messages:
+        # Müşteriyi bul
+        customer = await db.customers.find_one({"phone": booking.get("customer_phone")})
+        if customer:
+            await db.notifications.insert_one({
+                "title": status_messages[update.status],
+                "message": f"{booking.get('service_name')} - {booking.get('booking_date')} {booking.get('booking_time')}",
+                "type": "customer",
+                "target_id": str(customer["_id"]),
+                "booking_id": booking_id,
+                "read": False,
+                "created_at": datetime.utcnow().isoformat()
+            })
     
     return {"message": "Randevu güncellendi"}
 
