@@ -214,7 +214,7 @@ export default function CustomerLoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#0f172a',
   },
   keyboardView: {
     flex: 1,
@@ -231,13 +231,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#111827',
+    color: '#ffffff',
     marginTop: 16,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: '#94a3b8',
     textAlign: 'center',
   },
   form: {
@@ -246,21 +246,21 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1e293b',
     borderRadius: 12,
     paddingHorizontal: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#334155',
   },
   input: {
     flex: 1,
     height: 48,
     fontSize: 16,
-    color: '#111827',
+    color: '#ffffff',
   },
   submitButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#3b82f6',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
