@@ -806,8 +806,13 @@ async def admin_login(login: AdminLogin):
     if not bcrypt.checkpw(login.password.encode('utf-8'), admin["password"].encode('utf-8')):
         raise HTTPException(status_code=401, detail="Geçersiz kullanıcı bilgileri")
     
+    # 30 gün geçerli token
     token = jwt.encode(
-        {"username": admin["username"], "admin_id": str(admin["_id"])},
+        {
+            "username": admin["username"], 
+            "admin_id": str(admin["_id"]),
+            "exp": datetime.utcnow() + timedelta(days=30)
+        },
         JWT_SECRET,
         algorithm="HS256"
     )
