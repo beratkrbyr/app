@@ -497,4 +497,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
   },
+  adminLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    marginBottom: 32,
+    gap: 8,
+  },
+  adminLinkText: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
 });
