@@ -296,9 +296,13 @@ export default function BookingScreen() {
         customer_photos: customerPhotos.map(p => p.base64), // Müşteri fotoğrafları
       };
 
+      const token = await AsyncStorage.getItem('customer_token');
       const response = await fetch(`${BACKEND_URL}/api/bookings`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(booking),
       });
 
