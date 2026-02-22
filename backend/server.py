@@ -1085,6 +1085,15 @@ async def get_admin_reviews(credentials: HTTPAuthorizationCredentials = Depends(
     reviews = await db.reviews.find().sort("created_at", -1).to_list(1000)
     return [{**serialize_doc(r), "id": str(r["_id"])} for r in reviews]
 
+@api_router.delete("/admin/reviews/{review_id}")
+async def delete_review(review_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Delete a review"""
+    verify_token(credentials)
+    result = await db.reviews.delete_one({"_id": ObjectId(review_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Değerlendirme bulunamadı")
+    return {"message": "Değerlendirme silindi"}
+
 @api_router.post("/admin/packages")
 async def create_package(package: PackageCreate, credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Create a new package"""
