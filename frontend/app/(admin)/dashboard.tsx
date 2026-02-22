@@ -132,6 +132,30 @@ export default function DashboardScreen() {
           <Text style={styles.revenueValue}>₺{(stats?.total_revenue || 0).toFixed(2)}</Text>
         </View>
 
+        {/* Notifications */}
+        {unreadCount > 0 && (
+          <View style={styles.notificationBanner}>
+            <Ionicons name="notifications" size={24} color="#ffffff" />
+            <Text style={styles.notificationText}>
+              {unreadCount} yeni bildirim
+            </Text>
+            <View style={styles.notificationBadge}>
+              <Text style={styles.notificationBadgeText}>{unreadCount}</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Recent Notifications */}
+        {notifications.filter(n => !n.read).slice(0, 3).map((notif) => (
+          <View key={notif.id} style={styles.notificationCard}>
+            <Ionicons name="calendar-outline" size={20} color="#3b82f6" />
+            <View style={styles.notificationContent}>
+              <Text style={styles.notificationTitle}>{notif.title}</Text>
+              <Text style={styles.notificationMessage}>{notif.message}</Text>
+            </View>
+          </View>
+        ))}
+
         {/* Stats Grid */}
         <View style={styles.statsGrid}>
           <View style={[styles.statCard, { backgroundColor: '#eff6ff' }]}>
