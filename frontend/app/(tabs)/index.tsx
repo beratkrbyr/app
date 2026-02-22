@@ -131,15 +131,13 @@ export default function HomeScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+        <View style={styles.loadingContainer}>
           <Image 
             source={require('../../assets/titan360_logo.png')} 
-            style={styles.headerLogo}
+            style={styles.loadingLogo}
             resizeMode="contain"
           />
-        </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#1e40af" />
+          <ActivityIndicator size="large" color="#1e40af" style={{ marginTop: 20 }} />
         </View>
       </SafeAreaView>
     );
