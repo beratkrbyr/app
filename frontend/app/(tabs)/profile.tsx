@@ -385,12 +385,12 @@ export default function ProfileScreen() {
 
   if (!isAuthenticated) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profil</Text>
         </View>
         <View style={styles.notAuthContainer}>
-          <Ionicons name="person-circle-outline" size={80} color="#9ca3af" />
+          <Ionicons name="person-circle-outline" size={80} color="#64748b" />
           <Text style={styles.notAuthTitle}>Giriş Yapmanız Gerekiyor</Text>
           <Text style={styles.notAuthText}>
             Profilinizi görmek ve randevularınızı takip etmek için giriş yapın
