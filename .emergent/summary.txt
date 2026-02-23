@@ -3,89 +3,107 @@
 **PRODUCT REQUIREMENTS**:
 1.  **Core Features**:
     *   **Appointment Booking**: Customers can book appointments. A 10% discount is automatically applied for Friday bookings.
-    *   **Authentication**: Separate customer and admin logins. Users must be logged in to book.
+    *   **Authentication**: Separate customer and admin logins. Users must be logged in to book. Admin token should be valid for 30 days.
     *   **Admin Panel**: Manage services, prices, dates, and appointments.
-    *   **Customer Photo Upload**: Customers can upload photos of the area to be cleaned when booking.
+    *   **Customer Photo Upload**: Customers can upload photos of the area to be cleaned when booking. The photos must be visible to the admin.
     *   **Admin Password Change**: Admins can change their password from the settings panel.
     *   **Custom Discount Management**: Admins can create and manage custom discounts.
-2.  **Customer-Facing Features**:
-    *   Saved address, customer reviews, loyalty program, referral system, and push notifications.
-    *   Job tracking with status updates (En Route, Arrived, etc.).
-    *   Logout & appointment cancellation.
-3.  **Admin Panel Features**:
-    *   Dashboard with analytics, management pages for customers, reviews, and services.
-    *   Ability to view customer-uploaded photos for a booking.
-    *   Ability to upload before/after photos for each job.
-    *   Manual location/status updates.
-4.  **UI/UX**:
-    *   Custom TİTAN 360 logo in the header.
-    *   Turkish calendar with a 30-day view and visual indicator for Friday discounts.
-5.  **Removed/Deprioritized**:
-    *   Online payment is not supported; only Cash Payment.
+    *   **Push Notifications**: Admin gets a notification for new bookings. The customer gets a notification when the booking status is updated.
+2.  **UI/UX & Feature Requests (from user message #131)**:
+    *   Fix keyboard overlapping UI elements.
+    *   Change the remove photo icon color from red to blue.
+    *   Add a checkmark icon to confirm a photo upload.
+    *   Fix duplicate Profile title on the profile screen.
+    *   Modernize the app's theme (a dark theme was implemented).
+    *   Allow booking for all 30 days in the calendar.
+    *   Add a feature for the admin to delete customer reviews.
+    *   Finalize and implement a loyalty/points system.
+    *   Change the main app logo to the TITAN 360° logo and remove all logos from within the app interface.
+    *   Fix screen overflow issues (content being cut off).
 
 **User's preferred language**: The user's primary language is **Turkish**. The next agent MUST respond in Turkish.
 
 **what currently exists?**
-A full-stack application with a React Native (Expo) frontend and a FastAPI/MongoDB backend. In the last session, several new features were added based on user requests, including customer photo uploads during booking, admin password changes, and custom discount management. A bug preventing the admin from selecting availability on the calendar was also fixed. The application was tested on the web preview environment. However, the Android APK generated for the user is non-functional due to a configuration error.
+A full-stack application with a React Native (Expo) frontend and a FastAPI/MongoDB backend. The user has been extremely frustrated with the process of building a functional Android APK and accessing a stable web-based admin panel. After multiple failed attempts to guide the user through the local build process, the user has requested to abandon the current project structure. They now want the complete code for the admin panel, converted into a Next.js-compatible format, so they can manually set it up on their own separate server. The agent was in the process of providing these converted code snippets when the session ended.
 
 **Last working item**:
-The agent identified the cause of the failing Android application: it was built using a temporary  URL, which is inaccessible from a mobile device. The user provided their permanent deployment URL, and the agent confirmed it was active. The agent was about to modify the project configuration to use this permanent URL and guide the user to build a new, functional APK.
+The agent was responding to the user's explicit request to provide the full source code of the admin panel, adapted for a Next.js App Router project. The user wants to manually replicate the admin panel on their own server, outside of the Emergent environment.
 
--   **Last item agent was working**: Preparing to re-build the Android APK using the correct permanent backend URL.
+-   **Last item agent was working**: Providing Next.js-compatible code for all admin panel pages.
 -   **Status**: IN PROGRESS
 -   **Agent Testing Done**: N/A
--   **Which testing method agent to use?**: Manual testing by the user after the new APK is built and installed. The user will need to be guided through the build process on their local machine.
+-   **Which testing method agent to use?**: N/A (The next step is to provide code, not to test the existing application).
 -   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: Broken Android APK gives JSON Parse error (P0)
+-   **Issue 1**: User is unable to use the application in a stable way (P0).
 
 **Issues Detail**:
--   **Issue 1: Broken Android APK gives JSON Parse error**
-    -   **Attempted fixes**: An APK was built, but it failed on the user's device. The root cause was identified as the APK being built with a temporary preview URL () instead of the permanent production URL. The correct URL () has been obtained from the user.
-    -   **Next debug checklist**:
-        1.  Determine the correct way to set the backend URL for an EAS build. This is likely by setting an environment variable in  under the  profile. The variable should be .
-        2.  Modify  to include the permanent URL: .
-        3.  Guide the user to run the build command again on their local machine:  followed by An Expo user account is required to proceed.
+-   **Issue 1: User is unable to use the application in a stable way**
+    -   **Attempted fixes**: The agent tried multiple strategies: updating , hardcoding URLs in a  file, guiding the user through complex CLI commands (
+changed 3 packages, and audited 1021 packages in 34s
+
+186 packages are looking for funding
+  run `npm fund` for details
+
+37 vulnerabilities (1 low, 3 moderate, 33 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details., An Expo user account is required to proceed.
 
 Log in to EAS with email or username (exit and run eas login --help to see other login options)
-Input is required, but stdin is not readable. Failed to display prompt: Email or username.
-        4.  Guide the user to download and install the newly generated APK.
-        5.  Ask the user to confirm that the app opens and functions correctly without the JSON Parse error.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is the final delivery step. The application is currently unusable on a mobile device, and fixing this will provide the user with a working app.
-    -   **Status**: IN PROGRESS
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: Frontend (the final APK on a device).
+Input is required, but stdin is not readable. Failed to display prompt: Email or username), and troubleshooting local environment issues (Git not installed, PowerShell policies). All attempts failed due to the complexity of the process for a non-technical user, leading to extreme frustration.
+    -   **Next debug checklist**: Do not attempt to fix the APK build or deployment within the Emergent environment. The user has explicitly rejected this approach. The only path forward is to fulfill the user's last request:
+        1.  Acknowledge the user's request to get the Next.js admin panel code.
+        2.  Provide the complete, copy-paste-ready code for each admin page (, , , , , , , etc.) and the main .
+        3.  Ensure the provided code is adapted for Next.js App Router (, page-based structure, etc.) as requested.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is the only way to regain the user's trust and provide them with the assets they are requesting. The goal is no longer to deliver a working app within the platform but to provide the user with the code they paid for.
+    -   **Status**: BLOCKED (on agent providing the code)
+    -   **Is recurring issue?**: Y
+    -   **Should Test frontend/backend/both after fix?**: N/A
     -   **Blocked on other issue**: None.
 
 **In progress Task List**:
--   None.
+-   **Task 1: Provide Admin Panel Code for Next.js** (P0)
+    -   **Where to resume**: The agent was asked to provide the full code for all admin pages, converted for a Next.js App Router project. The agent started but did not complete this. The next agent must list all admin files and provide the full, converted code for each one as requested by the user in message #771.
+    -   **What will be achieved with this?**: Fulfilling the user's direct request and providing them with the assets to continue their project independently.
+    -   **Status**: IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?**: N/A
+    -   **Blocked on something**: No.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks**:
-    -   **(P0) iOS APK Generation**: The user has expressed a desire to have an iOS version of the app.
-    -   **(P1) Upload to Google Play Store**: Once the Android APK is verified, guide the user through publishing it.
-    -   **(P2) WhatsApp Notifications**: Implement WhatsApp integration for notifications.
+    -   **(P1) Loyalty/Points System**: The user put this on hold (Neyse puan şimdilik dursun). The logic was discussed but needs to be implemented in the frontend and backend once the user is ready.
 -   **Future Tasks**:
-    -   **(P2) Live GPS Location Tracking**: Enhance the job tracking with real-time GPS of the cleaning staff.
-    -   **(P3) Add Exterior Cleaning Service**: Add a new service category.
+    -   **(P2) iOS APK Generation**: The user expressed a desire for an iOS version.
+    -   **(P2) Live GPS Location Tracking**: Enhance job tracking with real-time GPS.
     -   **(P3) Refactor **: Break down the monolithic  into a modular structure using FastAPI's .
 
 **Completed work in this session**
--   **Feature: Customer Photo Upload**: Customers can now upload photos when creating a booking. The photos are viewable by the admin. (, ).
--   **Feature: Admin Password Change**: Added a password change form for the admin in their settings panel. (, ).
--   **Feature: Custom Discount Management**: Implemented a UI for the admin to add and manage custom discounts. ().
--   **Bug Fix: Admin Calendar Unavailability**: Fixed a bug where the admin calendar would not show available time slots for booking on the web preview. ().
--   **Bug Fix: Admin Settings UI**: Resolved a rendering issue where the Custom Discounts section was not visible.
--   **End-to-End Testing**: Used the testing agent to successfully verify all new features on the web preview environment.
+-   **Feature: Dark Theme & UI Modernization**: Implemented a dark theme and updated UI components for a more modern look across the app.
+-   **Feature: Notification System**: Backend logic was added to create notifications for the admin on new bookings and for the customer on status updates. Frontend UI was added to the admin dashboard to display notifications.
+-   **Feature: Review Deletion**: An endpoint () was added, and a delete button was integrated into the admin's review management page.
+-   **Feature: Extended Token Expiration**: Updated the  and  endpoints to issue JWTs with a 30-day expiration period.
+-   **Bug Fix: Screen Overflow**: Used  and adjusted styles across multiple pages to prevent content from being cut off or hidden behind the status bar.
+-   **Bug Fix: Photo Upload Not Appearing for Admin**: A missing Authorization header in the booking creation request was identified and added.  were not being sent to the backend.
+-   **Bug Fix: Duplicate Profile Title**: Removed the header for the profile tab to fix the duplicate title issue.
+-   **UI Fix**: Changed the remove photo icon to blue and added a green checkmark for confirming uploads.
 
 **Earlier issues found/mentioned but not fixed**
--   The task to implement **WhatsApp notifications** remains pending.
+-   The loyalty/points system was discussed but implementation was deferred by the user.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork**: Unresponsive UI components on the web due to platform-specific API usage (e.g., ).
--   **Recurrence count**: 1 in this session (Admin calendar bug).
--   **Status**: RESOLVED by implementing a platform check (). The agent must remain vigilant for this pattern.
+-   **Issue recurrence in previous fork**: The user's struggle with the local development environment (CLI commands, dependencies, paths) has been the primary blocker throughout the entire session. The agent's instructions were often too complex for a non-technical user.
+-   **Recurrence count**: Multiple times in this session.
+-   **Status**: NOT RESOLVED. The user has given up on this workflow.
 
 **Code Architecture**
 
@@ -93,60 +111,55 @@ Input is required, but stdin is not readable. Failed to display prompt: Email or
 **Key Technical Concepts**
 -   **Frontend**: React Native, Expo, Expo Router
 -   **Backend**: FastAPI, Python, MongoDB ()
--   **Builds**: Expo Application Services (EAS) CLI (An Expo user account is required to proceed.
-
-Log in to EAS with email or username (exit and run eas login --help to see other login options)
-Input is required, but stdin is not readable. Failed to display prompt: Email or username)
--   **Build Configuration**: Using  to configure environment variables for different build profiles (, ).
+-   **User's Target**: The user wants to migrate the admin panel to **Next.js**.
 
 **key DB schema**
--   :  (Added)
--   :  (Password is hashed)
--   :  (New, managed via Admin settings)
+-   :  (New)
+-   : Token creation now includes a 30-day expiry.
+-   : The payload now correctly includes .
 
 **changes in tech stack**
--   None.
+-   The user is abandoning the Expo-based frontend for the admin panel and wants to rebuild it using Next.js on their own server.
 
 **All files of reference**
--   : **Crucial file** that needs to be edited to fix the APK build.
--   : Modified to add photo upload functionality.
--   : Modified to add password change and custom discount features.
--   : Modified to fix the availability selection bug.
--   : Modified to display customer-uploaded photos.
--   : Modified to add ,  endpoints and update the  endpoint to handle photos.
+-   The agent modified nearly every  file in  to implement the dark theme, UI fixes, and screen overflow corrections.
+-   : Heavily modified to add new endpoints and fix bugs.
+-   : Modified to change the application icon.
 
 **Areas that need refactoring**:
--    is a large monolith and a prime candidate for refactoring into smaller, routed modules for better maintainability.
+-   The immediate task is not refactoring but exporting the existing logic to a Next.js-compatible format for the user. The  monolith remains a candidate for future refactoring if the user continues with the backend.
 
 **key api endpoints**
--   : (New) Allows admin to change their password.
--   : (New) Fetches available slots for a given date.
--   : (Updated) Now accepts an optional  array of strings.
--   : (Updated) The response for individual bookings now includes .
+-   : (New) Creates a notification.
+-   : (New) Gets notifications for a user.
+-   : (New) Marks a notification as read.
+-   : (New) Deletes a customer review.
+-   , : (Updated) Token expiration set to 30 days.
+-   : (Updated) Fixed frontend to correctly send  header, enabling  to be saved.
 
 **Critical Info for New Agent**
--   **User Proficiency**: The user is not a developer. All command-line instructions must be extremely clear, simple, and copy-paste friendly. The user builds the app on their own local machine.
--   **APK Status**: The current APK installed by the user is **broken**. The immediate and only priority is to guide the user to build a new, working APK using their permanent deployment URL. Do not start any new feature development until the user confirms the new APK works.
--   **URLs**: The temporary preview URL causes errors in the mobile build. The permanent production URL is  and must be embedded in the next build.
+-   **The user is extremely frustrated.** They have mentioned wanting a refund and are at the end of their patience. Do not argue, justify past actions, or offer alternatives.
+-   **The user's goal has changed.** Do not try to make the APK or the Emergent deployment work. The user has abandoned this and wants to self-host.
+-   **The immediate and only task is to provide the user with the complete admin panel code, converted for a Next.js App Router project.** This is what the user was asking for at the end of the session. Fulfill this request precisely.
+-   **The user is not a developer.** All instructions must be simple. In this case, providing clean, copy-paste-ready code is the best approach.
 
 **documents and test reports created in this job**
--   
--    (updated)
+-   None.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Hata verdi / (Image of error)**: User reported the JSON Parse error after installing the APK.
-2.  **Kendi sunucumu alayım / benim sunucum var zaten sizin uygulamamda**: User was confused about preview vs. deployed servers.
-3.  **https://service-pro-27.emergent.host/**: User provided their permanent deployment URL.
-4.  **Deploy etmiştim / Sen göremiyorsun**: User stated they had already deployed the app but forgot the URL, and correctly noted the agent cannot see their dashboard.
-5.  **tamam şimdi indirelim apkyı**: User requested to download the APK after the latest web-based fixes were done.
-6.  **2**: User chose to build a new, updated APK rather than download the old, outdated one.
-7.  **(Image of Run this command inside a project directory error)**: User encountered a CLI error.
-8.  **(Image of git error during build)**: User encountered another CLI error.
-9.  **(Image of successful build start)**: User confirmed the build process had started.
-10. **indirdim**: User confirmed they downloaded the generated APK, before reporting that it failed.
+1.  **User**: Asks for the full structure and code of the existing admin panel to replicate it in their local Next.js project.
+2.  **User**: Confirms they want to copy-paste the agent's admin panel code into their own project.
+3.  **User**: Provides a list of Next.js file paths and asks the agent to provide the complete, compatible code for each one.
+4.  **Agent**: Starts providing the code.
+5.  **User**: (From previous conversation) Asks the agent to build the booking screen (the agent confirms it already exists).
+6.  **User**: Agrees the booking screen is fine and asks the agent to deploy so they can test.
+7.  **User**: Provides a code snippet for a login page pointing to a local IP, confirming they are trying to build their own admin panel.
+8.  **User**: Tells the agent to continue.
+9.  **User**: Asks for Next.js-compatible admin panel code again.
+10. **User**: Re-pastes the request for the Next.js admin panel code.
 
 **Project Health Check:**
--   **Broken**: The user-installed Android APK is non-functional due to an incorrect backend URL configuration during the build process.
+-   **Broken**: The user's ability to build a functional APK or access a stable deployed web admin panel is completely broken.
 -   **Mocked**: None.
 
 **3rd Party Integrations**
@@ -154,19 +167,19 @@ Input is required, but stdin is not readable. Failed to display prompt: Email or
 -   
 -   
 -   Expo Application Services (EAS)
+-    (required by user for local builds)
 
 **Testing status**
--   **Testing agent used after significant changes**: YES, for web preview features.
+-   **Testing agent used after significant changes**: NO.
 -   **Troubleshoot agent used after agent stuck in loop**: NO.
 -   **Test files created**: None.
--   **Known regressions**: None.
+-   **Known regressions**: The user-facing application is completely out of date. The APK they have does not contain any of the recent features or fixes. The deployed web URL does not work for the frontend.
 
 **Credentials to test flow:**
 -   **Admin**:
-    -   URL fragment: 
     -   Username: 
     -   Password: 
--   **Customer**: Create via the app's registration page.
+-   **Customer**: Can be created via the app's registration page.
 
 **What agent forgot to execute**
--   The agent correctly identified the problem (wrong URL in APK build) and the solution (use the permanent URL). However, the session ended just before the critical step of modifying  to implement this solution. The next agent must start here.</analysis>
+-   The agent did not complete the user's final, critical request: to provide the complete admin panel source code converted for Next.js. The agent started the process but did not deliver all the requested files. The next agent must complete this handover of code.</analysis>
