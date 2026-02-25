@@ -129,6 +129,18 @@ export default function CustomerLoginScreen() {
               />
             </View>
 
+            <View style={styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color="#6b7280" />
+              <TextInput
+                style={styles.input}
+                placeholder="Şifre *"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                placeholderTextColor="#9ca3af"
+              />
+            </View>
+
             {!isLogin && (
               <View style={styles.inputContainer}>
                 <Ionicons name="mail-outline" size={20} color="#6b7280" />
@@ -139,6 +151,20 @@ export default function CustomerLoginScreen() {
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  placeholderTextColor="#9ca3af"
+                />
+              </View>
+            )}
+
+            {!isLogin && (
+              <View style={styles.inputContainer}>
+                <Ionicons name="gift-outline" size={20} color="#6b7280" />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Referans Kodu (Opsiyonel)"
+                  value={referralCode}
+                  onChangeText={setReferralCode}
+                  autoCapitalize="characters"
                   placeholderTextColor="#9ca3af"
                 />
               </View>
