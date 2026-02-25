@@ -23,7 +23,9 @@ export default function CustomerLoginScreen() {
   
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -43,6 +45,11 @@ export default function CustomerLoginScreen() {
       return;
     }
 
+    if (!password.trim()) {
+      setError('Şifre gereklidir.');
+      return;
+    }
+
     if (!isLogin && !name.trim()) {
       setError('Adınızı giriniz.');
       return;
@@ -51,9 +58,9 @@ export default function CustomerLoginScreen() {
     setLoading(true);
     try {
       if (isLogin) {
-        await login(phone);
+        await login(phone, password);
       } else {
-        await register(name, phone, email || undefined);
+        await register(name, phone, password, email || undefined, undefined, referralCode || undefined);
       }
       // Small delay to ensure state is updated before navigation
       setTimeout(() => {
