@@ -40,6 +40,7 @@
   - İletişim sayfası (form, iletişim bilgileri)
   - Sticky header, modern gradient tasarım
   - Tam sayfa layout düzeltmesi
+  - **İçerik ortalama düzeltmesi** - Tüm sayfalar merkeze hizalandı (container mx-auto)
 
 ## Bekleyen Görevler
 
