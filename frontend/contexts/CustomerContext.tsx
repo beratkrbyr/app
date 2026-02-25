@@ -18,8 +18,8 @@ interface CustomerContextType {
   customer: Customer | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (phone: string) => Promise<void>;
-  register: (name: string, phone: string, email?: string, address?: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
+  register: (name: string, phone: string, password: string, email?: string, address?: string, referralCode?: string) => Promise<void>;
   logout: () => Promise<void>;
   updateAddress: (address: string) => Promise<void>;
   refreshProfile: () => Promise<void>;
