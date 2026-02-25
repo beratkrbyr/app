@@ -9,7 +9,7 @@ import os
 import time
 import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://cleaning-admin-vps.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://admin-dashboard-946.preview.emergentagent.com')
 
 # Use unique identifiers for test data
 TEST_TIMESTAMP = int(time.time())

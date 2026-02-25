@@ -6,7 +6,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://cleaning-admin-vps.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://admin-dashboard-946.preview.emergentagent.com')
 
 # Test booking ID - confirmed booking for testing
 TEST_BOOKING_ID = "69959dca306ca23083ef1711"
