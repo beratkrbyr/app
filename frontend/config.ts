@@ -1,3 +1,4 @@
 // Backend URL Configuration
 // Bu dosya APK build için kalıcı URL içerir
-export const BACKEND_URL = "https://service-pro-27.emergent.host";
+// Hostinger VPS Backend URL
+export const BACKEND_URL = "http://76.13.61.47";
