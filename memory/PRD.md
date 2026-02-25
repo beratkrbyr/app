@@ -55,9 +55,30 @@ TİTAN 360, temizlik şirketleri için randevu ve iş yönetimi uygulamasıdır.
    - Hızlı işlemler bölümü
    - Animasyonlu geçişler
    - Tüm sayfalar güncellendi (Login, Dashboard, Bookings, Services, Customers, Settings)
+7. ✅ **Puan Sistemi ve Referans Kodu**:
+   - Müşteri puan sistemi eklendi
+   - Referans kodu oluşturma ve kopyalama
+   - Puan ekleme/çıkarma modal'ı
+   - Referans istatistikleri
+8. ✅ **Randevu Fotoğraf Sistemi**:
+   - Önce/Sonra fotoğrafları görüntüleme
+   - Fotoğraf modal'ı
+   - Konum takibi (Google Maps bağlantısı)
+9. ✅ **Mobil Responsive Tasarım**:
+   - Admin paneli mobil uyumlu
+   - Hamburger menü
+   - Responsive stat kartları
+10. ✅ **Mobil Uygulama API Bağlantısı**:
+    - Müşteri kayıt/giriş API'leri
+    - Şifre alanı eklendi
+    - Referans kodu desteği
+
+## Bilinen Sorunlar
+- Expo web preview HTTPS üzerinden çalıştığı için HTTP backend'e bağlanamıyor (Mixed Content)
+- Çözüm: SSL sertifikası eklemek veya APK build yapıp doğrudan test etmek
 
 ## Gelecek Geliştirmeler (Backlog)
-- [ ] SSL sertifikası (HTTPS) eklemesi
+- [ ] SSL sertifikası (HTTPS) eklemesi - Bu mobil uygulama bağlantısını çözecek
 - [ ] Domain bağlantısı
-- [ ] Mobil müşteri uygulaması
+- [ ] APK build ve Play Store yükleme
 - [ ] Raporlama ve grafik özelliği
