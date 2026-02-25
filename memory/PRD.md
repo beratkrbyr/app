@@ -1,84 +1,70 @@
-# TİTAN 360 - Admin Panel PRD
+# TİTAN 360 - Profesyonel Temizlik Hizmetleri
 
 ## Proje Özeti
-TİTAN 360, temizlik şirketleri için randevu ve iş yönetimi uygulamasıdır. Admin paneli web tabanlı olarak geliştirilmiş ve kullanıcının Hostinger VPS'ine deploy edilmiştir.
+İstanbul merkezli bir temizlik şirketi için tam kapsamlı dijital platform: web sitesi, admin paneli ve mobil uygulama.
+
+## Kullanıcı Personası
+- **İşletme Sahibi**: Temizlik şirketi sahibi, admin panel üzerinden randevuları ve müşterileri yönetir
+- **Müşteriler**: Temizlik hizmeti almak isteyen ev ve ofis sahipleri
+
+## Temel Gereksinimler
+1. **Admin Paneli**: Randevu, müşteri ve hizmet yönetimi
+2. **Public Web Sitesi**: Şirket tanıtımı ve hizmet bilgileri
+3. **Mobil Uygulama**: Müşteri girişi ve randevu takibi
+4. **SSL/HTTPS**: Güvenli bağlantı (titan360.com.tr)
 
 ## Teknik Mimari
-- **Frontend**: Next.js 16.1.6 (App Router, TypeScript, Tailwind CSS)
+- **Sunucu**: Hostinger VPS (76.13.61.47)
+- **Frontend**: Next.js 16 (App Router)
 - **Backend**: FastAPI (Python)
-- **Database**: MongoDB (localhost:27017)
+- **Database**: MongoDB
 - **Process Manager**: PM2
 - **Reverse Proxy**: Nginx
 
-## Deployment Bilgileri
-- **Sunucu**: Hostinger VPS
-- **IP**: 76.13.61.47
-- **Admin Panel URL**: http://76.13.61.47/admin-login
-- **API URL**: http://76.13.61.47/api/*
+## Tamamlanan İşler
 
-## Dizin Yapısı (Sunucu)
-```
-/var/www/titan360/
-├── frontend/          # Next.js Admin Panel
-│   ├── app/
-│   │   ├── admin/     # Admin sayfaları
-│   │   │   ├── dashboard/
-│   │   │   ├── bookings/
-│   │   │   ├── services/
-│   │   │   ├── customers/
-│   │   │   ├── calendar/
-│   │   │   ├── reviews/
-│   │   │   └── settings/
-│   │   └── admin-login/
-│   └── package.json
-└── backend/           # FastAPI Backend
-    ├── server.py
-    └── venv/
-```
+### 15 Aralık 2024
+- ✅ Admin paneli tam fonksiyonel (dashboard, randevular, müşteriler, hizmetler, ayarlar)
+- ✅ Modern koyu tema tasarımı
+- ✅ Mobil uyumlu responsive tasarım
+- ✅ Örnek veriler ile veritabanı dolduruldu
+- ✅ Müşteri sadakat puanları ve referans kodu sistemi
+- ✅ Randevu fotoğraf görüntüleyici
 
-## Önemli Bilgiler
-- **Admin Giriş**: admin / admin123
-- **PM2 Servisleri**: titan-admin (frontend), titan-api (backend)
-- **Nginx Config**: /etc/nginx/sites-available/titan360
+### 16 Aralık 2024
+- ✅ **Public Web Sitesi Yeniden Tasarlandı**
+  - Ana sayfa (hero section, istatistikler, hizmet önizleme)
+  - Hizmetler sayfası (6 hizmet kartı, fiyatlar)
+  - Nasıl Çalışır sayfası (4 adım, SSS)
+  - Hakkımızda sayfası (şirket hikayesi, değerler)
+  - İletişim sayfası (form, iletişim bilgileri)
+  - Sticky header, modern gradient tasarım
+  - Tam sayfa layout düzeltmesi
 
-## Tamamlanan İşler (25 Şubat 2026)
-1. ✅ Backend deploy edildi ve PM2 ile yönetiliyor
-2. ✅ Frontend deploy edildi ve PM2 ile yönetiliyor
-3. ✅ Nginx reverse proxy yapılandırıldı
-4. ✅ Admin login ve dashboard çalışıyor
-5. ✅ Tüm API endpoint'leri erişilebilir
-6. ✅ **Modern UI/UX Tasarım Güncellemesi**:
-   - Koyu tema (Dark mode) uygulandı
-   - Glassmorphism efektli kartlar
-   - Renkli gradient istatistik kartları
-   - Modern sidebar navigasyon
-   - Hızlı işlemler bölümü
-   - Animasyonlu geçişler
-   - Tüm sayfalar güncellendi (Login, Dashboard, Bookings, Services, Customers, Settings)
-7. ✅ **Puan Sistemi ve Referans Kodu**:
-   - Müşteri puan sistemi eklendi
-   - Referans kodu oluşturma ve kopyalama
-   - Puan ekleme/çıkarma modal'ı
-   - Referans istatistikleri
-8. ✅ **Randevu Fotoğraf Sistemi**:
-   - Önce/Sonra fotoğrafları görüntüleme
-   - Fotoğraf modal'ı
-   - Konum takibi (Google Maps bağlantısı)
-9. ✅ **Mobil Responsive Tasarım**:
-   - Admin paneli mobil uyumlu
-   - Hamburger menü
-   - Responsive stat kartları
-10. ✅ **Mobil Uygulama API Bağlantısı**:
-    - Müşteri kayıt/giriş API'leri
-    - Şifre alanı eklendi
-    - Referans kodu desteği
+## Bekleyen Görevler
 
-## Bilinen Sorunlar
-- Expo web preview HTTPS üzerinden çalıştığı için HTTP backend'e bağlanamıyor (Mixed Content)
-- Çözüm: SSL sertifikası eklemek veya APK build yapıp doğrudan test etmek
+### P1 - SSL Sertifikası
+- **Durum**: BLOCKED - DNS yayılımı bekleniyor
+- **Sonraki Adım**: DNS yayıldığında `certbot --nginx -d titan360.com.tr` çalıştır
+- **Kontrol Scripti**: `/root/get_ssl.sh`
 
-## Gelecek Geliştirmeler (Backlog)
-- [ ] SSL sertifikası (HTTPS) eklemesi - Bu mobil uygulama bağlantısını çözecek
-- [ ] Domain bağlantısı
-- [ ] APK build ve Play Store yükleme
-- [ ] Raporlama ve grafik özelliği
+### P2 - Mobil Uygulama Giriş
+- **Durum**: BLOCKED - SSL gerekli
+- **Sonraki Adım**: SSL sonrası `https://titan360.com.tr` URL'si ile test
+
+## Önemli Dosyalar
+- `/var/www/titan360/frontend/` - Next.js frontend
+- `/var/www/titan360/backend/server.py` - FastAPI backend
+- `/etc/nginx/sites-available/titan360` - Nginx config
+
+## Kimlik Bilgileri
+- **VPS SSH**: root@76.13.61.47
+- **Admin Panel**: admin / admin123
+- **Test Müşteri**: ahmet@ornek.com / password123
+
+## API Endpoints
+- `POST /api/admin/login` - Admin girişi
+- `GET /api/admin/stats` - Dashboard istatistikleri
+- `POST /api/customers/login` - Müşteri girişi (mobil app)
+- `GET /api/bookings` - Randevu listesi
+- `GET /api/customers` - Müşteri listesi
