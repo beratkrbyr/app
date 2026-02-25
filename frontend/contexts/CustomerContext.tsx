@@ -51,12 +51,12 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (phone: string) => {
+  const login = async (phone: string, password: string) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/customers/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone, password }),
       });
 
       if (!response.ok) {
@@ -66,14 +66,14 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
       const customerData: Customer = {
-        id: data.id,
-        name: data.name,
-        phone: data.phone,
-        email: data.email,
-        address: data.address,
-        loyalty_points: data.loyalty_points || 0,
-        total_bookings: data.total_bookings || 0,
-        referral_code: data.referral_code || '',
+        id: data.customer.id,
+        name: data.customer.name,
+        phone: data.customer.phone,
+        email: data.customer.email,
+        address: data.customer.address,
+        loyalty_points: data.customer.loyalty_points || 0,
+        total_bookings: data.customer.total_bookings || 0,
+        referral_code: data.customer.referral_code || '',
         token: data.token,
       };
 
@@ -85,12 +85,12 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (name: string, phone: string, email?: string, address?: string) => {
+  const register = async (name: string, phone: string, password: string, email?: string, address?: string, referralCode?: string) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/customers/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, email, address }),
+        body: JSON.stringify({ name, phone, password, email, address, referral_code: referralCode }),
       });
 
       if (!response.ok) {
@@ -100,14 +100,14 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
       const customerData: Customer = {
-        id: data.id,
-        name: data.name,
-        phone: data.phone,
-        email: data.email,
-        address: data.address,
-        loyalty_points: data.loyalty_points || 0,
-        total_bookings: data.total_bookings || 0,
-        referral_code: data.referral_code || '',
+        id: data.customer.id,
+        name: data.customer.name,
+        phone: data.customer.phone,
+        email: data.customer.email,
+        address: data.customer.address,
+        loyalty_points: data.customer.loyalty_points || 0,
+        total_bookings: data.customer.total_bookings || 0,
+        referral_code: data.customer.referral_code || '',
         token: data.token,
       };
 
