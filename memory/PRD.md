@@ -1,71 +1,78 @@
-# TİTAN 360 - Profesyonel Temizlik Hizmetleri
+# TİTAN 360 - Product Requirements Document
 
-## Proje Özeti
-İstanbul merkezli bir temizlik şirketi için tam kapsamlı dijital platform: web sitesi, admin paneli ve mobil uygulama.
+## Original Problem Statement
+A cleaning company owner requested a mobile application named "TİTAN 360". The project evolved to include:
+1. A web-based admin panel deployed on Hostinger VPS
+2. A professional public-facing website
+3. A React Native mobile app for customer bookings
 
-## Kullanıcı Personası
-- **İşletme Sahibi**: Temizlik şirketi sahibi, admin panel üzerinden randevuları ve müşterileri yönetir
-- **Müşteriler**: Temizlik hizmeti almak isteyen ev ve ofis sahipleri
-
-## Temel Gereksinimler
-1. **Admin Paneli**: Randevu, müşteri ve hizmet yönetimi
-2. **Public Web Sitesi**: Şirket tanıtımı ve hizmet bilgileri
-3. **Mobil Uygulama**: Müşteri girişi ve randevu takibi
-4. **SSL/HTTPS**: Güvenli bağlantı (titan360.com.tr)
-
-## Teknik Mimari
-- **Sunucu**: Hostinger VPS (76.13.61.47)
-- **Frontend**: Next.js 16 (App Router)
-- **Backend**: FastAPI (Python)
+## Technical Architecture
+- **Location**: Hostinger VPS (76.13.61.47)
+- **Directory**: `/var/www/titan360/`
+  - `frontend/`: Next.js 14+ (Admin Panel + Public Website)
+  - `backend/`: FastAPI (`server.py`)
+  - `mobile/`: React Native (Expo)
+- **Process Manager**: PM2 (titan-admin, titan-api, expo-mobile)
 - **Database**: MongoDB
-- **Process Manager**: PM2
-- **Reverse Proxy**: Nginx
+- **Domain**: titan360.com.tr
 
-## Tamamlanan İşler
+## Completed Features
 
-### 15 Aralık 2024
-- ✅ Admin paneli tam fonksiyonel (dashboard, randevular, müşteriler, hizmetler, ayarlar)
-- ✅ Modern koyu tema tasarımı
-- ✅ Mobil uyumlu responsive tasarım
-- ✅ Örnek veriler ile veritabanı dolduruldu
-- ✅ Müşteri sadakat puanları ve referans kodu sistemi
-- ✅ Randevu fotoğraf görüntüleyici
+### Admin Panel
+- Dashboard with booking statistics
+- Bookings management with status updates
+- Customer management with loyalty points
+- Services CRUD operations
+- Calendar view for booking statuses
+- New booking creation with photo upload
+- Settings page
+- Admin login (admin/admin123)
 
-### 16 Aralık 2024
-- ✅ **Public Web Sitesi Yeniden Tasarlandı**
-  - Ana sayfa (hero section, istatistikler, hizmet önizleme)
-  - Hizmetler sayfası (6 hizmet kartı, fiyatlar)
-  - Nasıl Çalışır sayfası (4 adım, SSS)
-  - Hakkımızda sayfası (şirket hikayesi, değerler)
-  - İletişim sayfası (form, iletişim bilgileri)
-  - Sticky header, modern gradient tasarım
-  - Tam sayfa layout düzeltmesi
-  - **İçerik ortalama düzeltmesi** - Tüm sayfalar merkeze hizalandı (container mx-auto)
+### Public Website
+- Modern landing page with hero section
+- Services page
+- About page (Hakkımızda)
+- How it works page (Nasıl Çalışır)
+- Contact page (İletişim)
+- Responsive design with glassmorphism theme
 
-## Bekleyen Görevler
+### Mobile App (Expo)
+- Login with phone number
+- Home screen with quick actions
+- Services listing
+- Booking creation with photo upload
+- Calendar view
+- Review submission
+- Dark theme matching website
 
-### P1 - SSL Sertifikası
-- **Durum**: BLOCKED - DNS yayılımı bekleniyor
-- **Sonraki Adım**: DNS yayıldığında `certbot --nginx -d titan360.com.tr` çalıştır
-- **Kontrol Scripti**: `/root/get_ssl.sh`
+## Recent Changes (Feb 26, 2025)
+- Fixed homepage layout bug - sections were overlapping
+- Separated Hero, Stats, Services, and CTA sections with proper spacing
+- Hero section now takes min 80vh height
+- Mobile responsive design improved
 
-### P2 - Mobil Uygulama Giriş
-- **Durum**: BLOCKED - SSL gerekli
-- **Sonraki Adım**: SSL sonrası `https://titan360.com.tr` URL'si ile test
-
-## Önemli Dosyalar
-- `/var/www/titan360/frontend/` - Next.js frontend
-- `/var/www/titan360/backend/server.py` - FastAPI backend
-- `/etc/nginx/sites-available/titan360` - Nginx config
-
-## Kimlik Bilgileri
-- **VPS SSH**: root@76.13.61.47
-- **Admin Panel**: admin / admin123
-- **Test Müşteri**: ahmet@ornek.com / password123
+## Database Schema
+- `customers`: {name, phone, loyalty_points, referral_code, password_hash}
+- `bookings`: {service_id, customer_id, status, work_photos, date, time, notes}
+- `services`: {name, price, description}
 
 ## API Endpoints
-- `POST /api/admin/login` - Admin girişi
-- `GET /api/admin/stats` - Dashboard istatistikleri
-- `POST /api/customers/login` - Müşteri girişi (mobil app)
-- `GET /api/bookings` - Randevu listesi
-- `GET /api/customers` - Müşteri listesi
+- POST /api/bookings - Create booking
+- POST /api/admin/bookings - Admin create booking
+- GET /api/services - List services
+- POST /api/customers/login - Customer login
+
+## Credentials
+- VPS SSH: root@76.13.61.47 (Berat25.krbyr)
+- Admin Panel: admin/admin123
+- Test Customer: 0532 111 2233 / 123456
+
+## Known Issues
+- Mobile app Expo server may need periodic restarts (pm2 restart expo-mobile)
+
+## Future Tasks (Backlog)
+- P1: Full end-to-end testing of mobile app features
+- P2: Push notifications for booking updates
+- P2: Customer loyalty program enhancement
+- P3: Analytics dashboard
+- P3: Multi-language support
