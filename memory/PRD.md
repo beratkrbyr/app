@@ -26,6 +26,7 @@ A cleaning company owner requested a mobile application named "TİTAN 360". The 
 - Calendar view for booking statuses
 - New booking creation with photo upload
 - Settings page
+- **Website Content Management** - Edit site content without code changes
 - Admin login (admin/admin123)
 
 ### Public Website
