@@ -56,6 +56,17 @@ A cleaning company owner requested a mobile application named "TİTAN 360". The 
   - Password confirmation
   - Referral code support for bonus points
   - Form validation
+- **Added "Şifremi Unuttum" (Forgot Password) feature**
+  - 3-step flow: Phone -> Code -> New Password
+  - 6-digit verification code via SMS/Email
+  - 10 minute code expiry
+  - Dedicated ForgotPasswordScreen component
+- **Added Notification System (MOCK - ready for activation)**
+  - SMS notifications (Twilio/Netgsm support)
+  - Email notifications (SendGrid/Gmail support)
+  - Booking notifications: created, confirmed, cancelled, completed
+  - Password reset code notifications
+  - All notifications logged in mock mode until API keys configured
 
 ## Database Schema
 - `customers`: {name, phone, loyalty_points, referral_code, password_hash}
