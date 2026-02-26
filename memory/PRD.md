@@ -78,6 +78,9 @@ A cleaning company owner requested a mobile application named "TİTAN 360". The 
 - POST /api/admin/bookings - Admin create booking
 - GET /api/services - List services
 - POST /api/customers/login - Customer login
+- POST /api/customers/register - Customer registration
+- POST /api/customers/forgot-password - Request password reset code
+- POST /api/customers/reset-password - Reset password with code
 
 ## Credentials
 - VPS SSH: root@76.13.61.47 (Berat25.krbyr)
