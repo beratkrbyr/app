@@ -50,6 +50,12 @@ A cleaning company owner requested a mobile application named "TİTAN 360". The 
 - Separated Hero, Stats, Services, and CTA sections with proper spacing
 - Hero section now takes min 80vh height
 - Mobile responsive design improved
+- **Added "Kayıt Ol" (Register) feature to mobile app login screen**
+  - Toggle between Login and Register modes
+  - Name, phone, email, password fields
+  - Password confirmation
+  - Referral code support for bonus points
+  - Form validation
 
 ## Database Schema
 - `customers`: {name, phone, loyalty_points, referral_code, password_hash}
