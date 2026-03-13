@@ -9,7 +9,7 @@ import os
 import time
 import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://titan-test-deploy.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://build-preview-apk.preview.emergentagent.com')
 
 # Use unique identifiers for test data
 TEST_TIMESTAMP = int(time.time())

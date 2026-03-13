@@ -8,7 +8,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://titan-test-deploy.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://build-preview-apk.preview.emergentagent.com')
 TEST_PHONE = f"TEST_{int(time.time())}"  # Unique phone for each test run
 
 class TestHealthAndInit:
